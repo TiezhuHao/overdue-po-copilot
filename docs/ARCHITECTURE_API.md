@@ -386,3 +386,9 @@ Phase 1 只建立可运行骨架：
 Phase 1 已无业务阻塞项。Report 1 粒度、Report 2/4 组织粒度、周历、Forecast 版本选择、Product Config/Lifecycle、Report 6 未来月和累计库龄语义均已固化。
 
 以下仅影响后续 Generator/业务 API 完成度，不阻塞 Phase 1：Report 2 辅助字段 Mock 公式（`DC-03`）、KD 完整释义（`DC-07`）、Report 6 辅助字段 Mock 公式（`DC-12`）。量化阈值默认 Mock 参数（`DC-15`）已在 Phase 4 标记为 `RESOLVED_AS_SYNTHETIC_CONFIG`，通过 `ScenarioGenerationConfig` 配置并进入 Scenario signature，不代表企业真实规则。售后正式处置（`DC-16`）仍为 `NEEDS_BUSINESS_CONFIRMATION`，不得自行写入正式 `expected_action`。
+
+## 15. Phase 5A 模块落地边界
+
+`EvidenceFoundationGenerationService` 是 generator-only 事务入口，要求 Dataset 为 GENERATING，并只读验证完整 Master/Procurement/Scenario。`app/generators/evidence_foundation` 提供配置、日历、Generator、Validator、数量 as-of 投影与 CLI；公共 `services/__init__.py` 不导入该入口，公共应用不会加载 Evaluation 或 Generator。
+
+输出为项目 Lifecycle、Product Config/Material 关联及一个共享 Demand World（初始日点 + 中性源修订长表）。服务保留明确事务边界，不修改既有 Truth，不写最终 Dataset hash，不将状态升级为 READY。只允许 generator 写入新 raw tables；API 继续仅访问原有健康/就绪所需白名单。未新增 Report endpoint、Forecast Version 或任何诊断接口。

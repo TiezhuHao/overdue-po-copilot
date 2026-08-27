@@ -27,6 +27,8 @@ def test_migrations_render_for_postgresql() -> None:
     assert "CREATE TABLE platform.po_lines" in ddl
     assert "CREATE TABLE platform.po_line_schedules" in ddl
     assert "CREATE TABLE evaluation.scenario_truth" in ddl
+    assert "CREATE TABLE platform.project_lifecycle_history" in ddl
+    assert "CREATE TABLE platform.demand_signal_revisions" in ddl
     assert "EXCLUDE USING gist" in ddl
 
 
@@ -42,5 +44,5 @@ def test_migration_upgrade_reaches_head(migrated_database: Engine) -> None:
                 )
             ).scalars()
         )
-    assert revision == "007_scenario_truth"
+    assert revision == "008_evidence_foundation"
     assert schemas == {"platform", "evaluation"}

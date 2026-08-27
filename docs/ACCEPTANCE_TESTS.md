@@ -206,7 +206,7 @@ V1 默认周版本日历。对同一 `version_date` 的多个补发/修订版本
 
 ## 8. Demand Adjustment 场景
 
-量化阈值使用测试配置中的显式参数，不宣称为真实企业硬规则。默认 Mock 参数在进入 Generator 阶段前固定；该延后不阻塞 Phase 1。
+量化阈值使用测试配置中的显式参数，不宣称为真实企业硬规则。默认 Mock 参数已在 Phase 4 固定，并在 Phase 5A Evidence Validator 复用；不再作为 deferred 项。
 
 ### `AT-033` Demand Reduction
 
@@ -510,4 +510,38 @@ Phase 4 收尾回归要求：七个量产 Pattern 分别采用单一权重为 1�
 
 本轮修复兼容场景权重全零的抽样失败、拒绝负权重、移除公共服务包对 Generator/Truth 的隐式导入，并补齐 `/ready` 根路径兼容入口。未改变业务判断优先级、五类根因或现有 Demo 业务内容。
 
-Git 提交仍为 `GIT_IDENTITY_BLOCKED`：仓库尚无提交，未配置 `user.name/user.email`，未代填身份、添加 remote 或 push。该项不是业务阻塞；KD 完整释义和售后正式处置仍按原确认边界保留。
+Phase 4 收尾时 Git 为 `GIT_IDENTITY_BLOCKED`。之后用户已配置 repository-local 身份，Phase 5A 开始前创建 checkpoint `14f3d94fea8d62c9272536a34dae84acab897401`，该工程阻塞已解除；未添加 remote 或 push。KD 完整释义和售后正式处置仍按原确认边界保留。
+
+## 20. Phase 5A 验收边界与测试映射
+
+| 合同 | 当前覆盖 | 留待后续 |
+|---|---|---|
+| AT-010 / AT-012 | 全部 Material × Project 可解析配置；一项目多配置、一配置多物料；生命周期半开区间、无重叠、snapshot 唯一且满足 Scenario | Report 5 展示/导出 |
+| AT-026 / AT-032 | 唯一共享日需求 + 中性 dated revisions，as-of 不偷看未来，所有候选项目均有 Signal | Report 3/4/6 具体派生服务 |
+| AT-033～036 | 源观测前后 Reduction/Delay/Mixed、数量守恒/净减少与远期移量、causal 强于稳定非 causal | 正式共享 Forecast Calendar 的每 PO 版本窗口比较 |
+| AT-038～043 | 项目 EOL 证据、售后13周/6月持续性、囤料双值；Stockpile/Internal EOL 零量负证据；Trial 优先级不变 | 正式 Forecast、历史 Stockpile 及根因推断 |
+
+自动化测试包括：
+
+- `test_evidence_foundation.py`：schema、全部关系、真实数量形态、source revision 日期、防未来观测、跨年/闰日、确定性、不同 seed；默认 Demo Internal-side 仅非 EOL，因此另用固定 Scenario seed=20260829 显式验证 EOL，而非修改原 Truth。
+- `test_evidence_foundation_integration.py`：008 空库重建、真实 exclusion、跨 dataset FK、重复日期/负数量拒绝、完整复用、配置冲突、六类部分数据拒绝、三个上游世界缺失拒绝、写入中途故障整体回滚、模型与迁移一致性、角色登录权限。
+- 既有 OpenAPI/公共进程隔离、仓库 hygiene、禁止词及全部历史测试继续执行。
+
+测试库每次 `downgrade base → upgrade head` 后重放既有 `002_grants.sql`，因为删除 Schema 会删除其默认 ACL。原 001～007 迁移保持不变；API 不获得 Evidence raw table 读取权。
+
+### Phase 5A 实测记录（2026-08-28）
+
+- Pre-Phase5A checkpoint：`14f3d94fea8d62c9272536a34dae84acab897401`。
+- 开发库成功从 007 升至 `008_evidence_foundation`；测试库完成 `008 → base → 008` 重建，迁移与六张新表的 SQLAlchemy metadata 一致。
+- 全量：153 passed / 0 failed / 0 skipped；保留1条现有测试客户端依赖弃用警告。
+- 实际 generator 角色生成 Demo 后重复调用，聚合数量与 hash 完全一致；六张新表的真实权限检查通过，API raw SELECT 被拒绝，evaluation 仍隔离。
+- Demo：70 条 Lifecycle；snapshot NPI=4、MASS_PRODUCTION=12、EOL=14；60 个 Product Config、272 条 Config-Material 关系、136 个 Demand Signal、110840 个日点、255098 条中性日修订。
+- Demand 日期：2025-02-01～2027-04-26；以 snapshot 2026-08-26 观察的全窗口合成需求总量：7875929.9700。
+- Evidence hash：`762381c2296e7c684b3698bc669ed353f55bdb342edf8157fa4b96678d28c8a3`。
+- 原 Truth 仍为115条，实际 Lifecycle requirement mismatch=0；Dataset 仍为 GENERATING，最终 business_content_hash=null。
+- `/health`、`/ready`、`/api/v1/health`、`/api/v1/ready` 实际 HTTP 均为200；在线 OpenAPI 无 Truth/Generator endpoint。
+- Forbidden-term scan：124 个文件通过；GitHub hygiene：环境文件/数据卷忽略、可提交文件无已知本地密钥或本机绝对路径、公开示例无逐条 Truth。
+
+本次失败测试的诊断输出曾回显本地测试库连接凭据，未写入仓库；已为测试 URL repr 增加脱敏及回归断言。该本地凭据建议由用户轮换，不在本阶段擅自改动凭据。
+
+未实现 Forecast Version、Monthly/13W Forecast、Supply/Demand Facts、Stockpile Facts、Report Views/API、Excel Export、Agent 或 LLM。`DC-07-KD` 和 `DC-16` 的待确认边界保持不变，不阻塞本阶段。

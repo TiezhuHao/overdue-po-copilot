@@ -12,6 +12,13 @@ from sqlalchemy.engine import make_url
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 
+class _RedactedDatabaseURL(str):
+    """Keep pytest argument rendering from revealing local connection passwords."""
+
+    def __repr__(self) -> str:
+        return make_url(self).render_as_string(hide_password=True)
+
+
 def alembic_config(database_url: str) -> Config:
     config = Config(str(BACKEND_ROOT / "alembic.ini"))
     config.set_main_option("sqlalchemy.url", database_url)
@@ -25,7 +32,7 @@ def _disposable_database_url(env_name: str) -> str:
     database_name = make_url(database_url).database or ""
     if "test" not in database_name.lower():
         pytest.fail(f"{env_name} must target a database whose name contains 'test'")
-    return database_url
+    return _RedactedDatabaseURL(database_url)
 
 
 @pytest.fixture(scope="session")
@@ -55,6 +62,12 @@ def migrated_database(test_database_url: str) -> Iterator[Engine]:
             ) == 0
             assert connection.scalar(text("SELECT count(*) FROM alembic_version")) == 0
         command.upgrade(config, "head")
+        # Dropping a schema removes its default ACLs too. Reapply the established
+        # owner bootstrap after rebuilding so isolated test modules see real grants.
+        with engine.begin() as connection:
+            connection.exec_driver_sql(
+                (BACKEND_ROOT / "db/bootstrap/002_grants.sql").read_text(encoding="utf-8")
+            )
         yield engine
     finally:
         engine.dispose()

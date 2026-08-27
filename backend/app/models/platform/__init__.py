@@ -1,4 +1,8 @@
 from app.models.platform.customer import Customer
+from app.models.platform.evidence_foundation import (
+    DemandSignal, DemandSignalPoint, DemandSignalRevision,
+    ProductConfig, ProductConfigMaterial, ProjectLifecycleHistory,
+)
 from app.models.platform.dataset import DatasetVersion
 from app.models.platform.employee import Employee
 from app.models.platform.material import Material
@@ -15,6 +19,8 @@ from app.models.platform.world_relationships import (
 )
 
 __all__ = [
+    "DemandSignal", "DemandSignalPoint", "DemandSignalRevision",
+    "ProductConfig", "ProductConfigMaterial", "ProjectLifecycleHistory",
     "Customer",
     "DatasetVersion",
     "Employee",

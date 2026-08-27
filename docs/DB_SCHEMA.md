@@ -284,6 +284,17 @@ UQ (demand_signal_id, demand_date)
 
 Report 3/4/6 均必须保存到 `demand_signal_id` 或可验证 lineage 的引用。
 
+### 9.2A Phase 5A 日需求与源观测修订（008 已实现）
+
+- `demand_signals` 每 `(dataset_version_id, material_id, project_id)` 唯一；`organization_id` 绑定该物料 Primary Inventory Organization。
+- `signal_kind` 仅为中性业务值 `PLANNED_DEMAND`；`scenario_generation_key` 为 64 位十六进制、不含标签的 lineage hash。
+- `observed_from` 表示初始日需求可被观察的起点；`reference_daily_qty > 0` 是 Synthetic 计划的正常日量参考，用于复用已确认的售后相对量级参数，不是诊断标签。
+- `demand_signal_points` 保存初始日计划，`demand_qty numeric(20,4) >= 0`，唯一键为 `(dataset_version_id, demand_signal_id, demand_date)`。
+- 新增中性长表 `demand_signal_revisions`：`dataset_version_id`、`demand_signal_revision_id`、`demand_signal_id`、`observed_on`、`demand_date`、`demand_qty >= 0`、`created_at`。唯一 `(dataset_version_id, demand_signal_id, observed_on, demand_date)`；复合 FK 指向同 dataset 的初始日需求点。
+- 修订保存新的绝对数量而非原因或带符号 delta。给定观察日，仅取 `observed_on <= as_of` 的最新数量覆盖初始点；未来修订不可提前可见。
+- 此表是企业需求源的 revision basis，不是 `forecast_versions`；本阶段未创建任何月预测、周预测或 Forecast Version。
+- 所有 ID/FK、相关索引均带 dataset 前缀；初始点和修订保持长表，不复制三套 Report 需求。
+
 ### 9.3 `platform.forecast_versions`
 
 | 列 | 说明 |
@@ -351,6 +362,8 @@ Report 4 从 `weekly_project_forecasts` 聚合到物料级。周历统一 Monday
 - `modified_by_employee_id`、`modified_at`。
 
 一个 Project 可关联多个 Product Config。`product_configs` 不保存单值 `material_id`。
+
+Phase 5A 增加 `[effective_from,effective_to)` 配置有效期及 `ACTIVE/INACTIVE` 状态。每 Project 默认两个有效配置，每个配置关联该 Project 的所有 Material。当前 Project Master 没有组织归属字段，因此配置使用其关联物料主库存组织所属 Business Unit 的多数项（并列稳定 UUID 排序），计划部门必须为该 Business Unit 的真实子组织；优先选 snapshot 有效 Primary Customer，研发代表只能来自已有有效 `RESEARCH_REPRESENTATIVE` 角色。`customer_material_code` 暂为 null，不为多物料配置编造单一客户料号。
 
 ### 10.2 `platform.product_config_materials`
 

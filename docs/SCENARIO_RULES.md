@@ -408,3 +408,32 @@ Underlying Demand Signal
 - 至少一个 13 周总需求为 0 的样本。
 - 至少一个 `po_reference_project_id != causal_project_id` 的非试产样本。
 - 至少一个物料服务多个项目，且只有一个项目呈主要因果证据。
+
+## 17. Phase 5A Evidence Foundation 实现口径
+
+Phase 5A 只生成 Lifecycle、Product Config、共享日需求及中性源修订；不生成 Forecast Version、月/周 Forecast、Supply/Demand、Stockpile、Report View/API。
+
+生命周期严格服从 Phase 4 的 project requirements；其余项目按 seed 生成 NPI → MASS_PRODUCTION → EOL 的合法前缀历史。snapshot 恰有一个 stage；不得重选 required project 的生命周期。
+
+### 源需求观测，不是 Forecast Calendar
+
+每个 Material × Project 恰有一条日需求 Signal；从最早相关 Anchor 前至少两个月及最早下单日前一月起覆盖至 snapshot 后八个月。初始日点加 `demand_signal_revisions` 形成可按观察日读取的统一数量序列。
+
+为每个物料的相关 Anchor 创建源计划周期：相邻间隔不超过两天的 Anchor 归为一组，组首前一天为预算刷新观察日，组末后一天为修订观察日；共同可比窗口从组首所在月月首开始。刷新与修订均只保存日期和绝对数量，并且同一物料的所有候选项目使用相同观察日期及完整日粒度覆盖，不以“只有一个项目有修订记录”暗示 causal project。
+
+这些日期仅是 Synthetic source revision basis，不取代既定 Forecast Anchor 公式、Monday-start 或共享周版本选择规则。Phase 5B 必须另外验收每个 PO 的真实 Forecast Baseline/后续 2～5 版本；Phase 5A 的源观测对验收不能宣称为该项已通过。
+
+`EvidenceFoundationConfig` 默认：seed=20260829，版本=5A.1.0/schema=008，历史至少2月、未来8月，每项目2个配置，正常日量40～120，日内数量噪声±2%，周期预算保留系数0.90。以下是造数幅度，不是重新定义 `DC-15` 阈值：
+
+- Reduction：源修订后未来数量减少55%，无远期回补；
+- Delay：将近3个月数量的80%移至其余比较月份，7个月总量精确保留；
+- Mixed：移走近端数量的30%并永久减少整个7个月总量的25%，同时保留可观测远期净增加；无法同时满足约束的配置显式失败；
+- Customer-side：按 Truth 的上述三种形态生成，并遵守项目 EOL；
+- After-sales：数量相对正常日量参考取 Phase 4 已确认 min/max 的中值（默认12.5%），连续13周/6月非零，源观测前后不调整；
+- Stockpile/Internal-side：causal 项目使用稳定零需求，不构成 Demand Adjustment，也排除 EOL 售后；历史囤料事实仍留 Phase 5C；
+- Trial：合法稳定日需求，其数量形态不改变试产优先级；
+- 非 causal 项目：稳定正常需求及轻微日噪声。调整分支的 causal 数量变化得分严格更大；售后/稳定零量分支以量级差异形成可观测证据，不要求凭空产生 Forecast 下修。
+
+Validation 只在 Generator/Evaluation 中比较数量证据：`drop=1-after_total/before_total`、`near_drop=1-after_near/before_near`、`shift=max(after_far-before_far,0)/before_near`。调整强度为正向 drop、near_drop 与 shift 之和；阈值始终来自传入的 `ScenarioGenerationConfig`。持久化 platform 不保存这些分型或得分。
+
+Evidence 服务先按各阶段原配置重建预期 Master/Procurement/Scenario 并与现存内容比对，只读验证前置完整性，不调用上游生成服务去补数据。六张 Evidence 表在同一事务中写入；全空时生成、完整且哈希一致时复用、部分存在时拒绝。最终 Dataset 继续 `GENERATING`，不得写 `business_content_hash`。

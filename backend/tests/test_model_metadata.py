@@ -23,10 +23,16 @@ EXPECTED_TABLES = {
     "platform.po_lines",
     "platform.po_line_schedules",
     "evaluation.scenario_truth",
+    "platform.project_lifecycle_history",
+    "platform.product_configs",
+    "platform.product_config_materials",
+    "platform.demand_signals",
+    "platform.demand_signal_points",
+    "platform.demand_signal_revisions",
 }
 
 
-def test_metadata_contains_only_authorized_tables_through_phase_2() -> None:
+def test_metadata_contains_only_authorized_tables_through_phase_5a() -> None:
     assert set(Base.metadata.tables) == EXPECTED_TABLES
 
 
