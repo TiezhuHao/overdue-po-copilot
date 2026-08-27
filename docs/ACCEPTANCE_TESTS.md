@@ -545,3 +545,20 @@ Phase 4 收尾时 Git 为 `GIT_IDENTITY_BLOCKED`。之后用户已配置 reposit
 本次失败测试的诊断输出曾回显本地测试库连接凭据，未写入仓库；已为测试 URL repr 增加脱敏及回归断言。该本地凭据建议由用户轮换，不在本阶段擅自改动凭据。
 
 未实现 Forecast Version、Monthly/13W Forecast、Supply/Demand Facts、Stockpile Facts、Report Views/API、Excel Export、Agent 或 LLM。`DC-07-KD` 和 `DC-16` 的待确认边界保持不变，不阻塞本阶段。
+
+## 21. Phase 5A.1 修复验收（2026-08-28）
+
+- 根因：原预算恢复/扣减脉冲不能保证被周度发布观察；共享日历采样可只观察两个低状态，从而漏掉需求变化。
+- 修复：`PERSISTENT_1` 有效日状态，联合约束多个 Anchor 的初始计划及修订数量，不针对某个 weekday、不降阈值。生命周期/配置与源实体 ID 保留，具体有限计划窗口及旧参数兼容边界见 `SCENARIO_RULES.md` 第18节。
+- Demo publication dry-run：115 条 Scenario schedule × 7 个 weekly offsets × 3 种有效日历（正常/最近 Baseline 无效/首个 post 无效）× 5 个 post，共 12075 次比较全部通过；REDUCTION 1470、DELAY 1680、MIXED 945、NONE 7980。分别覆盖前2～5版前缀；After-sales 保持囤料双值与持续小量，不产生明显变化。
+- 增加 Monday/Tuesday/Friday/Sunday Anchor、月末/年末/年初、同日多序号、最大序号无效、整日无效、Anchor 同日排除测试。纯 Reduction、纯 Delay 均不能通过 Mixed 判据。
+- 同 seed 重跑新 hash 相同；不同 Evidence seed 保持全部 demo 场景类型证据。旧脉冲幅度的非默认覆盖显式拒绝，避免忽略配置。
+- 受控修复实际完成：只更新 GENERATING demo 的受影响 Evidence；Lifecycle 70 / Config 60 / Config-Material 272 / Signal 136 / Point 110840 保持实体数及稳定 ID，Revision 255098 → 130415。Lifecycle/Config 业务内容逐行相等且未写入。
+- Master、Procurement、Scenario（含 causal project、lifecycle requirement 与 stockpile plan）由事务前后精确内容 hash 验证不变。Dataset 保持 GENERATING、最终 hash=null。
+- 旧 Evidence hash：`762381c2296e7c684b3698bc669ed353f55bdb342edf8157fa4b96678d28c8a3`。
+- 新 Evidence hash：`d2ee070ef425915488b5281b244a234a24be0a9890598a2b2d48de1400cc868e`；正常 CLI 重跑复用并一致。
+- 真实 PostgreSQL：测试库 `008 → base → 008` 成功，schema 与 metadata 相符；历史001～008无diff。旧 hash/非demo/READY 安全门禁、另一 dataset 不变、插入中途故障整阶段回滚、generator/API 角色权限均通过。
+- 最终全量：191 passed / 0 failed / 0 skipped；1 条既有 Starlette/httpx 弃用警告。
+- 四个 `/health`、`/ready` 及版本化端点实际 HTTP 200，在线 OpenAPI 泄漏扫描通过。首次诊断请求受环境代理影响，改为本机直连后成功；临时 API 已关闭。
+- Forbidden-term scan：129 文件通过；GitHub hygiene、公共代码隔离和示例防泄漏随全量测试通过。无新增业务待确认项；DC-15 resolved、DC-16/KD 原确认边界不变。
+- 本修复不创建 Forecast 表或正式 WindowSelector；Phase 5B 从本修复 checkpoint 继续，Report View/API/Excel 仍未实现。

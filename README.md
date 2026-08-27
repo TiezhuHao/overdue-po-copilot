@@ -1,6 +1,6 @@
 # Overdue PO Copilot — System A
 
-本仓库当前完成到 Phase 5A：在隔离 Scenario Plan 基础上生成 Lifecycle、Product Config 和共享 Underlying Demand Signal。
+本仓库已完成 Phase 5A，并实施 Phase 5A.1 源计划持续状态修复；正式 Forecast facts 仍属于 Phase 5B。
 
 ## Implementation Status
 
@@ -161,7 +161,17 @@ cd backend; .\.venv\Scripts\python.exe -m app.generators.evidence_foundation.cli
 
 六张基础表为项目生命周期、产品配置及关联、日需求 Signal/Point，以及中性的 `demand_signal_revisions`。最后一张保存企业需求源“在哪天修订哪个需求日的数量”，不是 Forecast Version。后续月/周报表必须按同一 as-of 源序列聚合，不能各自随机造数。
 
-Demo：70 条生命周期（snapshot：NPI 4 / MASS_PRODUCTION 12 / EOL 14），60 个配置、272 条 Config-Material 关系、136 条 Signal、110840 个日点、255098 条源日修订。需求窗口为 2025-02-01～2027-04-26，由 Dataset/PO 时间计算，并非硬编码窗口。Dataset 仍为 `GENERATING`，最终 `business_content_hash` 保持 null。
+Demo：70 条生命周期（snapshot：NPI 4 / MASS_PRODUCTION 12 / EOL 14），60 个配置、272 条 Config-Material 关系、136 条 Signal、110840 个日点、130415 条持续状态日修订。需求窗口为 2025-02-01～2027-04-26，由 Dataset/PO 时间计算，并非硬编码窗口。Dataset 仍为 `GENERATING`，最终 `business_content_hash` 保持 null。
+
+Phase 5A.1 消除临时预算恢复脉冲；source state 在 Anchor 当日生效并持续至下一事件。多 Anchor 联合构造非负数量状态，再按原 seeded 日权重分配；不依赖特定发布星期，不放宽 Scenario 阈值。构造器固定 NumPy/SciPy 版本，采用 [SciPy HiGHS 线性约束求解](https://docs.scipy.org/doc/scipy-1.15.3/reference/optimize.linprog-highs.html)，只在 Generator 中使用，不是运行时诊断引擎。
+
+针对已审计的旧 demo，显式修复命令（不可用于 READY 或已有下游 Forecast/Stockpile 的世界）：
+
+```powershell
+python -m app.generators.evidence_foundation.correct_timing --expected-old-hash 762381c2296e7c684b3698bc669ed353f55bdb342edf8157fa4b96678d28c8a3 --summary-output ../examples/evidence_foundation_summary.json
+```
+
+该操作只修改受影响 Evidence，并保留 Master、Procurement、Truth、Lifecycle/Config 和既有实体 ID。无公开 reset API。新 Evidence hash：`d2ee070ef425915488b5281b244a234a24be0a9890598a2b2d48de1400cc868e`。
 
 ## 9. FastAPI
 
@@ -200,6 +210,8 @@ python -m pytest
 Integration fixture 会先执行 `alembic downgrade base` 再执行 `upgrade head`，不得指向共享或生产数据库。
 
 Phase 5A 全量验收：153 passed / 0 failed / 0 skipped。正式 Forecast 版本比较留待 Phase 5B；Source revision foundation 已验证 Reduction/Delay/Mixed、售后持续性及 EOL 负证据。
+
+Phase 5A.1 修复后全量：191 passed / 0 failed / 0 skipped；12075 次多发布日历比较全部通过。测试库完成 `008 → base → 008`，历史迁移不变；正式 Forecast 表与选择服务仍待 Phase 5B。
 
 禁止词扫描：
 

@@ -28,14 +28,9 @@ def material_anchors(scenario, procurement):
 
 
 def source_cycles(anchors):
-    """Adjacent anchors share an observation pair, preventing same-day overwrites."""
-    groups = []
-    for anchor in sorted(set(anchors)):
-        if groups and (anchor - groups[-1][-1]).days <= 2:
-            groups[-1].append(anchor)
-        else:
-            groups.append([anchor])
-    return [(group[0] - timedelta(days=1), group[-1] + timedelta(days=1), group[0].replace(day=1)) for group in groups]
+    """Each event is effective on its anchor, independent of publication weekday."""
+    return [(anchor - timedelta(days=1), anchor, anchor.replace(day=1))
+            for anchor in sorted(set(anchors))]
 
 
 def demand_horizon(snapshot, scenario, procurement, config):

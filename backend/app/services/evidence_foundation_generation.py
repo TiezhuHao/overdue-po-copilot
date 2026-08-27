@@ -8,7 +8,7 @@ from app.generators.context import GenerationContext
 from app.generators.evidence_foundation.config import EvidenceFoundationConfig
 from app.generators.evidence_foundation.generator import EvidenceFoundationGenerator
 from app.generators.evidence_foundation.validation import EvidenceFoundationValidator
-from app.generators.evidence_foundation.world import EvidenceFoundationWorld, evidence_signature, record_payload
+from app.generators.evidence_foundation.world import EvidenceFoundationWorld, evidence_identity_signature, evidence_signature, record_payload
 from app.generators.master_data.generator import MasterDataGenerator
 from app.generators.procurement.config import ProcurementGenerationConfig
 from app.generators.procurement.generator import ProcurementGenerator
@@ -96,11 +96,12 @@ class EvidenceFoundationGenerationService:
                 raise EvidenceFoundationError("DATASET_NOT_GENERATING")
             master, procurement, scenario, master_hash, scenario_hash = self._prerequisites(dataset, procurement_config, scenario_config)
             signature = evidence_signature(dataset.generation_signature, master_hash, procurement.procurement_facts_hash(), scenario_hash, scenario_config, config)
+            identity_signature = evidence_identity_signature(dataset.generation_signature, master_hash, procurement.procurement_facts_hash(), scenario_hash, scenario_config, config)
             existing_counts = {
                 model.__tablename__: self.session.scalar(select(func.count()).select_from(model).where(model.dataset_version_id == dataset_id))
                 for model in EVIDENCE_MODELS
             }
-            world = self.generator.generate(dataset_id, dataset.snapshot_date, signature, config, scenario_config, master, procurement, scenario)
+            world = self.generator.generate(dataset_id, dataset.snapshot_date, signature, config, scenario_config, master, procurement, scenario, identity_signature=identity_signature)
             self.validator.validate(world, master, procurement, scenario, dataset_id, dataset.snapshot_date, config, scenario_config)
             expected_hash = world.content_hash(signature)
             reused = any(existing_counts.values())

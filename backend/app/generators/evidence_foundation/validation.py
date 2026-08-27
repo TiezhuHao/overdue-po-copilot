@@ -44,6 +44,55 @@ def has_after_sales_quantities(stats, config):
             and config.after_sales_level_ratio_min <= stats["level_ratio"] <= config.after_sales_level_ratio_max)
 
 
+def matches_shape(metrics, change, config):
+    reduction = metrics['drop'] >= config.reduction_total_drop_ratio and metrics['shift'] < config.delay_shift_share_min
+    delay = (metrics['near_drop'] >= config.delay_near_term_drop_ratio
+             and metrics['shift'] >= config.delay_shift_share_min
+             and config.delay_total_retention_lower <= metrics['retention'] <= config.delay_total_retention_upper)
+    mixed = metrics['drop'] >= config.mixed_total_drop_ratio and metrics['shift'] >= config.mixed_shift_share_min
+    return {'REDUCTION': reduction, 'DELAY': delay, 'MIXED': mixed,
+            'NONE': not (reduction or delay or mixed)}[change]
+
+
+def publication_dry_run(world, scenario, procurement, scenario_config):
+    """Seven weekly offsets, five post observations, and one skipped date.
+
+    This is a source-state invariant check, not a persisted Forecast calendar or
+    the Phase 5B selection service. It never changes an observation date or qty.
+    """
+    from functools import lru_cache
+    observation = DemandObservationIndex(world)
+    signals = {(r.material_id, r.project_id): r for r in world.demand_signals}
+    lines = {r.po_line_id: r for r in procurement.po_lines}
+
+    @lru_cache(maxsize=None)
+    def observed(signal_id, observed_on):
+        months = defaultdict(Decimal)
+        for day, qty in observation.observe(signal_id, observed_on).items():
+            months[day.replace(day=1)] += qty
+        return months
+
+    counts = Counter()
+    for row in scenario.scenario_truth_rows:
+        line = lines[row.po_line_id]
+        anchor = line.order_date + timedelta(days=line.material_lt_days_at_order)
+        signal = signals[(line.material_id, row.causal_project_id)]
+        for weekday in range(7):
+            before = anchor - timedelta(days=(anchor.weekday() - weekday - 1) % 7 + 1)
+            first = anchor + timedelta(days=(weekday - anchor.weekday() - 1) % 7 + 1)
+            for skip in ('NONE', 'BASELINE', 'FIRST_POST'):
+                baseline = before - timedelta(days=7 if skip == 'BASELINE' else 0)
+                post_start = first + timedelta(days=7 if skip == 'FIRST_POST' else 0)
+                initial = observed(signal.demand_signal_id, baseline)
+                for index in range(5):
+                    post = post_start + timedelta(days=7 * index)
+                    metrics = shape_metrics(initial, observed(signal.demand_signal_id, post), anchor.replace(day=1), scenario_config)
+                    if not matches_shape(metrics, row.demand_change_type, scenario_config):
+                        raise EvidenceFoundationValidationError('PUBLICATION_CALENDAR_EVIDENCE_MISMATCH')
+                    counts[row.demand_change_type] += 1
+    return dict(counts)
+
+
 class EvidenceFoundationValidator:
     def validate(self, world, master, procurement, scenario, dataset_id, snapshot, config, scenario_config):
         errors = []
@@ -177,3 +226,4 @@ class EvidenceFoundationValidator:
                     require(stats["level_ratio"] < other_stats["level_ratio"], "stable target evidence not distinct from other projects")
         if errors:
             raise EvidenceFoundationValidationError("; ".join(sorted(set(errors))))
+        publication_dry_run(world, scenario, procurement, scenario_config)

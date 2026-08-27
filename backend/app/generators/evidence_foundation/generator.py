@@ -4,8 +4,9 @@ from decimal import Decimal, ROUND_HALF_UP
 from random import Random
 
 from app.core.ids import deterministic_uuid
-from app.generators.evidence_foundation.calendar import active, add_months, days, demand_horizon, material_anchors, source_cycles
+from app.generators.evidence_foundation.calendar import active, days, demand_horizon, material_anchors
 from app.generators.evidence_foundation.world import EvidenceFoundationWorld
+from app.generators.evidence_foundation.planning_states import persistent_daily_states
 from app.generators.signature import content_hash
 from app.models.platform.evidence_foundation import (
     DemandSignal, DemandSignalPoint, DemandSignalRevision, ProductConfig,
@@ -23,53 +24,8 @@ class EvidenceFoundationGenerationError(ValueError):
     pass
 
 
-def changed_quantities(baseline, window_start, change, scenario_config, config):
-    """Create numeric revision observations; classification labels stay generator-only."""
-    revised = dict(baseline)
-    near_end = add_months(window_start, scenario_config.delay_near_term_months)
-    end = add_months(window_start, scenario_config.comparison_months)
-    near = [day for day in baseline if window_start <= day < near_end]
-    far = [day for day in baseline if near_end <= day < end]
-    near_total = sum((baseline[day] for day in near), Decimal(0))
-    total = near_total + sum((baseline[day] for day in far), Decimal(0))
-    if not near or not far or near_total <= 0:
-        raise EvidenceFoundationGenerationError("INCOMPATIBLE_EVIDENCE_CONFIG: empty comparison window")
-    if change == "REDUCTION":
-        if config.reduction_drop_ratio <= scenario_config.reduction_total_drop_ratio:
-            raise EvidenceFoundationGenerationError("INCOMPATIBLE_EVIDENCE_CONFIG: reduction margin")
-        for day in revised:
-            if day >= window_start:
-                revised[day] = quantize(baseline[day] * (1 - config.reduction_drop_ratio))
-        return revised
-    if change == "DELAY":
-        if not (scenario_config.delay_total_retention_lower <= 1 <= scenario_config.delay_total_retention_upper):
-            raise EvidenceFoundationGenerationError("INCOMPATIBLE_EVIDENCE_CONFIG: delay retention")
-        moved = quantize(near_total * config.delay_near_shift_ratio)
-        lost = Decimal(0)
-    elif change == "MIXED":
-        moved = quantize(near_total * config.mixed_near_shift_ratio)
-        lost = quantize(total * config.mixed_drop_ratio)
-        # Net reduction remains visible after the comparison window too.
-        for day in revised:
-            if day >= end:
-                revised[day] = quantize(baseline[day] * (1 - config.mixed_drop_ratio))
-    else:
-        raise EvidenceFoundationGenerationError("unsupported generator demand shape")
-    if moved + lost >= near_total:
-        raise EvidenceFoundationGenerationError("INCOMPATIBLE_EVIDENCE_CONFIG: removal exceeds near-term demand")
-    remaining = near_total - moved - lost
-    for day in near:
-        revised[day] = quantize(baseline[day] * remaining / near_total)
-    revised[near[-1]] += remaining - sum(revised[day] for day in near)
-    increment = quantize(moved / len(far))
-    for day in far:
-        revised[day] = baseline[day] + increment
-    revised[far[-1]] += moved - increment * len(far)
-    return revised
-
-
 class EvidenceFoundationGenerator:
-    def generate(self, dataset_id, snapshot, signature, config, scenario_config, master, procurement, scenario):
+    def generate(self, dataset_id, snapshot, signature, config, scenario_config, master, procurement, scenario, *, identity_signature=None):
         world = EvidenceFoundationWorld()
         start, end = demand_horizon(snapshot, scenario, procurement, config)
         rng = Random(config.evidence_seed)
@@ -91,7 +47,7 @@ class EvidenceFoundationGenerator:
             raise EvidenceFoundationGenerationError("INCOMPLETE_MASTER_WORLD: research representative role missing")
 
         def uid(kind, key):
-            return deterministic_uuid(signature, kind, key)
+            return deterministic_uuid(identity_signature or signature, kind, key)
 
         for index, project in enumerate(projects):
             stage = scenario.project_lifecycle_requirements.get(project.project_id)
@@ -181,23 +137,22 @@ class EvidenceFoundationGenerator:
                 day: quantize(reference * level * (1 + config.daily_noise_ratio * Decimal(pair_rng.randint(-100, 100)) / 100))
                 for day in days(start, end)
             }
+            events = sorted(set(anchors.get(material_id, [])))
+            states = persistent_daily_states(events, change, scenario_config, baseline, reference)
+            baseline = states[0]
             for day, qty in baseline.items():
                 world.demand_signal_points.append(DemandSignalPoint(
                     dataset_version_id=dataset_id, demand_signal_point_id=uid("demand_point", f"{signal_id}:{day}"),
                     demand_signal_id=signal_id, demand_date=day, demand_qty=qty,
                 ))
-            for cycle, (before, after, window_start) in enumerate(source_cycles(anchors.get(material_id, []))):
-                # A source planning cycle has a numeric budget refresh followed by a
-                # dated revision. All candidate projects use the same observation dates.
-                multiplier = config.planning_cycle_retention ** cycle if change != "NONE" else Decimal(1)
-                cycle_base = {day: quantize(qty * multiplier) for day, qty in baseline.items()}
-                revised = changed_quantities(cycle_base, window_start, change, scenario_config, config) if change != "NONE" else cycle_base
-                for observed_on, values in ((before, cycle_base), (after, revised)):
-                    for day in days(window_start, end):
-                        world.demand_signal_revisions.append(DemandSignalRevision(
-                            dataset_version_id=dataset_id,
-                            demand_signal_revision_id=uid("demand_revision", f"{signal_id}:{observed_on}:{day}"),
-                            demand_signal_id=signal_id, observed_on=observed_on,
-                            demand_date=day, demand_qty=values[day],
-                        ))
+            for cycle, observed_on in enumerate(events, 1):
+                # No budget-reset pulses: each absolute quantity state persists
+                # until a later genuine planning event replaces it.
+                for day in days(observed_on.replace(day=1), end):
+                    world.demand_signal_revisions.append(DemandSignalRevision(
+                        dataset_version_id=dataset_id,
+                        demand_signal_revision_id=uid("demand_revision", f"{signal_id}:{observed_on}:{day}"),
+                        demand_signal_id=signal_id, observed_on=observed_on,
+                        demand_date=day, demand_qty=states[cycle][day],
+                    ))
         return world

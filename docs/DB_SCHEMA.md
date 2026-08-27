@@ -295,6 +295,8 @@ Report 3/4/6 均必须保存到 `demand_signal_id` 或可验证 lineage 的引�
 - 此表是企业需求源的 revision basis，不是 `forecast_versions`；本阶段未创建任何月预测、周预测或 Forecast Version。
 - 所有 ID/FK、相关索引均带 dataset 前缀；初始点和修订保持长表，不复制三套 Report 需求。
 
+Phase 5A.1 不新增或修改 schema：`observed_on` 数量覆盖天然持续有效。修复使用 Anchor 当日生效的联合计划状态，保留源实体 ID；无新增时间列、Truth 列或 Forecast 表，001～008 文件不变。
+
 ### 9.3 `platform.forecast_versions`
 
 | 列 | 说明 |

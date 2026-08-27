@@ -1,7 +1,7 @@
 {
   "counts": {
     "demand_signal_points": 110840,
-    "demand_signal_revisions": 255098,
+    "demand_signal_revisions": 130415,
     "demand_signals": 136,
     "product_config_materials": 272,
     "product_configs": 60,
@@ -11,7 +11,7 @@
   "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
   "demand_date_max": "2027-04-26",
   "demand_date_min": "2025-02-01",
-  "evidence_foundation_content_hash": "762381c2296e7c684b3698bc669ed353f55bdb342edf8157fa4b96678d28c8a3",
+  "evidence_foundation_content_hash": "d2ee070ef425915488b5281b244a234a24be0a9890598a2b2d48de1400cc868e",
   "notice": "Synthetic data only. Aggregate evidence statistics; no per-record evaluation truth.",
   "quantity_observed_as_of": "2026-08-26",
   "snapshot_lifecycle_distribution": {
@@ -19,6 +19,6 @@
     "MASS_PRODUCTION": 12,
     "NPI": 4
   },
-  "total_synthetic_demand_qty": "7875929.97",
+  "total_synthetic_demand_qty": "7631342.6401",
   "validation_status": "PASS"
 }

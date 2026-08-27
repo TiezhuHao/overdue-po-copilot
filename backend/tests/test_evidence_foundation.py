@@ -13,7 +13,7 @@ from app.generators.config import GenerationConfig
 from app.generators.context import GenerationContext
 from app.generators.evidence_foundation.calendar import active, add_months, demand_horizon, material_anchors, source_cycles
 from app.generators.evidence_foundation.config import EvidenceFoundationConfig
-from app.generators.evidence_foundation.generator import EvidenceFoundationGenerator, changed_quantities
+from app.generators.evidence_foundation.generator import EvidenceFoundationGenerator
 from app.generators.evidence_foundation.validation import EvidenceFoundationValidator, future_statistics, has_after_sales_quantities, shape_metrics
 from app.generators.evidence_foundation.world import DemandObservationIndex, evidence_signature
 from app.generators.master_data.generator import MasterDataGenerator

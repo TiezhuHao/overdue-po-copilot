@@ -43,6 +43,12 @@ def evidence_signature(dataset_signature, master_hash, procurement_hash, scenari
     })
 
 
+def evidence_identity_signature(dataset_signature, master_hash, procurement_hash, scenario_hash, scenario_config, evidence_config):
+    """Preserve Phase 5A entity identities while versioning corrected content."""
+    identity_config = evidence_config.model_dump(exclude={"revision_timing_version"})
+    return evidence_signature(dataset_signature, master_hash, procurement_hash, scenario_hash, scenario_config, identity_config)
+
+
 class DemandObservationIndex:
     """Quantity-only as-of projection, with no reference to evaluation or its labels."""
 

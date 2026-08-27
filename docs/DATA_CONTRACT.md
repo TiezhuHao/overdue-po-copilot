@@ -590,3 +590,5 @@ Phase 1 已无业务阻塞项。以上延后项不得被当作正式企业规则
 Report 3/4/6 未来统一由 `demand_signals` 的日点及 `demand_signal_revisions` 的中性数量修订派生。`demand_date` 是需求发生日，`observed_on` 是企业需求源修订观察日，两者不能混用；读取 as-of 数量必须跳过未来修订。源观测长表不是 Forecast Version，也不是额外报表字段。
 
 Phase 5A 只验证实体 lineage、可观察数量形态与生命周期，正式 Forecast 周版本、月周聚合报表及 Stockpile 版本匹配仍由后续阶段实现。`DC-15` 状态不变；`DC-16` 正式售后处置仍不生成。
+
+Phase 5A.1 将临时预算恢复/扣减改为持续有效的源计划状态，并增加七种周度发布偏移与无效版本 dry-run。报表粒度、Anchor、严格前后版本选择、Monday-start、七个月/13周契约及 Scenario 阈值全部不变；实际 Forecast facts 仍由 Phase 5B 生成。

@@ -10,6 +10,7 @@ class EvidenceFoundationConfig(BaseModel):
     evidence_seed: int = 20260829
     generator_version: Literal["5A.1.0"] = "5A.1.0"
     schema_version: Literal["008"] = "008"
+    revision_timing_version: Literal["PERSISTENT_1"] = "PERSISTENT_1"
     history_months_before_anchor: int = Field(default=2, ge=2)
     future_months: int = Field(default=8, ge=8)
     configs_per_project: int = Field(default=2, ge=1, le=5)
@@ -26,4 +27,10 @@ class EvidenceFoundationConfig(BaseModel):
     def validate_ranges(self) -> Self:
         if self.reference_daily_qty_min > self.reference_daily_qty_max:
             raise ValueError("reference daily quantity bounds are reversed")
+        # Preserve legacy identity inputs, but never silently accept inactive
+        # pulse-amplitude overrides under the persistent-state implementation.
+        for name in ('reduction_drop_ratio', 'delay_near_shift_ratio', 'mixed_drop_ratio',
+                     'mixed_near_shift_ratio', 'planning_cycle_retention'):
+            if getattr(self, name) != type(self).model_fields[name].default:
+                raise ValueError('legacy pulse settings cannot override persistent revision states')
         return self

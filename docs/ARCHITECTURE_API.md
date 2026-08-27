@@ -392,3 +392,5 @@ Phase 1 已无业务阻塞项。Report 1 粒度、Report 2/4 组织粒度、周�
 `EvidenceFoundationGenerationService` 是 generator-only 事务入口，要求 Dataset 为 GENERATING，并只读验证完整 Master/Procurement/Scenario。`app/generators/evidence_foundation` 提供配置、日历、Generator、Validator、数量 as-of 投影与 CLI；公共 `services/__init__.py` 不导入该入口，公共应用不会加载 Evaluation 或 Generator。
 
 输出为项目 Lifecycle、Product Config/Material 关联及一个共享 Demand World（初始日点 + 中性源修订长表）。服务保留明确事务边界，不修改既有 Truth，不写最终 Dataset hash，不将状态升级为 READY。只允许 generator 写入新 raw tables；API 继续仅访问原有健康/就绪所需白名单。未新增 Report endpoint、Forecast Version 或任何诊断接口。
+
+Phase 5A.1 的 `EvidenceTimingCorrectionService` 只供显式 generator CLI 使用：锁定名为 `demo-master-v1` 的 GENERATING dataset，校验调用方提供的旧 hash、前置世界、保留实体 ID 与未变更的 Lifecycle/Config。仅更新变更日点和源 lineage，替换该 dataset 源修订；写入后重新验 hash 和上游内容，不触碰最终 Dataset hash。异常整体回滚、再次执行完整同 hash 则复用；其他名称、READY、错误旧 hash、已有 Forecast/Stockpile schema 均拒绝。无公开 reset endpoint。

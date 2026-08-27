@@ -411,6 +411,8 @@ Underlying Demand Signal
 
 ## 17. Phase 5A Evidence Foundation 实现口径
 
+本节记录原 Phase 5A checkpoint；源修订时间与数量状态的现行实现以第 18 节为准。
+
 Phase 5A 只生成 Lifecycle、Product Config、共享日需求及中性源修订；不生成 Forecast Version、月/周 Forecast、Supply/Demand、Stockpile、Report View/API。
 
 生命周期严格服从 Phase 4 的 project requirements；其余项目按 seed 生成 NPI → MASS_PRODUCTION → EOL 的合法前缀历史。snapshot 恰有一个 stage；不得重选 required project 的生命周期。
@@ -437,3 +439,17 @@ Phase 5A 只生成 Lifecycle、Product Config、共享日需求及中性源修�
 Validation 只在 Generator/Evaluation 中比较数量证据：`drop=1-after_total/before_total`、`near_drop=1-after_near/before_near`、`shift=max(after_far-before_far,0)/before_near`。调整强度为正向 drop、near_drop 与 shift 之和；阈值始终来自传入的 `ScenarioGenerationConfig`。持久化 platform 不保存这些分型或得分。
 
 Evidence 服务先按各阶段原配置重建预期 Master/Procurement/Scenario 并与现存内容比对，只读验证前置完整性，不调用上游生成服务去补数据。六张 Evidence 表在同一事务中写入；全空时生成、完整且哈希一致时复用、部分存在时拒绝。最终 Dataset 继续 `GENERATING`，不得写 `business_content_hash`。
+
+## 18. Phase 5A.1：持续有效的源计划状态
+
+根因是原始周期预算恢复与扣减围绕 Anchor 集中在几天内；周度发布经常同时跳过预算恢复而只观察两次扣减后的值。改发布星期不能解决多 Anchor 的状态冲突。
+
+现行 `revision_timing_version=PERSISTENT_1`：每个不同 Anchor 是一个 source planning event，数量状态自 Anchor 当日生效，持续到下一事件；没有临时预算恢复。所有候选项目沿用同一物料事件日，不用记录是否存在暗示 causal project。Anchor 同日 Forecast 仍既非 Baseline 也非 post。
+
+同物料的多个事件联合构造非负计划状态，不能反复从原始均匀预算独立扣减。Generator-only 线性约束构造器覆盖每个 Anchor 前 14 天内可能的 Baseline、之后 42 天内的状态：包含七种周度偏移、最多五个 post、最近 Baseline 或首个 post 无效时跳过一周。约束直接复用 `ScenarioGenerationConfig`，生成采用比阈值严格 0.01 的数值余量，而非降低阈值。Delay 比较窗口总量保持相等，Reduction 不增加远期量，Mixed 同时满足净减少与远期移量；无解直接拒绝，不修改 Truth 或阈值。
+
+为满足重叠事件，调整分支的初始计划月度分布及后续状态一起求解，目标尽量接近均匀预算。计划覆盖原 Anchor 七个月窗口的并集；并集之外的未来调整项目计划为零，历史早期日点保留。日内按原 seeded 权重用最大余数法分配，Decimal 月合计精确守恒。它们仍是同一个源 Demand World，不是独立生成 Forecast。稳定分支、售后持续小量与其他候选项目的原始日需求保持不变。
+
+原 `reduction_drop_ratio` 等五个脉冲幅度字段只保留默认值以维持 Phase 5A 实体 identity signature；非默认覆盖显式拒绝，避免静默忽略。实际业务判据仍唯一来自 Scenario config，`reduction_total_drop_ratio=0.35` 等值未改。新 timing version 进入内容 signature；独立旧 identity signature 保留 Lifecycle、Config、Signal、Point 的既有 ID。
+
+`DemandObservationIndex` 不读取未来修订，也不依赖 weekday、PO 或 Truth。Schema 008 已支持该状态模型，无 migration 变更。正式 Forecast Calendar/WindowSelector 仍属于 Phase 5B，本节只固化源状态及 publication dry-run。
