@@ -1,0 +1,22 @@
+{
+  "counts": {
+    "forecast_versions": 102,
+    "material_project_shipments": 11152,
+    "monthly_forecasts": 135320,
+    "weekly_forecast_snapshots": 1,
+    "weekly_forecasts": 780,
+    "weekly_project_forecasts": 1768
+  },
+  "dataset_status": "GENERATING",
+  "forecast_content_hash": "fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9",
+  "invalid_version_count": 20,
+  "notice": "Synthetic data only. Aggregate forecast statistics; no per-record evaluation truth.",
+  "same_day_revision_count": 20,
+  "valid_version_count": 82,
+  "validation_status": "PASS",
+  "version_date_max": "2026-08-24",
+  "version_date_min": "2025-02-03",
+  "week_13_start": "2026-11-23",
+  "week_1_start": "2026-08-31",
+  "zero_demand_material_count": 9
+}

@@ -453,3 +453,13 @@ Evidence 服务先按各阶段原配置重建预期 Master/Procurement/Scenario 
 原 `reduction_drop_ratio` 等五个脉冲幅度字段只保留默认值以维持 Phase 5A 实体 identity signature；非默认覆盖显式拒绝，避免静默忽略。实际业务判据仍唯一来自 Scenario config，`reduction_total_drop_ratio=0.35` 等值未改。新 timing version 进入内容 signature；独立旧 identity signature 保留 Lifecycle、Config、Signal、Point 的既有 ID。
 
 `DemandObservationIndex` 不读取未来修订，也不依赖 weekday、PO 或 Truth。Schema 008 已支持该状态模型，无 migration 变更。正式 Forecast Calendar/WindowSelector 仍属于 Phase 5B，本节只固化源状态及 publication dry-run。
+
+## 19. Phase 5B 的真实 Forecast 版本证据
+
+ForecastGenerator 只接收 Master、共享 Evidence 和 Forecast 配置，不读取 Scenario Truth，也不重新生成 Demand。ForecastValidator 独立读取隔离 Truth，按每个 schedule 的真实 Anchor，从共享版本表先过滤无效、归并同日最终版本，然后取严格前 Baseline 和最多5个严格后版本；其2～5版前缀均可查询。
+
+比较窗口固定为 Anchor 所在月起的7个自然月。月事实保留必要前后重叠桶，避免拿两个滚动展示窗口的不同月份当作需求变化。Reduction/Delay/Mixed/NONE 判据只复用 `ScenarioGenerationConfig`；Mixed 同时要求净减少和移量，纯 Reduction/Delay 反例继续拒绝。Customer-side 按原 Truth 中的变化子型校验，所有其他项目同样有事实，调整项目证据强度须严格最高。
+
+`ForecastGenerationConfig` 固定 V1 7日周频、默认后3版/允许2～5、展示7个月、13周、数量4位小数；seed默认20260830，仅用于发布有效性/补发夹具及生成签名，不改源需求。补发偏好0.12、无效日偏好0.07；至少覆盖同日有效修订与高序号无效回退，整日无效日期间隔至少7周，保证任意6周窗口至多跳过一版。所有版本日在 dataset snapshot 当天或之前，默认连续星期一 Calendar。
+
+最新13周来自 snapshot 源观察，项目周合计精确组成物料周值；完整自然月与最新有效月预测在原舍入容差内对账。Demo 必须包含物料级全零13周，当前仅提供合计/周均安全计算，不实施 PO 消耗对策。After-sales 与 NONE 保持原稳定源状态。

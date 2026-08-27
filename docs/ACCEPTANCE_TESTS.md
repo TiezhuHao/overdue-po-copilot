@@ -562,3 +562,28 @@ Phase 4 收尾时 Git 为 `GIT_IDENTITY_BLOCKED`。之后用户已配置 reposit
 - 四个 `/health`、`/ready` 及版本化端点实际 HTTP 200，在线 OpenAPI 泄漏扫描通过。首次诊断请求受环境代理影响，改为本机直连后成功；临时 API 已关闭。
 - Forbidden-term scan：129 文件通过；GitHub hygiene、公共代码隔离和示例防泄漏随全量测试通过。无新增业务待确认项；DC-15 resolved、DC-16/KD 原确认边界不变。
 - 本修复不创建 Forecast 表或正式 WindowSelector；Phase 5B 从本修复 checkpoint 继续，Report View/API/Excel 仍未实现。
+
+## 22. Phase 5B 验收（2026-08-28）
+
+| 合同 | 已落地的验收 | 后续边界 |
+|---|---|---|
+| AT-020～025 | 正式 Anchor/WindowSelector；严格前后、每日有效最大序号、整日无效跳过、2～5 post、跨年、共享周历与稳定版本ID | Report Query/API 对外封装留Phase6 |
+| AT-026～028 / AT-032 | 月/周/project/material 全链路源对账、lineage、缺少Demand拒绝、不独立随机、错误数量及错误Signal引用拒绝 | Report6同源留Phase5C |
+| AT-029/030 / AT-064/065 | 月长表、13周长表、连续日期、累计发货、最多项目、合计/周均；原展示7月/13周契约不变 | View/Excel字段与列宽布局仍留Phase6 |
+| AT-033～036 | 每个真实Scenario schedule按共享版本选Baseline+5post，原阈值下Reduction/Delay/Mixed/NONE与Customer-side通过，causal强于其他Project；纯Reduction/Delay不能通过Mixed | 不实现最终根因判断服务 |
+| AT-051 | 9个真实物料级全零13周，合计与周均均为0，无除零 | PO消耗月数/处置仍未实现 |
+| AT-056～061 | 实际generator可写新raw facts、API raw SELECT与Truth SELECT均42501；公共域模块不加载Generator/Truth，OpenAPI/公开样例无答案 | 仅未来Report Views可授权API |
+
+新增 `009_forecast_evidence` 六表，历史001～008无修改。开发库008→009成功；专用测试库实际009→base→009，metadata与DDL一致。月首/数量非负、周索引/Monday、唯一键、同dataset唯一latest的部分索引及全部复合FK均有真实PostgreSQL测试。
+
+六表全空生成、完整复用、六类partial拒绝、四层前置缺失拒绝、不同配置冲突、READY拒绝、故障注入整阶段rollback全部通过。已有下游Forecast facts时Evidence correction拒绝；空009 schema不阻塞隔离修复测试。
+
+实际generator角色Demo：102 Forecast Versions（有效82/无效20，同日附加版本20）；135320 Monthly Forecast（含比较重叠月份）；11152 Material-Project Shipments；1 Weekly Snapshot；1768 Weekly Project rows；780 Weekly Material rows。版本日期2025-02-03～2026-08-24；13W首周2026-08-31、第13周2026-11-23，最后需求日2026-11-29。
+
+实际正常CLI重跑复用，`forecast_content_hash=fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9` 不变。Same-seed确定性、different-seed发布夹具变化而源需求/场景证据不变均通过。Dataset继续GENERATING、最终业务hash=null；Phase5A.1 Evidence hash不变。
+
+完整回归结果：262 passed / 0 failed / 0 skipped。全量启动后增加1项“缺少Demand不得随机回退”，补充执行通过；最终收集263项，全部有通过记录。另补跑新增的缺少post窗口断言与GitHub hygiene，均通过。保留1条既有Starlette/httpx弃用警告，不将其视为业务失败。
+
+四个健康/就绪端点实际HTTP200，在线OpenAPI、公共代码隔离与JSON样例扫描通过；临时API已关闭。Forbidden-term scan：142文件通过。`.env`/数据卷忽略、无已知本地密钥/绝对路径/逐条Truth公开示例。无新业务阻塞；DC-15保持resolved，DC-16与KD仍按既有范围待确认，不阻塞本阶段。
+
+未实现Supply/Demand、Stockpile、最终Report Views/API、Excel Export、Agent、LLM。前后重叠月是比较用source facts，不扩充最终Excel列；最终展示/查询接口仍须在Phase6明确还原合同。

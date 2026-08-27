@@ -592,3 +592,13 @@ Report 3/4/6 未来统一由 `demand_signals` 的日点及 `demand_signal_revisi
 Phase 5A 只验证实体 lineage、可观察数量形态与生命周期，正式 Forecast 周版本、月周聚合报表及 Stockpile 版本匹配仍由后续阶段实现。`DC-15` 状态不变；`DC-16` 正式售后处置仍不生成。
 
 Phase 5A.1 将临时预算恢复/扣减改为持续有效的源计划状态，并增加七种周度发布偏移与无效版本 dry-run。报表粒度、Anchor、严格前后版本选择、Monday-start、七个月/13周契约及 Scenario 阈值全部不变；实际 Forecast facts 仍由 Phase 5B 生成。
+
+## 12. Phase 5B Forecast facts 实现口径
+
+- Forecast Calendar 从共享 Demand 历史起点之后的首个星期一至 dataset snapshot，默认每周发布，所有 PO 共用；ID 由 dataset signature + 日期 + sequence 确定。
+- Report 3 的展示窗口仍为版本月 M0～M+6。月事实额外保留最多前2个月、后1个月的重叠桶（历史起点前不补造），以支持跨月版本在同一 Anchor 七个月窗口比较；这些不是新增 Excel 列，也不改变展示汇总的七个月口径。
+- 月事实逐日汇总该版本日 `observed_on <= version_date` 的共享源数量；同日修订版可有相同数量，不为演示修订而重新随机需求。
+- Weekly Project Facts 使用 snapshot 当日源观测、Monday-start 连续13周。Material Weekly Facts 必须逐周等于全部 Project 贡献之和；保留主组织 FK，仍一物料一组13周。最多项目并列按稳定 project ID 排序。
+- Weekly Snapshot 指向当时最新有效最终 Forecast Version；对完整覆盖自然月核对月/周来源数量，容差只用 Scenario config 中的 `forecast_rounding_tolerance`。
+- Synthetic 项目发货是独立于 PO receipt 的履约事实：每周一记录截至当天的最近7日（截断至源历史起点）源计划数量 × 配置履约比例，默认0.8，以当日源观测生成并固定，不因未来修订重算历史实际发货。累计发货按 Material×Project 从历史起点累加至版本日（含）。这只是 Mock 履约策略，不是企业硬规则。
+- 正式 Report 3/4 Views、API、Excel 与 PO consumption action 未实现。

@@ -1,4 +1,8 @@
 from app.models.platform.customer import Customer
+from app.models.platform.forecasts import (
+    ForecastVersion, MonthlyForecast, MaterialProjectShipment,
+    WeeklyForecastSnapshot, WeeklyProjectForecast, WeeklyForecast,
+)
 from app.models.platform.evidence_foundation import (
     DemandSignal, DemandSignalPoint, DemandSignalRevision,
     ProductConfig, ProductConfigMaterial, ProjectLifecycleHistory,
@@ -19,6 +23,8 @@ from app.models.platform.world_relationships import (
 )
 
 __all__ = [
+    "ForecastVersion", "MonthlyForecast", "MaterialProjectShipment",
+    "WeeklyForecastSnapshot", "WeeklyProjectForecast", "WeeklyForecast",
     "DemandSignal", "DemandSignalPoint", "DemandSignalRevision",
     "ProductConfig", "ProductConfigMaterial", "ProjectLifecycleHistory",
     "Customer",

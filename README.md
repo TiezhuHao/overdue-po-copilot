@@ -1,6 +1,6 @@
 # Overdue PO Copilot — System A
 
-本仓库已完成 Phase 5A，并实施 Phase 5A.1 源计划持续状态修复；正式 Forecast facts 仍属于 Phase 5B。
+本仓库已完成 Phase 5A.1 源修订修复与 Phase 5B Forecast Evidence World；尚未实现最终 Report Views / API / Excel。
 
 ## Implementation Status
 
@@ -11,7 +11,7 @@
 - [x] Phase 3：PO Header、PO Line、PO Shipment / Schedule 采购事实世界
 - [x] Phase 4：Scenario Planning 与隔离 Evaluation Truth
 - [x] Phase 5A — Evidence Foundation
-- [ ] Phase 5B — Forecast Evidence World
+- [x] Phase 5B — Forecast Evidence World
 - [ ] Phase 5C — Supply/Demand & Stockpile Evidence
 - [ ] Phase 6：Report Views / API / Excel Export
 - [ ] Phase 7：Copilot
@@ -27,7 +27,7 @@
 - `GET /api/v1/health` 与 `GET /api/v1/ready`；
 - unit tests 与真实 PostgreSQL integration tests。
 
-当前已实现 Master Data、Procurement Fact Generator、隐藏 Scenario Planner、Lifecycle/Product Config 与共享日需求证据；尚未实现 Forecast、Supply/Demand、Stockpile、六张 Report、Agent 或 AI 诊断。
+当前已实现 Master Data、Procurement Fact Generator、隐藏 Scenario Planner、Lifecycle/Product Config、共享日需求证据与 Forecast facts；尚未实现 Supply/Demand、Stockpile、六张最终 Report、Agent 或 AI 诊断。
 
 所有生成内容均为合成演示数据，不来源于真实企业数据，也不得用于真实企业运营。
 
@@ -56,8 +56,10 @@ Scenario Plan (evaluation-only)
 Lifecycle + Product Config
       ↓
 Underlying Demand Signal + dated source revisions
+      ├─ Forecast Versions → Monthly Project Forecast
+      └─ Latest Snapshot → Project 13W → Material 13W
       ↓
-Forecast / Supply-Demand / Stockpile (next phases)
+Supply-Demand / Stockpile (next phase)
 ```
 
 All report-facing demand data will be derived from one shared Underlying Demand Signal.
@@ -213,6 +215,8 @@ Phase 5A 全量验收：153 passed / 0 failed / 0 skipped。正式 Forecast 版�
 
 Phase 5A.1 修复后全量：191 passed / 0 failed / 0 skipped；12075 次多发布日历比较全部通过。测试库完成 `008 → base → 008`，历史迁移不变；正式 Forecast 表与选择服务仍待 Phase 5B。
 
+Phase 5B：完整回归262项通过；全量启动后新增的1项“缺少 Demand 禁止随机回退”测试另外执行通过，当前263项均已验证，0 failed / 0 skipped。测试库完成 `009 → base → 009`，1条既有 Starlette/httpx 弃用警告。
+
 禁止词扫描：
 
 ```powershell
@@ -233,3 +237,30 @@ docker build -f backend/Dockerfile -t overdue-po-system-a:phase1 backend
 
 运行 API 容器时必须通过环境变量提供可从容器访问的 `DATABASE_URL_API`；
 不得把数据库密码写入 Dockerfile 或提交到仓库。
+
+## 12. Phase 5B Forecast Evidence World
+
+Pre-Phase5B checkpoint（独立5A.1修复）：`1e38a4b2f79771d1affd581647a0569d292c4655`。新增 migration `009_forecast_evidence`；不修改001～008。
+
+```powershell
+cd backend
+python -m app.generators.forecasts.cli --dataset-version-name demo-master-v1 --seed 20260830 --summary-output ../examples/forecast_world_summary.json
+```
+
+可使用 `--config`、`--evidence-config`、`--procurement-config`、`--scenario-config` 传入原始阶段配置。只能在完整前置世界和 GENERATING dataset 上执行；完整同配置复用，部分存在拒绝，错误整阶段回滚。最终 Dataset hash 仍为 null。
+
+Forecast history and 13-week demand are two views of the same synthetic demand world.
+
+```text
+Underlying Demand Signal
+        ↓
+Forecast Versions
+        ├─ Monthly Project Forecast
+        └─ Latest 13W Forecast (Project → Material)
+```
+
+`SYNTHETIC_PLANNING` 是 synthetic source-domain label，不是真实企业系统名。月长表含用于共同月份比较的前2月/后1月重叠事实；Report 3 展示仍限定版本月 M0～M+6，不增加 Excel 列。项目发货是独立履约事实，不使用 PO receipt 冒充。
+
+Demo：102版本（82有效、20无效；20条同日附加版本），135320月事实，11152项目发货，1个最新周快照，1768项目周行、780物料周行。版本日期2025-02-03～2026-08-24；13周起始日2026-08-31～2026-11-23，覆盖至2026-11-29；9个物料13周全零。正常 CLI 重跑 hash 一致：`fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9`。
+
+只完成底层 Forecast facts、选择器与查询计算器。Report 3/4 final Views、Report API、Excel Export、Supply/Demand、Stockpile、Agent、LLM 均未实现。

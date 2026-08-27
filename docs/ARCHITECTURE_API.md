@@ -394,3 +394,13 @@ Phase 1 已无业务阻塞项。Report 1 粒度、Report 2/4 组织粒度、周�
 输出为项目 Lifecycle、Product Config/Material 关联及一个共享 Demand World（初始日点 + 中性源修订长表）。服务保留明确事务边界，不修改既有 Truth，不写最终 Dataset hash，不将状态升级为 READY。只允许 generator 写入新 raw tables；API 继续仅访问原有健康/就绪所需白名单。未新增 Report endpoint、Forecast Version 或任何诊断接口。
 
 Phase 5A.1 的 `EvidenceTimingCorrectionService` 只供显式 generator CLI 使用：锁定名为 `demo-master-v1` 的 GENERATING dataset，校验调用方提供的旧 hash、前置世界、保留实体 ID 与未变更的 Lifecycle/Config。仅更新变更日点和源 lineage，替换该 dataset 源修订；写入后重新验 hash 和上游内容，不触碰最终 Dataset hash。异常整体回滚、再次执行完整同 hash 则复用；其他名称、READY、错误旧 hash、已有 Forecast/Stockpile schema 均拒绝。无公开 reset endpoint。
+
+## 16. Phase 5B 模块边界
+
+`app/domain/forecasts.py` 是无数据库/Generator/Evaluation 依赖的纯查询计算器：Anchor、每日有效最终版、`ForecastWindowSelector`、13周合计/周均、最多项目与截至版本日累计发货。Selector 构造时注入共享版本集合，查询输入 dataset ID、Anchor、后版本数量，输出 baseline/post_versions/ordered_window；缺失完整窗口显式失败，无诊断返回值。
+
+`app/generators/forecasts` 提供配置、日历/源聚合 Generator、独立 Validator、世界 hash 与 CLI；`ForecastGenerationService` 是 generator-only 事务入口。只读逐一核验完整 Master/Procurement/Scenario/Evidence，任何缺失或 hash 不符均失败；六张 Forecast 表全空才生成、完整同配置校验复用、部分存在拒绝，配置冲突不覆写。失败整阶段回滚，不写最终 Dataset hash、不升级 READY。
+
+Phase 5B 兼容修复：旧 Evidence correction 的下游保护调整为“该 dataset 已有 Forecast/Stockpile facts”即拒绝；允许空009 schema 下的隔离修复测试，但有真实下游数据时不能使其失效。其他 dataset 的下游数据不影响本 dataset 的隔离门禁。
+
+公开应用不导入上述 Generator/Truth；本阶段无 Report route/View/导出接口，也无 reset API。Forecast history and 13-week demand are two views of the same synthetic demand world.

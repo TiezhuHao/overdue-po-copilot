@@ -532,3 +532,13 @@ Phase 1 的 Schema 建设已无业务阻塞项。`DC-01/02/04/05/06/08/09/10/11/
 - `DC-12`：Report 6 金额、GAP、完成率、结余和预警 Mock 公式延后至 Generator 阶段；
 - `DC-15`：`RESOLVED_AS_SYNTHETIC_CONFIG`；Generator/Evaluation 默认 Mock 阈值已在 Phase 4 配置化固定，不代表企业真实规则；
 - `DC-16`：售后正式处置仍为 `NEEDS_BUSINESS_CONFIRMATION`，不影响 Phase 1 Schema。
+
+## 19. Phase 5B / 009 落地
+
+新增六张表：`forecast_versions`、`monthly_forecasts`、`material_project_shipments`、`weekly_forecast_snapshots`、`weekly_project_forecasts`、`weekly_forecasts`。无等价历史 Shipment 事实可复用；PO Schedule/receipt 不冒充项目实际发货。
+
+Monthly 与 Weekly 两类明细使用自然复合主键，版本头、Snapshot 和 Shipment 使用稳定 UUID；全部 FK 携带 dataset ID。月首、非负数量、sequence>0、周索引1～13与 Monday-start 均有 CHECK；周索引与周日期均有对应唯一性。`uq_fc_latest_snapshot` 是同 dataset `WHERE is_latest` 的部分唯一索引。
+
+Monthly/Weekly Project/Shipment 都含 `demand_signal_id`；物料周表通过 Snapshot×Material×Week 关联完整项目明细作为 lineage bridge，不伪造一个单一 Signal。周事实保留 `organization_id`，Validator 核对 Primary Inventory Organization。物料/项目/Signal 语义一致性由 Validator 检查，数据库独立保证各 FK 的 dataset 隔离。
+
+原001～008文件未改。Generator 沿用既有 raw-table 写权限；API 不获得六张 raw tables 的 SELECT，Evaluation 仍隔离。

@@ -29,10 +29,16 @@ EXPECTED_TABLES = {
     "platform.demand_signals",
     "platform.demand_signal_points",
     "platform.demand_signal_revisions",
+    "platform.forecast_versions",
+    "platform.monthly_forecasts",
+    "platform.material_project_shipments",
+    "platform.weekly_forecast_snapshots",
+    "platform.weekly_project_forecasts",
+    "platform.weekly_forecasts",
 }
 
 
-def test_metadata_contains_only_authorized_tables_through_phase_5a() -> None:
+def test_metadata_contains_only_authorized_tables_through_phase_5b() -> None:
     assert set(Base.metadata.tables) == EXPECTED_TABLES
 
 

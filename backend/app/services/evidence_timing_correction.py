@@ -1,6 +1,6 @@
 """Explicit, generator-only correction of an audited GENERATING evidence world."""
 
-from sqlalchemy import delete, insert, inspect, select, update
+from sqlalchemy import delete, insert, inspect, select, text, update
 
 from app.generators.evidence_foundation.config import EvidenceFoundationConfig
 from app.generators.evidence_foundation.world import EvidenceFoundationWorld, evidence_identity_signature, evidence_signature, record_payload
@@ -22,8 +22,10 @@ class EvidenceTimingCorrectionService(EvidenceFoundationGenerationService):
                 raise EvidenceFoundationError('CORRECTION_TARGET_NOT_DEMO')
             if dataset.status != 'GENERATING':
                 raise EvidenceFoundationError('DATASET_NOT_GENERATING')
-            if {'forecast_versions', 'stockpile_versions'} & set(inspect(self.session.connection()).get_table_names(schema='platform')):
-                raise EvidenceFoundationError('CORRECTION_DOWNSTREAM_SCHEMA_EXISTS')
+            existing_tables = set(inspect(self.session.connection()).get_table_names(schema='platform'))
+            for table in ('forecast_versions', 'stockpile_versions'):
+                if table in existing_tables and self.session.scalar(text(f'SELECT EXISTS (SELECT 1 FROM platform.{table} WHERE dataset_version_id = :dataset_id)'), {'dataset_id': dataset_id}):
+                    raise EvidenceFoundationError('CORRECTION_DOWNSTREAM_FACTS_EXIST')
             master, procurement, scenario, master_hash, scenario_hash = self._prerequisites(dataset, pc, sc)
             args = (dataset.generation_signature, master_hash, procurement.procurement_facts_hash(), scenario_hash, sc, config)
             signature = evidence_signature(*args)
