@@ -1,0 +1,79 @@
+{
+  "counts": {
+    "customers": 12,
+    "employee_role_assignments": 7,
+    "employees": 40,
+    "material_mpm_assignments": 66,
+    "material_projects": 136,
+    "material_responsibility_assignments": 180,
+    "material_supplier_assignments": 81,
+    "materials": 60,
+    "organizations": 18,
+    "project_customers": 36,
+    "projects": 30,
+    "suppliers": 15
+  },
+  "dataset": {
+    "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+    "generation_signature": "7ccb43f1db06ecc1970e9bde2a0cda0b6d014b05d02d1fd9e67660e1d5769e9b",
+    "master_content_hash": "9ceccb5821633dd51bae2ffc6d1909e7b137cc40b48e92b28c3abddf53c977ce",
+    "random_seed": 20260826,
+    "snapshot_date": "2026-08-26",
+    "status": "GENERATING",
+    "validation_status": "PASS",
+    "version_name": "demo-master-v1"
+  },
+  "notice": "Synthetic data only. Not derived from or suitable for real enterprise operations.",
+  "relationship_counts": {
+    "employee_role_assignments": 7,
+    "material_mpm_assignments": 66,
+    "material_projects": 136,
+    "material_responsibility_assignments": 180,
+    "material_supplier_assignments": 81,
+    "project_customers": 36
+  },
+  "samples": {
+    "customer_codes": [
+      "CUS-0001",
+      "CUS-0002",
+      "CUS-0003",
+      "CUS-0004",
+      "CUS-0005"
+    ],
+    "employee_codes": [
+      "EMP-0001",
+      "EMP-0002",
+      "EMP-0003",
+      "EMP-0004",
+      "EMP-0005"
+    ],
+    "material_codes": [
+      "MAT-0001",
+      "MAT-0002",
+      "MAT-0003",
+      "MAT-0004",
+      "MAT-0005"
+    ],
+    "organization_codes": [
+      "BE-001",
+      "BU-001",
+      "BU-002",
+      "BU-003",
+      "DEP-001"
+    ],
+    "project_codes": [
+      "PRJ-0001",
+      "PRJ-0002",
+      "PRJ-0003",
+      "PRJ-0004",
+      "PRJ-0005"
+    ],
+    "supplier_codes": [
+      "SUP-0001",
+      "SUP-0002",
+      "SUP-0003",
+      "SUP-0004",
+      "SUP-0005"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "overdue-po-copilot-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "next": "16.3.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "9.39.2",
+    "eslint-config-next": "16.3.1",
+    "typescript": "5.9.3"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "unrs-resolver"
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "counts": {
+    "po_headers": 100,
+    "po_line_schedules": 206,
+    "po_lines": 206
+  },
+  "dataset_status": "GENERATING",
+  "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+  "dataset_version_name": "demo-master-v1",
+  "inventory_organization_distribution": {
+    "MASS_PRODUCTION": 80,
+    "TRIAL": 20
+  },
+  "notice": "Synthetic data only. No proprietary enterprise data included.",
+  "objective_age_distribution": {
+    "non_overdue_schedules": 91,
+    "overdue_candidate_schedules": 115
+  },
+  "procurement_content_hash": "93d93eec22922de873c13926f6d230396bdcfc8af9f569f06852d3b1778b766f",
+  "synthetic_po_examples": [
+    {
+      "material_code": "MAT-0023",
+      "po_line_number": 1,
+      "po_number": "PO-000001",
+      "reference_project_code": "PRJ-0007"
+    },
+    {
+      "material_code": "MAT-0043",
+      "po_line_number": 1,
+      "po_number": "PO-000002",
+      "reference_project_code": "PRJ-0013"
+    },
+    {
+      "material_code": "MAT-0056",
+      "po_line_number": 1,
+      "po_number": "PO-000003",
+      "reference_project_code": "PRJ-0026"
+    },
+    {
+      "material_code": "MAT-0056",
+      "po_line_number": 2,
+      "po_number": "PO-000003",
+      "reference_project_code": "PRJ-0026"
+    },
+    {
+      "material_code": "MAT-0056",
+      "po_line_number": 3,
+      "po_number": "PO-000003",
+      "reference_project_code": "PRJ-0026"
+    }
+  ],
+  "validation_status": "PASS"
+}

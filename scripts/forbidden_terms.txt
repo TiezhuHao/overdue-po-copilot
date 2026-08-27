@@ -1,0 +1,2 @@
+# One case-insensitive enterprise-specific term per line.
+# BG, PDT, and PCBA are approved display terms and are ignored by the scanner.

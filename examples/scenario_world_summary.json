@@ -1,0 +1,29 @@
+{
+  "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+  "notice": "Aggregate synthetic generator statistics only. Per-record evaluation truth remains isolated in the evaluation schema.",
+  "overdue_truth_count": 115,
+  "project_lifecycle_requirement_counts": {
+    "EOL": 10,
+    "MASS_PRODUCTION": 10
+  },
+  "reference_not_equal_causal_count": 40,
+  "scenario_content_hash": "8ae86d1579e22cbef374ba5edf8eae7ac2accd5eef23d3b823139ef64f73767f",
+  "scenario_pattern_counts": {
+    "AFTER_SALES": 6,
+    "CUSTOMER_SIDE_PROJECT_OBSOLESCENCE": 19,
+    "DEMAND_DELAY": 9,
+    "DEMAND_MIXED": 2,
+    "DEMAND_REDUCTION": 9,
+    "INTERNAL_SIDE_PROJECT_OBSOLESCENCE": 9,
+    "STOCKPILE": 21,
+    "TRIAL": 40
+  },
+  "true_cause_counts": {
+    "AFTER_SALES": 6,
+    "DEMAND_ADJUSTMENT": 20,
+    "PROJECT_OBSOLESCENCE": 28,
+    "STOCKPILE": 21,
+    "TRIAL": 40
+  },
+  "validation_status": "PASS"
+}
