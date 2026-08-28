@@ -35,10 +35,19 @@ EXPECTED_TABLES = {
     "platform.weekly_forecast_snapshots",
     "platform.weekly_project_forecasts",
     "platform.weekly_forecasts",
+    "platform.inventory_snapshots",
+    "platform.inventory_age_buckets",
+    "platform.supply_demand_snapshots",
+    "platform.supply_demand_components",
+    "platform.stockpile_versions",
+    "platform.stockpile_records",
+    "platform.stockpile_forecasts",
+    "platform.stockpile_balance_projections",
+    "platform.stockpile_inventory_age_buckets",
 }
 
 
-def test_metadata_contains_only_authorized_tables_through_phase_5b() -> None:
+def test_metadata_contains_only_authorized_tables_through_phase_5c() -> None:
     assert set(Base.metadata.tables) == EXPECTED_TABLES
 
 

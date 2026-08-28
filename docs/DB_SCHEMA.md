@@ -260,7 +260,7 @@ snapshot_date date = dataset_versions.snapshot_date
 
 ### 8.3 `platform.inventory_age_buckets`（新增）
 
-保存 Report 2 库龄数量与抵扣后剩余：`snapshot_id`、`bucket_start_days`、`bucket_end_days`、`inventory_qty`、`remaining_inventory_qty`。唯一 `(snapshot,bucket_start,bucket_end)`。
+010采用累计阈值长表：inventory_snapshot_id、age_threshold_days、age_qty；唯一(dataset, inventory_snapshot_id, threshold)。Report2区间列留View按累计值差分；不保存互斥桶或未知抵扣公式。
 
 ---
 
@@ -542,3 +542,15 @@ Monthly 与 Weekly 两类明细使用自然复合主键，版本头、Snapshot �
 Monthly/Weekly Project/Shipment 都含 `demand_signal_id`；物料周表通过 Snapshot×Material×Week 关联完整项目明细作为 lineage bridge，不伪造一个单一 Signal。周事实保留 `organization_id`，Validator 核对 Primary Inventory Organization。物料/项目/Signal 语义一致性由 Validator 检查，数据库独立保证各 FK 的 dataset 隔离。
 
 原001～008文件未改。Generator 沿用既有 raw-table 写权限；API 不获得六张 raw tables 的 SELECT，Evaluation 仍隔离。
+
+## 20. Phase 5C / 010 纠偏落地
+
+九表：inventory_snapshots、inventory_age_buckets、supply_demand_snapshots、supply_demand_components、stockpile_versions、stockpile_records、stockpile_forecasts、stockpile_balance_projections、stockpile_inventory_age_buckets。010仍是未提交草稿，已获授权备份后重建；历史001～009未改。
+
+- Inventory/Supply快照分别有dataset×material唯一键和完整snapshot粒度唯一键；库存分解、供需与试产盈余公式由CHECK约束。MPM使用既有material_mpm_assignment_id复合FK。
+- 组件以snapshot×component_key唯一，含side、organization_type_scope、source_domain，以及可空inventory_snapshot_id/po_line_schedule_id/demand_signal_id/project_id/source_forecast_version_id。来源FK均含dataset；需求和PO组件的必需来源由CHECK约束，语义一致性由Validator检查。component_qty对应第8节抽象quantity。
+- Stockpile Version日期/sequence唯一、名称唯一。Record包含target/actual/inventory数量和7日/本月剩余需求；period限定1～6。target与tag分别映射原planned_stockpile_qty与stockpile_nature。价格/金额/责任展示可后续关联主数据，不提前固化未知公式。
+- Forecast/Balance/Age通过(dataset, version, material)复合FK引用Record，防止产生未计划物料的子事实。Forecast每月唯一并校验月首/非负/非空JSON lineage；多Project来源数组通过Validator逐项对账，不声明虚假的单Signal FK。
+- Balance每月唯一，demand/inbound非负，opening/closing是可负净额；数据库强制closing=opening+inbound-demand，Validator强制跨月连续。原第11.4节的30/60/...天展示与金额暂为DEFERRED_TO_REPORT_VIEW。
+- 两类Age保存age_threshold_days/age_qty，阈值和数量CHECK、父键/阈值唯一；跨行单调和父数量上界由Validator验证。
+- 仅Generator写raw facts，API不授予raw SELECT，Evaluation隔离保持。无Report Views或业务路由。DC-03/DC-12展示公式推迟至Report View，DC-16不变。

@@ -21,6 +21,11 @@ from app.models.platform.world_relationships import (
     MaterialSupplierAssignment,
     ProjectCustomer,
 )
+from app.models.platform.operational import (
+    InventorySnapshot, InventoryAgeBucket, SupplyDemandSnapshot, SupplyDemandComponent,
+    StockpileVersion, StockpileRecord, StockpileForecast, StockpileBalanceProjection,
+    StockpileInventoryAgeBucket,
+)
 
 __all__ = [
     "ForecastVersion", "MonthlyForecast", "MaterialProjectShipment",
@@ -43,4 +48,7 @@ __all__ = [
     "Project",
     "ProjectCustomer",
     "Supplier",
+    "InventorySnapshot", "InventoryAgeBucket", "SupplyDemandSnapshot", "SupplyDemandComponent",
+    "StockpileVersion", "StockpileRecord", "StockpileForecast", "StockpileBalanceProjection",
+    "StockpileInventoryAgeBucket",
 ]

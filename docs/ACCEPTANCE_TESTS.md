@@ -290,7 +290,7 @@ API 必须区分：无任何 as-of 有效版本；有匹配版本但物料无记
 
 ### `AT-050` Stockpile 派生公式
 
-库龄阈值语义测试立即启用：30/60/90/120/150/180/270/365 天均为累计超过阈值，较高阈值数量/金额不得大于较低阈值。金额、GAP、完成率、结余和预警的具体数值公式测试标记 `DEFERRED_TO_GENERATOR / DC-12`，不属于 Phase 1 blocked；Generator 阶段固定 Mock 公式后启用，且验证这些字段不参与五类根因判断。
+库龄阈值语义测试立即启用：30/60/90/120/150/180/270/365 天均为累计超过阈值，较高阈值数量/金额不得大于较低阈值。金额、GAP、完成率、结余和预警的最终展示数值公式测试标记 `DEFERRED_TO_REPORT_VIEW / DC-12`，不属于 Phase 1 blocked；底层数量与连续结余已在 Phase 5C 验证，最终展示映射固定后补齐对应测试，且验证这些字段不参与五类根因判断。
 
 ---
 
@@ -476,8 +476,8 @@ Report 3/4/6 JSON 使用 `months`/`weeks`/`buckets` 数组，不把 `202609`、`
 
 | ID | 延后至后续阶段的测试 |
 |---|---|
-| `DC-03` | Report 2 辅助供需汇总、多余库存/采购/工单/PR 等最终 Mock 公式；三个核心字段与盈余公式测试已启用 |
-| `DC-12` | Report 6 金额、GAP、完成率、结余、预警的最终 Mock 公式；累计库龄语义测试已启用 |
+| `DC-03` | DEFERRED_TO_REPORT_VIEW：Report 2 辅助供需汇总、多余库存/采购/工单/PR 等最终 Mock 公式；三个核心字段与盈余公式测试已启用 |
+| `DC-12` | DEFERRED_TO_REPORT_VIEW：Report 6 金额、GAP、完成率、结余、预警的最终 Mock 公式；累计库龄语义测试已启用 |
 
 ### 18.4 已固化的 Synthetic Config（不是企业规则）
 
@@ -587,3 +587,31 @@ Phase 4 收尾时 Git 为 `GIT_IDENTITY_BLOCKED`。之后用户已配置 reposit
 四个健康/就绪端点实际HTTP200，在线OpenAPI、公共代码隔离与JSON样例扫描通过；临时API已关闭。Forbidden-term scan：142文件通过。`.env`/数据卷忽略、无已知本地密钥/绝对路径/逐条Truth公开示例。无新业务阻塞；DC-15保持resolved，DC-16与KD仍按既有范围待确认，不阻塞本阶段。
 
 未实现Supply/Demand、Stockpile、最终Report Views/API、Excel Export、Agent、LLM。前后重叠月是比较用source facts，不扩充最终Excel列；最终展示/查询接口仍须在Phase6明确还原合同。
+
+## 23. Phase 5C 纠偏验收
+
+前次报告不作为完成依据：当时没有新增Phase5C业务测试；只取第一个Project且忽略revision、月opening重置、试产供应固定0等缺陷已确认。本次新增test_operational_evidence.py与test_operational_integration.py，按实际行为验收。
+
+- AT-005/008/011：dataset FK、Primary Organization、有效Material MPM；Trial源自组织而非Truth。
+- Report2核心公式：库存分解、组件供需和试产汇总、Schedule open量拆分及不重复计收货、近端Demand分段变换、不同Cause共享盈余符号。
+- AT-031/032/044～050：同日有效最大序号、整日无效跳过、三态查询、历史hit/miss不被当前改变覆盖、多PO逐条匹配、After-sales双覆盖、六自然月全Project as-of Demand、月结余连续和累计库龄。金额/预警等最终View映射不宣称完成。
+- AT-052/053：四位Decimal、非负原始数量、允许负净结余、target=0无除零。
+- 完整世界幂等、不同seed非核心噪声、输入顺序不影响结果、九类partial拒绝、五层非空但损坏前置拒绝、READY/配置冲突拒绝、插入中途故障全阶段回滚和上游指纹不变。
+- PostgreSQL真实CHECK/业务唯一键/全部复合FK、模型DDL一致、generator/API/evaluator真实登录权限；纯查询域和platform/公开摘要防Truth泄漏。
+- AT-037、AT-054既有PO/场景语义不改；AT-066～068最终模板布局/Views留Phase6，不能把底层facts验证当作Excel完成。
+
+### 本次实测结果
+
+- Pre-Phase5C：`907e26e9b54995aca87657661c73ce6dca49930b`；原HEAD完整基线263项通过。修正未提交草稿的授权不等于原草稿已经通过验收。
+- 新增27项unit与64项integration；最终仅采用最后一次完整运行：**354 passed / 0 failed / 0 skipped，425.57秒**。保留1条既有Starlette/httpx弃用警告；不是分批测试数相加。
+- 测试库真实010→base→010成功，九表metadata与DDL一致；历史001～009无修改。约束、跨dataset FK、九类partial、五层损坏上游、READY/配置冲突、故障回滚、真实角色登录权限均通过。
+- 获授权的demo纠偏：先将旧九表92199行备份至Git忽略目录并校验，再以单个事务重建九表。38表指纹审计确认除Operational九表外全部保持原样，含运行元数据；没有重写Master、Procurement、Truth、Evidence或Forecast。Dataset仍GENERATING、最终business_content_hash=null。
+- Demo当前60条Inventory Snapshots、600条Inventory Age；60条Supply-Demand Snapshots、738条Components（Supply330/Demand408）；盈余正/零/负物料44/0/16。真实SQL复核试产供应汇总差异0。
+- Stockpile：88版本（3无效、4条同日附加版本）、2469 Records、14814 Forecasts、14814 Balance Projections、24690 Age rows；日期2025-02-01～2026-09-02。snapshot之后版本用于防未来命中反例，不允许as-of提前选取。
+- 115条Scenario Schedule全部进行历史查询对照，74命中/41未命中；STOCKPILE、INTERNAL-side、After-sales双值及同Material多PO验证通过。同日有效最大序号、无效版本跳过、无版本/无物料/命中三态均通过。
+- 六自然月全Project需求按版本日as-of revision聚合，9108条月预测包含多个Project；真实SQL复核月间opening/closing衔接错误0。库龄累计阈值、target=0安全除法、允许负净结余均通过。
+- Same-seed、输入顺序无关、different-seed与正常generator角色CLI幂等复用通过。新Operational hash：`a2cd88c8de00b9c659ce4c781a953e9e037fa3cf7d2de76e8c348c0bedd37e9f`；旧错误草稿hash为`7f0a49aedacd3c28185eda8f3e95a1ff8f1057c2193ccd7e67982b8c0599fe33`。
+- Evidence hash仍为`d2ee070ef425915488b5281b244a234a24be0a9890598a2b2d48de1400cc868e`；Forecast hash仍为`fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9`。
+- 四个健康/就绪端点真实HTTP200；在线OpenAPI、公共代码/示例隔离通过。临时API已关闭；普通API角色对九张raw表及evaluation.scenario_truth实际SELECT均被42501拒绝。
+- Forbidden-term标准扫描156文件，另补扫描1个私有维护脚本；真实合成数据库38表450558行，发现0。GitHub hygiene通过；备份、环境文件与数据库卷不提交，没有创建remote或push。此前本地测试密码若尚未人工轮换，仍建议轮换；本轮不修改凭据。
+- 无新增业务阻塞；DC-15仍RESOLVED_AS_SYNTHETIC_CONFIG，DC-16与KD仍待确认；DC-03/DC-12最终展示映射留Phase6。没有实现Final Report Views、Report APIs、Excel Export、Diagnosis、Decision Engine、Agent或LLM。

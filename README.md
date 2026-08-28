@@ -1,6 +1,6 @@
 # Overdue PO Copilot — System A
 
-本仓库已完成 Phase 5A.1 源修订修复与 Phase 5B Forecast Evidence World；尚未实现最终 Report Views / API / Excel。
+本仓库已完成 Phase 5A.1 源修订修复、Phase 5B Forecast Evidence World 与 Phase 5C Operational Evidence World；尚未实现最终 Report Views / API / Excel。
 
 ## Implementation Status
 
@@ -12,7 +12,7 @@
 - [x] Phase 4：Scenario Planning 与隔离 Evaluation Truth
 - [x] Phase 5A — Evidence Foundation
 - [x] Phase 5B — Forecast Evidence World
-- [ ] Phase 5C — Supply/Demand & Stockpile Evidence
+- [x] Phase 5C — Supply/Demand & Stockpile Evidence
 - [ ] Phase 6：Report Views / API / Excel Export
 - [ ] Phase 7：Copilot
 
@@ -27,7 +27,7 @@
 - `GET /api/v1/health` 与 `GET /api/v1/ready`；
 - unit tests 与真实 PostgreSQL integration tests。
 
-当前已实现 Master Data、Procurement Fact Generator、隐藏 Scenario Planner、Lifecycle/Product Config、共享日需求证据与 Forecast facts；尚未实现 Supply/Demand、Stockpile、六张最终 Report、Agent 或 AI 诊断。
+当前已实现 Master Data、Procurement Fact Generator、隐藏 Scenario Planner、Lifecycle/Product Config、共享日需求证据、Forecast 与 Supply/Demand/Inventory/Stockpile facts；尚未实现六张最终 Report、Agent 或 AI 诊断。
 
 所有生成内容均为合成演示数据，不来源于真实企业数据，也不得用于真实企业运营。
 
@@ -263,4 +263,39 @@ Forecast Versions
 
 Demo：102版本（82有效、20无效；20条同日附加版本），135320月事实，11152项目发货，1个最新周快照，1768项目周行、780物料周行。版本日期2025-02-03～2026-08-24；13周起始日2026-08-31～2026-11-23，覆盖至2026-11-29；9个物料13周全零。正常 CLI 重跑 hash 一致：`fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9`。
 
-只完成底层 Forecast facts、选择器与查询计算器。Report 3/4 final Views、Report API、Excel Export、Supply/Demand、Stockpile、Agent、LLM 均未实现。
+已完成底层 Forecast 与 Operational Evidence facts、选择器与查询计算器。Report 3/4/6 final Views、Report API、Excel Export、Diagnosis、Agent、LLM 均未实现。
+
+## 13. Phase 5C Operational Evidence World
+
+Pre-Phase5C checkpoint：`907e26e9b54995aca87657661c73ce6dca49930b`。新增 `010_operational_evidence` 九表；历史001～009保持不变。
+
+```text
+Procurement + Inventory + Demand
+        ↓
+Current Supply/Demand Context
+
+Scenario Plan
+        ↓
+Historical Stockpile Evidence
+```
+
+Supply-demand is context, not a root-cause decision gate.
+
+```powershell
+cd backend
+python -m app.generators.operational_evidence.cli --dataset-version-name demo-master-v1 --seed 20260831 --summary-output ../examples/operational_evidence_summary.json
+```
+
+支持 `--config`、`--evidence-config`、`--forecast-config`、`--procurement-config`、`--scenario-config`。默认 Operational generator 为5C.2.0，schema为010，数量保留四位小数。全空才生成，完整且同配置才复用，部分世界、损坏上游、配置冲突与READY均拒绝；失败整体回滚。
+
+Supply以Schedule open量与当前库存为来源；试产数量按真实来源组织汇总，不固定为0。Stockpile六自然月预测聚合全部Material-Project有效日需求修订，并记录完整lineage；月结余连续，允许净缺口为负。历史命中使用order_date，不以当前囤料状态替代。
+
+Demo：60 Inventory Snapshots、60 Supply-Demand Snapshots；330 Supply Components、408 Demand Components；盈余正/零/负物料为44/0/16。88个Stockpile Versions、2469条Records、14814条Forecast与14814条Balance Projection；版本日期2025-02-01～2026-09-02。历史查询74命中/41未命中。公开摘要仅包含聚合值，不输出逐条Truth。
+
+本次获授权纠正未提交草稿：旧九表数据已备份并校验，受控事务只重建Operational九表；Master、Procurement、Scenario Truth、Evidence、Forecast和Dataset元数据逐表指纹不变。备份位于Git忽略的 `data/synthetic/phase5c_before_correction`，不是可发布数据。私有维护工具以 `python -m scripts.phase5c_maintenance` 从backend运行，不提供公开reset。
+
+新增91项测试；最终单次全量结果为354 passed / 0 failed / 0 skipped（425.57秒，1条既有依赖弃用警告）。真实测试库完成010→base→010；API不能读取Operational raw tables或Truth，generator/evaluator权限验证通过。四个健康端点HTTP200，在线OpenAPI、公共代码与示例防泄漏检查通过。
+
+正常generator角色CLI重复调用得到相同 `operational_content_hash=a2cd88c8de00b9c659ce4c781a953e9e037fa3cf7d2de76e8c348c0bedd37e9f`。Dataset仍为GENERATING，最终business_content_hash=null；上游Evidence与Forecast hash不变。DC-03/DC-12最终展示映射留Phase6，DC-16售后正式处置及KD完整释义继续待确认；不新增本阶段业务阻塞。
+
+未实现Final Report Views、Report APIs、Excel Export、Diagnosis、Decision Engine、Agent或LLM。

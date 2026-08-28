@@ -462,4 +462,12 @@ ForecastGenerator 只接收 Master、共享 Evidence 和 Forecast 配置，不�
 
 `ForecastGenerationConfig` 固定 V1 7日周频、默认后3版/允许2～5、展示7个月、13周、数量4位小数；seed默认20260830，仅用于发布有效性/补发夹具及生成签名，不改源需求。补发偏好0.12、无效日偏好0.07；至少覆盖同日有效修订与高序号无效回退，整日无效日期间隔至少7周，保证任意6周窗口至多跳过一版。所有版本日在 dataset snapshot 当天或之前，默认连续星期一 Calendar。
 
-最新13周来自 snapshot 源观察，项目周合计精确组成物料周值；完整自然月与最新有效月预测在原舍入容差内对账。Demo 必须包含物料级全零13周，当前仅提供合计/周均安全计算，不实施 PO 消耗对策。After-sales 与 NONE 保持原稳定源状态。
+最新13周来自snapshot源观察，项目周合计组成物料周值；After-sales/NONE保持原稳定源状态。
+
+## 20. Phase 5C Operational Evidence（纠偏后）
+
+Supply-demand is context, not a root-cause decision gate. 库存和供需生成不接收Cause控制数量；Validator确认不同Cause可有相同盈余符号。既有阈值、causal project、Scenario Pattern、Lifecycle和stockpile_flag均不修改。
+
+Stockpile生成只在generator进程读取Material级历史计划。所有相关PO分别执行dataset隔离、有效版本、同日最大sequence的order_date查询；必须全部符合原hit/miss。After-sales同时保留hit/miss，Internal-side保持miss，不把历史囤料优先于售后。snapshot和其后7日反例可以改变当前记录，但不覆盖历史查询。
+
+Stockpile六个月需求必须按各版本日observed_on读取持续修订状态，再汇总Material全部Project；源lineage数量逐项核对，未来修订不能提前生效。库龄累计阈值，结余连续递推，不生成处置结论。DC-15阈值不变，DC-16正式售后策略仍待确认。

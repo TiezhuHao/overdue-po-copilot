@@ -404,3 +404,13 @@ Phase 5A.1 的 `EvidenceTimingCorrectionService` 只供显式 generator CLI 使�
 Phase 5B 兼容修复：旧 Evidence correction 的下游保护调整为“该 dataset 已有 Forecast/Stockpile facts”即拒绝；允许空009 schema 下的隔离修复测试，但有真实下游数据时不能使其失效。其他 dataset 的下游数据不影响本 dataset 的隔离门禁。
 
 公开应用不导入上述 Generator/Truth；本阶段无 Report route/View/导出接口，也无 reset API。Forecast history and 13-week demand are two views of the same synthetic demand world.
+
+## 17. Phase 5C Operational evidence（纠偏后）
+
+OperationalEvidenceGenerationService在单事务内锁定GENERATING dataset，逐层重建期望Master/Procurement/Scenario/Evidence/Forecast至内存并比较现有事实hash，不能用“表非空”代替完整性。Operational signature包含全部上游hash及配置。全空生成；已有部分行显式拒绝；完整数据重新验证并比较期望hash后复用；不静默修补，不改READY或最终business_content_hash。
+
+生成器接收只读World对象，不持有数据库Session。供需从Inventory/Schedule/有效需求观测派生；历史Stockpile仅generator可读取Truth计划。纯StockpileAsOfSelector位于app/domain/operational.py，入参包含dataset_id，能区分NO_VALID_VERSION、MATERIAL_NOT_FOUND、FOUND；不加载Generator/Evaluation。
+
+scripts/phase5c_maintenance.py仅用于本次显式授权的草稿纠偏：备份至Git忽略目录并验证checksum；重建前要求唯一demo且GENERATING、010版本、全部表指纹与备份一致。仅DROP指定九表（不用CASCADE），DDL和重新生成处于同一外层事务；任何异常回滚旧schema与数据；提交前检查所有上游表含运行元数据的指纹未变。它不是公开API、常规reset接口或自动repair路径。
+
+CLI使用generator角色、只输出聚合摘要，异常只报告异常类、不输出SQL/参数/凭据/逐条Truth。无Report路由/导出或诊断、决策、Agent、LLM。

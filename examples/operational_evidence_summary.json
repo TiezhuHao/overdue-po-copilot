@@ -1,0 +1,28 @@
+{
+  "counts": {
+    "inventory_age_buckets": 600,
+    "inventory_snapshots": 60,
+    "stockpile_balance_projections": 14814,
+    "stockpile_forecasts": 14814,
+    "stockpile_inventory_age_buckets": 24690,
+    "stockpile_records": 2469,
+    "stockpile_versions": 88,
+    "supply_demand_components": 738,
+    "supply_demand_snapshots": 60
+  },
+  "dataset_status": "GENERATING",
+  "demand_component_count": 408,
+  "historical_lookup_hit_count": 74,
+  "historical_lookup_miss_count": 41,
+  "invalid_version_count": 3,
+  "negative_surplus_material_count": 16,
+  "notice": "Synthetic data only; aggregate operational statistics without record-level evaluation truth.",
+  "operational_content_hash": "a2cd88c8de00b9c659ce4c781a953e9e037fa3cf7d2de76e8c348c0bedd37e9f",
+  "positive_surplus_material_count": 44,
+  "same_day_revision_count": 4,
+  "stockpile_date_max": "2026-09-02",
+  "stockpile_date_min": "2025-02-01",
+  "supply_component_count": 330,
+  "validation_status": "PASS",
+  "zero_surplus_material_count": 0
+}
