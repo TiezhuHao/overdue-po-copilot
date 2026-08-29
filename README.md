@@ -1,6 +1,6 @@
 # Overdue PO Copilot — System A
 
-本仓库已完成 Phase 5A.1 源修订修复、Phase 5B Forecast Evidence World 与 Phase 5C Operational Evidence World；尚未实现最终 Report Views / API / Excel。
+本仓库已完成 Phase 5A.1、Phase 5B、Phase 5C 与 Phase 6A 六报表语义层；Report API、Excel 与 Dataset finalization 留待 Phase 6B。
 
 ## Implementation Status
 
@@ -13,7 +13,8 @@
 - [x] Phase 5A — Evidence Foundation
 - [x] Phase 5B — Forecast Evidence World
 - [x] Phase 5C — Supply/Demand & Stockpile Evidence
-- [ ] Phase 6：Report Views / API / Excel Export
+- [x] Phase 6A — Six Report Semantic Layer
+- [ ] Phase 6B — Report APIs / Excel / Finalization
 - [ ] Phase 7：Copilot
 
 当前已包含：
@@ -27,7 +28,7 @@
 - `GET /api/v1/health` 与 `GET /api/v1/ready`；
 - unit tests 与真实 PostgreSQL integration tests。
 
-当前已实现 Master Data、Procurement Fact Generator、隐藏 Scenario Planner、Lifecycle/Product Config、共享日需求证据、Forecast 与 Supply/Demand/Inventory/Stockpile facts；尚未实现六张最终 Report、Agent 或 AI 诊断。
+当前已实现 Master Data、Procurement、隔离 Scenario Truth、Lifecycle/Product Config、共享需求、Forecast、Operational facts及六张canonical Report Semantics；尚未实现Report REST API、Excel、Agent或AI诊断。
 
 所有生成内容均为合成演示数据，不来源于真实企业数据，也不得用于真实企业运营。
 
@@ -59,7 +60,11 @@ Underlying Demand Signal + dated source revisions
       ├─ Forecast Versions → Monthly Project Forecast
       └─ Latest Snapshot → Project 13W → Material 13W
       ↓
-Supply-Demand / Stockpile (next phase)
+Supply-Demand / Stockpile
+      ↓
+Six Canonical Report Semantics
+      ↓
+REST API / Excel (next phase)
 ```
 
 All report-facing demand data will be derived from one shared Underlying Demand Signal.
@@ -115,7 +120,7 @@ alembic -c alembic.ini upgrade head
 psql -U system_a_owner -d overdue_po_copilot -f db/bootstrap/002_grants.sql
 ```
 
-迁移链为：schema/extension → dataset_versions → master data → master relationships → master-world auxiliary relationships → `006_procurement_facts` → `007_scenario_truth` → `008_evidence_foundation`。`alembic downgrade base` 会按依赖逆序删除表和两个应用 schema；共享的 `btree_gist` extension 不会在 downgrade 时删除。重建 Schema 后必须重放已有 grants 脚本；测试夹具已自动执行。
+迁移链为：schema/extension → dataset/master/relationships → `006_procurement_facts` → `007_scenario_truth` → `008_evidence_foundation` → `009_forecast_evidence` → `010_operational_evidence` → `011_report_semantic_views`。`alembic downgrade base` 会按依赖逆序删除对象；共享的 `btree_gist` extension 不会在 downgrade 时删除。重建 Schema 后必须重放grants脚本；测试夹具已自动执行。
 
 ## 5. Phase 2 主数据生成
 
@@ -299,3 +304,15 @@ Demo：60 Inventory Snapshots、60 Supply-Demand Snapshots；330 Supply Componen
 正常generator角色CLI重复调用得到相同 `operational_content_hash=a2cd88c8de00b9c659ce4c781a953e9e037fa3cf7d2de76e8c348c0bedd37e9f`。Dataset仍为GENERATING，最终business_content_hash=null；上游Evidence与Forecast hash不变。DC-03/DC-12最终展示映射留Phase6，DC-16售后正式处置及KD完整释义继续待确认；不新增本阶段业务阻塞。
 
 未实现Final Report Views、Report APIs、Excel Export、Diagnosis、Decision Engine、Agent或LLM。
+
+## 14. Phase 6A Six Report Semantic Layer
+
+新增 `reporting` schema与`011_report_semantic_views`。六个canonical sources严格从normalized platform facts派生；Report3/4/6另有normalized long views。精确展示列序取自六个“最终模板”，由 `backend/app/reporting/report_header_manifest.json` 单点维护；`docs/REPORT_HEADER_MANIFEST.md` 与 `docs/REPORT_FIELD_MAPPING.md` 是生成投影。
+
+Report 1严格按Schedule粒度和`overdue_days > 0`；Report 2核心供需与component facts对账；Report3使用daily-final-valid及严格Anchor窗口；Report4为每Material完整13周并保留零需求行；Report5按snapshot取项目生命周期；Report6 current版本严格不晚于dataset snapshot，历史as-of仍以PO order_date查询。跨报表validator验证Material、Project、Forecast、MPM及Report3/4/6共享Demand lineage。
+
+`system_a_api`只新增reporting SELECT，仍不能读取evaluation与restricted raw facts。聚合证据位于`examples/report_semantic_summary.json`；Dataset继续`GENERATING`，没有写最终`business_content_hash`。
+
+本阶段未实现Report REST APIs、Excel Export、Dataset READY finalization、Diagnosis、Decision Engine、Agent或LLM。
+
+Phase6A最终单次全量结果：404 passed / 0 failed / 0 skipped（446.81秒，1条既有依赖弃用警告）。开发库与测试库迁移、四个健康端点、角色权限、OpenAPI泄漏、forbidden-term和repository hygiene均已验证。

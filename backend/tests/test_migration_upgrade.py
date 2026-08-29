@@ -17,6 +17,7 @@ def test_migrations_render_for_postgresql() -> None:
     ddl = output.getvalue()
     assert "CREATE SCHEMA IF NOT EXISTS platform" in ddl
     assert "CREATE SCHEMA IF NOT EXISTS evaluation" in ddl
+    assert "CREATE SCHEMA reporting" in ddl
     assert "CREATE EXTENSION IF NOT EXISTS btree_gist" in ddl
     assert "CREATE TABLE platform.dataset_versions" in ddl
     assert "CREATE TABLE platform.employee_role_assignments" in ddl
@@ -35,6 +36,8 @@ def test_migrations_render_for_postgresql() -> None:
     assert "CREATE TABLE platform.inventory_snapshots" in ddl
     assert "CREATE TABLE platform.supply_demand_snapshots" in ddl
     assert "CREATE TABLE platform.stockpile_versions" in ddl
+    assert "CREATE VIEW reporting.report1_overdue_po_detail" in ddl
+    assert "CREATE VIEW reporting.report6_stockpile_detail" in ddl
     assert "EXCLUDE USING gist" in ddl
 
 
@@ -46,9 +49,9 @@ def test_migration_upgrade_reaches_head(migrated_database: Engine) -> None:
             connection.execute(
                 text(
                     "SELECT schema_name FROM information_schema.schemata "
-                    "WHERE schema_name IN ('platform', 'evaluation')"
+                    "WHERE schema_name IN ('platform', 'evaluation', 'reporting')"
                 )
             ).scalars()
         )
-    assert revision == "010_operational_evidence"
-    assert schemas == {"platform", "evaluation"}
+    assert revision == "011_report_semantic_views"
+    assert schemas == {"platform", "evaluation", "reporting"}

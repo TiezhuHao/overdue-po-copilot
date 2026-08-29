@@ -1,0 +1,5755 @@
+{
+  "manifest_version": 1,
+  "notes": "Exact final-template header order. Business cells were not extracted. Dynamic headers are slots, not fixed dates.",
+  "reports": [
+    {
+      "report_id": 1,
+      "source_template": "报表1_超期PO明细_最终模板.xlsx",
+      "sheet_name": "超期PO明细",
+      "header_rows": [
+        1
+      ],
+      "column_count": 37,
+      "sheet_structure": [
+        {
+          "sheet_name": "超期PO明细",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "库存组织",
+            "B1": "库存组织类型",
+            "C1": "业务实体",
+            "D1": "订单号",
+            "E1": "订单行",
+            "F1": "订单行发运号",
+            "G1": "关闭状态",
+            "H1": "项目名称",
+            "I1": "物料编码",
+            "J1": "物料描述",
+            "K1": "规格型号",
+            "L1": "供应商编码",
+            "M1": "供应商名称",
+            "N1": "数量",
+            "O1": "接收数量",
+            "P1": "超期未交数量",
+            "Q1": "物料属性",
+            "R1": "物料大类",
+            "S1": "物料中类",
+            "T1": "订单下达日期",
+            "U1": "应交日期",
+            "V1": "数据快照日期",
+            "W1": "物料LT",
+            "X1": "超期天数",
+            "Y1": "是否超期",
+            "Z1": "订单采购员",
+            "AA1": "默认采购员",
+            "AB1": "物控员",
+            "AC1": "计划经理",
+            "AD1": "计划总监",
+            "AE1": "采购经理",
+            "AF1": "采购总监",
+            "AG1": "通知接收人",
+            "AH1": "参考编号（项目）",
+            "AI1": "是否可关闭",
+            "AJ1": "完成时间",
+            "AK1": "PO状态"
+          }
+        },
+        {
+          "sheet_name": "字段说明",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "字段",
+            "B1": "业务含义",
+            "C1": "在Copilot中的用途",
+            "D1": "是否核心"
+          }
+        }
+      ],
+      "columns": [
+        {
+          "column_index": 1,
+          "excel_column": "A",
+          "display_name": "库存组织",
+          "header_path": [
+            "库存组织"
+          ],
+          "source_header_cells": [
+            "A1"
+          ],
+          "canonical_field": "inventory_organization_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 2,
+          "excel_column": "B",
+          "display_name": "库存组织类型",
+          "header_path": [
+            "库存组织类型"
+          ],
+          "source_header_cells": [
+            "B1"
+          ],
+          "canonical_field": "inventory_organization_type",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 3,
+          "excel_column": "C",
+          "display_name": "业务实体",
+          "header_path": [
+            "业务实体"
+          ],
+          "source_header_cells": [
+            "C1"
+          ],
+          "canonical_field": "business_entity_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 4,
+          "excel_column": "D",
+          "display_name": "订单号",
+          "header_path": [
+            "订单号"
+          ],
+          "source_header_cells": [
+            "D1"
+          ],
+          "canonical_field": "po_number",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 5,
+          "excel_column": "E",
+          "display_name": "订单行",
+          "header_path": [
+            "订单行"
+          ],
+          "source_header_cells": [
+            "E1"
+          ],
+          "canonical_field": "po_line_number",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 6,
+          "excel_column": "F",
+          "display_name": "订单行发运号",
+          "header_path": [
+            "订单行发运号"
+          ],
+          "source_header_cells": [
+            "F1"
+          ],
+          "canonical_field": "shipment_number",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 7,
+          "excel_column": "G",
+          "display_name": "关闭状态",
+          "header_path": [
+            "关闭状态"
+          ],
+          "source_header_cells": [
+            "G1"
+          ],
+          "canonical_field": "close_status",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 8,
+          "excel_column": "H",
+          "display_name": "项目名称",
+          "header_path": [
+            "项目名称"
+          ],
+          "source_header_cells": [
+            "H1"
+          ],
+          "canonical_field": "reference_project_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 9,
+          "excel_column": "I",
+          "display_name": "物料编码",
+          "header_path": [
+            "物料编码"
+          ],
+          "source_header_cells": [
+            "I1"
+          ],
+          "canonical_field": "material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 10,
+          "excel_column": "J",
+          "display_name": "物料描述",
+          "header_path": [
+            "物料描述"
+          ],
+          "source_header_cells": [
+            "J1"
+          ],
+          "canonical_field": "material_description",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 11,
+          "excel_column": "K",
+          "display_name": "规格型号",
+          "header_path": [
+            "规格型号"
+          ],
+          "source_header_cells": [
+            "K1"
+          ],
+          "canonical_field": "specification_model",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 12,
+          "excel_column": "L",
+          "display_name": "供应商编码",
+          "header_path": [
+            "供应商编码"
+          ],
+          "source_header_cells": [
+            "L1"
+          ],
+          "canonical_field": "supplier_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 13,
+          "excel_column": "M",
+          "display_name": "供应商名称",
+          "header_path": [
+            "供应商名称"
+          ],
+          "source_header_cells": [
+            "M1"
+          ],
+          "canonical_field": "supplier_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 14,
+          "excel_column": "N",
+          "display_name": "数量",
+          "header_path": [
+            "数量"
+          ],
+          "source_header_cells": [
+            "N1"
+          ],
+          "canonical_field": "schedule_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 15,
+          "excel_column": "O",
+          "display_name": "接收数量",
+          "header_path": [
+            "接收数量"
+          ],
+          "source_header_cells": [
+            "O1"
+          ],
+          "canonical_field": "schedule_received_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 16,
+          "excel_column": "P",
+          "display_name": "超期未交数量",
+          "header_path": [
+            "超期未交数量"
+          ],
+          "source_header_cells": [
+            "P1"
+          ],
+          "canonical_field": "overdue_open_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 17,
+          "excel_column": "Q",
+          "display_name": "物料属性",
+          "header_path": [
+            "物料属性"
+          ],
+          "source_header_cells": [
+            "Q1"
+          ],
+          "canonical_field": "material_attribute",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 18,
+          "excel_column": "R",
+          "display_name": "物料大类",
+          "header_path": [
+            "物料大类"
+          ],
+          "source_header_cells": [
+            "R1"
+          ],
+          "canonical_field": "material_category_level_1",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 19,
+          "excel_column": "S",
+          "display_name": "物料中类",
+          "header_path": [
+            "物料中类"
+          ],
+          "source_header_cells": [
+            "S1"
+          ],
+          "canonical_field": "material_category_level_2",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 20,
+          "excel_column": "T",
+          "display_name": "订单下达日期",
+          "header_path": [
+            "订单下达日期"
+          ],
+          "source_header_cells": [
+            "T1"
+          ],
+          "canonical_field": "order_date",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 21,
+          "excel_column": "U",
+          "display_name": "应交日期",
+          "header_path": [
+            "应交日期"
+          ],
+          "source_header_cells": [
+            "U1"
+          ],
+          "canonical_field": "due_date",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 22,
+          "excel_column": "V",
+          "display_name": "数据快照日期",
+          "header_path": [
+            "数据快照日期"
+          ],
+          "source_header_cells": [
+            "V1"
+          ],
+          "canonical_field": "snapshot_date",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 23,
+          "excel_column": "W",
+          "display_name": "物料LT",
+          "header_path": [
+            "物料LT"
+          ],
+          "source_header_cells": [
+            "W1"
+          ],
+          "canonical_field": "material_lt_days",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 24,
+          "excel_column": "X",
+          "display_name": "超期天数",
+          "header_path": [
+            "超期天数"
+          ],
+          "source_header_cells": [
+            "X1"
+          ],
+          "canonical_field": "overdue_days",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 25,
+          "excel_column": "Y",
+          "display_name": "是否超期",
+          "header_path": [
+            "是否超期"
+          ],
+          "source_header_cells": [
+            "Y1"
+          ],
+          "canonical_field": "is_overdue",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 26,
+          "excel_column": "Z",
+          "display_name": "订单采购员",
+          "header_path": [
+            "订单采购员"
+          ],
+          "source_header_cells": [
+            "Z1"
+          ],
+          "canonical_field": "order_buyer_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 27,
+          "excel_column": "AA",
+          "display_name": "默认采购员",
+          "header_path": [
+            "默认采购员"
+          ],
+          "source_header_cells": [
+            "AA1"
+          ],
+          "canonical_field": "default_buyer_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 28,
+          "excel_column": "AB",
+          "display_name": "物控员",
+          "header_path": [
+            "物控员"
+          ],
+          "source_header_cells": [
+            "AB1"
+          ],
+          "canonical_field": "material_controller_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 29,
+          "excel_column": "AC",
+          "display_name": "计划经理",
+          "header_path": [
+            "计划经理"
+          ],
+          "source_header_cells": [
+            "AC1"
+          ],
+          "canonical_field": "planning_manager_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 30,
+          "excel_column": "AD",
+          "display_name": "计划总监",
+          "header_path": [
+            "计划总监"
+          ],
+          "source_header_cells": [
+            "AD1"
+          ],
+          "canonical_field": "planning_director_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 31,
+          "excel_column": "AE",
+          "display_name": "采购经理",
+          "header_path": [
+            "采购经理"
+          ],
+          "source_header_cells": [
+            "AE1"
+          ],
+          "canonical_field": "purchasing_manager_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 32,
+          "excel_column": "AF",
+          "display_name": "采购总监",
+          "header_path": [
+            "采购总监"
+          ],
+          "source_header_cells": [
+            "AF1"
+          ],
+          "canonical_field": "purchasing_director_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 33,
+          "excel_column": "AG",
+          "display_name": "通知接收人",
+          "header_path": [
+            "通知接收人"
+          ],
+          "source_header_cells": [
+            "AG1"
+          ],
+          "canonical_field": "notification_recipient_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 34,
+          "excel_column": "AH",
+          "display_name": "参考编号（项目）",
+          "header_path": [
+            "参考编号（项目）"
+          ],
+          "source_header_cells": [
+            "AH1"
+          ],
+          "canonical_field": "reference_project_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 35,
+          "excel_column": "AI",
+          "display_name": "是否可关闭",
+          "header_path": [
+            "是否可关闭"
+          ],
+          "source_header_cells": [
+            "AI1"
+          ],
+          "canonical_field": "can_close",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 36,
+          "excel_column": "AJ",
+          "display_name": "完成时间",
+          "header_path": [
+            "完成时间"
+          ],
+          "source_header_cells": [
+            "AJ1"
+          ],
+          "canonical_field": "completion_at",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 37,
+          "excel_column": "AK",
+          "display_name": "PO状态",
+          "header_path": [
+            "PO状态"
+          ],
+          "source_header_cells": [
+            "AK1"
+          ],
+          "canonical_field": "po_status",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        }
+      ],
+      "source_header_structure_sha256": "5f4cd6e5f35c2ee4f51180d75a0d153e67a2b460df4c9ed68dc2fa0eda9f95dc"
+    },
+    {
+      "report_id": 2,
+      "source_template": "报表2_物料供需汇总表_最终模板.xlsx",
+      "sheet_name": "物料供需汇总",
+      "header_rows": [
+        3
+      ],
+      "column_count": 106,
+      "sheet_structure": [
+        {
+          "sheet_name": "物料供需汇总",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            3
+          ],
+          "merges": [
+            "A1:CZ1",
+            "A2:CZ2"
+          ],
+          "header_cells": {
+            "A3": "库存组织",
+            "B3": "计划方法",
+            "C3": "物料编码",
+            "D3": "物料描述",
+            "E3": "采购类别",
+            "F3": "替代组",
+            "G3": "供应商",
+            "H3": "供应商名称(英文)",
+            "I3": "物料类别",
+            "J3": "类别说明",
+            "K3": "采购员",
+            "L3": "物控员",
+            "M3": "物控员名字",
+            "N3": "物控员代码",
+            "O3": "主物控员名称",
+            "P3": "MPM编号",
+            "Q3": "MPM姓名",
+            "R3": "MPM部门",
+            "S3": "物料提前期",
+            "T3": "原厂LT",
+            "U3": "良品VMI库存数量",
+            "V3": "良品非VMI库存数量",
+            "W3": "不良品库存数量",
+            "X3": "不参与MRP库存数量",
+            "Y3": "虚拟不良品库存",
+            "Z3": "VMI在途订单数量",
+            "AA3": "非VMI在途订单数量",
+            "AB3": "VMI在途送货数量",
+            "AC3": "非VMI在途送货数量",
+            "AD3": "采购申请数量",
+            "AE3": "量产工单在制数量",
+            "AF3": "非标工单在制数量",
+            "AG3": "虚拟计划单",
+            "AH3": "标准工单需求数量",
+            "AI3": "非标准工单需求数量",
+            "AJ3": "计划单需求数量",
+            "AK3": "安全库存需求数量",
+            "AL3": "人工需求数量",
+            "AM3": "长期预测需求",
+            "AN3": "所有供应",
+            "AO3": "供需盈余量",
+            "AP3": "供需汇总",
+            "AQ3": "不参与MRP供需汇总",
+            "AR3": "计划单",
+            "AS3": "已到期预测计划单",
+            "AT3": "未到期预测计划单",
+            "AU3": "多余不参与MRP库存",
+            "AV3": "多余库存",
+            "AW3": "多余采购数量",
+            "AX3": "多余工单数量",
+            "AY3": "多余pr数量",
+            "AZ3": "最小包装",
+            "BA3": "最小订单量",
+            "BB3": "ncnr",
+            "BC3": "组织在用项目",
+            "BD3": "集团在用项目",
+            "BE3": "最多项目",
+            "BF3": "所有项目",
+            "BG3": "组织在用客户",
+            "BH3": "集团在用客户",
+            "BI3": "所有客户",
+            "BJ3": "0~90天库存",
+            "BK3": "90～180天库存",
+            "BL3": "180～360天库存",
+            "BM3": "360～540天库存",
+            "BN3": "540+天库存",
+            "BO3": "0~90天库存剩余",
+            "BP3": "90～180天库存剩余",
+            "BQ3": "180～360天库存剩余",
+            "BR3": "360～540库存剩余",
+            "BS3": "540+库存剩余",
+            "BT3": "规格型号",
+            "BU3": "累计下单",
+            "BV3": "累计交付",
+            "BW3": "OPEN PO",
+            "BX3": "LT内需求数量",
+            "BY3": "超物料LT Excess PO",
+            "BZ3": "KD最小包需求",
+            "CA3": "良品VMI库存数量(试产)",
+            "CB3": "良品非VMI库存数量(试产)",
+            "CC3": "不良品库存数量(试产)",
+            "CD3": "虚拟不良品库存(试产)",
+            "CE3": "VMI在途订单数量(试产)",
+            "CF3": "非VMI在途订单数量(试产)",
+            "CG3": "VMI在途送货数量(试产)",
+            "CH3": "非VMI在途送货数量(试产)",
+            "CI3": "采购申请数量(试产)",
+            "CJ3": "量产工单在制数量(试产)",
+            "CK3": "非标工单在制数量(试产)",
+            "CL3": "标准工单需求数量(试产)",
+            "CM3": "非标准工单需求数量(试产)",
+            "CN3": "计划单需求数量(试产)",
+            "CO3": "人工需求数量(试产)",
+            "CP3": "长期预测需求(试产)",
+            "CQ3": "所有供应(试产)",
+            "CR3": "供需盈余量(试产)",
+            "CS3": "供需汇总(试产)",
+            "CT3": "计划单(试产)",
+            "CU3": "已到期预测计划单(试产)",
+            "CV3": "未到期预测计划单(试产)",
+            "CW3": "多余库存(试产)",
+            "CX3": "多余采购数量(试产)",
+            "CY3": "多余工单数量(试产)",
+            "CZ3": "多余pr数量(试产)",
+            "DA3": "实际需求合计",
+            "DB3": "实际需求合计(试产)"
+          }
+        },
+        {
+          "sheet_name": "字段说明",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "字段组",
+            "B1": "代表字段",
+            "C1": "业务作用",
+            "D1": "重要性",
+            "E1": "备注"
+          }
+        },
+        {
+          "sheet_name": "使用逻辑",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "步骤",
+            "B1": "动作",
+            "C1": "使用字段/来源",
+            "D1": "作用/输出"
+          }
+        }
+      ],
+      "columns": [
+        {
+          "column_index": 1,
+          "excel_column": "A",
+          "display_name": "库存组织",
+          "header_path": [
+            "库存组织"
+          ],
+          "source_header_cells": [
+            "A3"
+          ],
+          "canonical_field": "inventory_organization_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 2,
+          "excel_column": "B",
+          "display_name": "计划方法",
+          "header_path": [
+            "计划方法"
+          ],
+          "source_header_cells": [
+            "B3"
+          ],
+          "canonical_field": "planning_method",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 3,
+          "excel_column": "C",
+          "display_name": "物料编码",
+          "header_path": [
+            "物料编码"
+          ],
+          "source_header_cells": [
+            "C3"
+          ],
+          "canonical_field": "material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 4,
+          "excel_column": "D",
+          "display_name": "物料描述",
+          "header_path": [
+            "物料描述"
+          ],
+          "source_header_cells": [
+            "D3"
+          ],
+          "canonical_field": "material_description",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 5,
+          "excel_column": "E",
+          "display_name": "采购类别",
+          "header_path": [
+            "采购类别"
+          ],
+          "source_header_cells": [
+            "E3"
+          ],
+          "canonical_field": "purchasing_category",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 6,
+          "excel_column": "F",
+          "display_name": "替代组",
+          "header_path": [
+            "替代组"
+          ],
+          "source_header_cells": [
+            "F3"
+          ],
+          "canonical_field": "substitute_group_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 7,
+          "excel_column": "G",
+          "display_name": "供应商",
+          "header_path": [
+            "供应商"
+          ],
+          "source_header_cells": [
+            "G3"
+          ],
+          "canonical_field": "supplier_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 8,
+          "excel_column": "H",
+          "display_name": "供应商名称(英文)",
+          "header_path": [
+            "供应商名称(英文)"
+          ],
+          "source_header_cells": [
+            "H3"
+          ],
+          "canonical_field": "supplier_name_en",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 9,
+          "excel_column": "I",
+          "display_name": "物料类别",
+          "header_path": [
+            "物料类别"
+          ],
+          "source_header_cells": [
+            "I3"
+          ],
+          "canonical_field": "material_category_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 10,
+          "excel_column": "J",
+          "display_name": "类别说明",
+          "header_path": [
+            "类别说明"
+          ],
+          "source_header_cells": [
+            "J3"
+          ],
+          "canonical_field": "material_category_description",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 11,
+          "excel_column": "K",
+          "display_name": "采购员",
+          "header_path": [
+            "采购员"
+          ],
+          "source_header_cells": [
+            "K3"
+          ],
+          "canonical_field": "buyer_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 12,
+          "excel_column": "L",
+          "display_name": "物控员",
+          "header_path": [
+            "物控员"
+          ],
+          "source_header_cells": [
+            "L3"
+          ],
+          "canonical_field": "material_controller_account",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 13,
+          "excel_column": "M",
+          "display_name": "物控员名字",
+          "header_path": [
+            "物控员名字"
+          ],
+          "source_header_cells": [
+            "M3"
+          ],
+          "canonical_field": "material_controller_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 14,
+          "excel_column": "N",
+          "display_name": "物控员代码",
+          "header_path": [
+            "物控员代码"
+          ],
+          "source_header_cells": [
+            "N3"
+          ],
+          "canonical_field": "material_controller_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 15,
+          "excel_column": "O",
+          "display_name": "主物控员名称",
+          "header_path": [
+            "主物控员名称"
+          ],
+          "source_header_cells": [
+            "O3"
+          ],
+          "canonical_field": "primary_material_controller_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 16,
+          "excel_column": "P",
+          "display_name": "MPM编号",
+          "header_path": [
+            "MPM编号"
+          ],
+          "source_header_cells": [
+            "P3"
+          ],
+          "canonical_field": "mpm_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 17,
+          "excel_column": "Q",
+          "display_name": "MPM姓名",
+          "header_path": [
+            "MPM姓名"
+          ],
+          "source_header_cells": [
+            "Q3"
+          ],
+          "canonical_field": "mpm_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 18,
+          "excel_column": "R",
+          "display_name": "MPM部门",
+          "header_path": [
+            "MPM部门"
+          ],
+          "source_header_cells": [
+            "R3"
+          ],
+          "canonical_field": "mpm_department_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 19,
+          "excel_column": "S",
+          "display_name": "物料提前期",
+          "header_path": [
+            "物料提前期"
+          ],
+          "source_header_cells": [
+            "S3"
+          ],
+          "canonical_field": "material_lt_days",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 20,
+          "excel_column": "T",
+          "display_name": "原厂LT",
+          "header_path": [
+            "原厂LT"
+          ],
+          "source_header_cells": [
+            "T3"
+          ],
+          "canonical_field": "manufacturer_lt_days",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 21,
+          "excel_column": "U",
+          "display_name": "良品VMI库存数量",
+          "header_path": [
+            "良品VMI库存数量"
+          ],
+          "source_header_cells": [
+            "U3"
+          ],
+          "canonical_field": "good_vmi_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 22,
+          "excel_column": "V",
+          "display_name": "良品非VMI库存数量",
+          "header_path": [
+            "良品非VMI库存数量"
+          ],
+          "source_header_cells": [
+            "V3"
+          ],
+          "canonical_field": "good_non_vmi_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 23,
+          "excel_column": "W",
+          "display_name": "不良品库存数量",
+          "header_path": [
+            "不良品库存数量"
+          ],
+          "source_header_cells": [
+            "W3"
+          ],
+          "canonical_field": "defective_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 24,
+          "excel_column": "X",
+          "display_name": "不参与MRP库存数量",
+          "header_path": [
+            "不参与MRP库存数量"
+          ],
+          "source_header_cells": [
+            "X3"
+          ],
+          "canonical_field": "non_mrp_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 25,
+          "excel_column": "Y",
+          "display_name": "虚拟不良品库存",
+          "header_path": [
+            "虚拟不良品库存"
+          ],
+          "source_header_cells": [
+            "Y3"
+          ],
+          "canonical_field": "virtual_defective_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 26,
+          "excel_column": "Z",
+          "display_name": "VMI在途订单数量",
+          "header_path": [
+            "VMI在途订单数量"
+          ],
+          "source_header_cells": [
+            "Z3"
+          ],
+          "canonical_field": "vmi_in_transit_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 27,
+          "excel_column": "AA",
+          "display_name": "非VMI在途订单数量",
+          "header_path": [
+            "非VMI在途订单数量"
+          ],
+          "source_header_cells": [
+            "AA3"
+          ],
+          "canonical_field": "non_vmi_in_transit_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 28,
+          "excel_column": "AB",
+          "display_name": "VMI在途送货数量",
+          "header_path": [
+            "VMI在途送货数量"
+          ],
+          "source_header_cells": [
+            "AB3"
+          ],
+          "canonical_field": "vmi_in_transit_delivery_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 29,
+          "excel_column": "AC",
+          "display_name": "非VMI在途送货数量",
+          "header_path": [
+            "非VMI在途送货数量"
+          ],
+          "source_header_cells": [
+            "AC3"
+          ],
+          "canonical_field": "non_vmi_in_transit_delivery_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 30,
+          "excel_column": "AD",
+          "display_name": "采购申请数量",
+          "header_path": [
+            "采购申请数量"
+          ],
+          "source_header_cells": [
+            "AD3"
+          ],
+          "canonical_field": "purchase_requisition_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 31,
+          "excel_column": "AE",
+          "display_name": "量产工单在制数量",
+          "header_path": [
+            "量产工单在制数量"
+          ],
+          "source_header_cells": [
+            "AE3"
+          ],
+          "canonical_field": "mass_production_wip_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 32,
+          "excel_column": "AF",
+          "display_name": "非标工单在制数量",
+          "header_path": [
+            "非标工单在制数量"
+          ],
+          "source_header_cells": [
+            "AF3"
+          ],
+          "canonical_field": "nonstandard_wip_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 33,
+          "excel_column": "AG",
+          "display_name": "虚拟计划单",
+          "header_path": [
+            "虚拟计划单"
+          ],
+          "source_header_cells": [
+            "AG3"
+          ],
+          "canonical_field": "virtual_planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 34,
+          "excel_column": "AH",
+          "display_name": "标准工单需求数量",
+          "header_path": [
+            "标准工单需求数量"
+          ],
+          "source_header_cells": [
+            "AH3"
+          ],
+          "canonical_field": "standard_work_order_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 35,
+          "excel_column": "AI",
+          "display_name": "非标准工单需求数量",
+          "header_path": [
+            "非标准工单需求数量"
+          ],
+          "source_header_cells": [
+            "AI3"
+          ],
+          "canonical_field": "nonstandard_work_order_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 36,
+          "excel_column": "AJ",
+          "display_name": "计划单需求数量",
+          "header_path": [
+            "计划单需求数量"
+          ],
+          "source_header_cells": [
+            "AJ3"
+          ],
+          "canonical_field": "planned_order_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 37,
+          "excel_column": "AK",
+          "display_name": "安全库存需求数量",
+          "header_path": [
+            "安全库存需求数量"
+          ],
+          "source_header_cells": [
+            "AK3"
+          ],
+          "canonical_field": "safety_stock_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 38,
+          "excel_column": "AL",
+          "display_name": "人工需求数量",
+          "header_path": [
+            "人工需求数量"
+          ],
+          "source_header_cells": [
+            "AL3"
+          ],
+          "canonical_field": "manual_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 39,
+          "excel_column": "AM",
+          "display_name": "长期预测需求",
+          "header_path": [
+            "长期预测需求"
+          ],
+          "source_header_cells": [
+            "AM3"
+          ],
+          "canonical_field": "long_term_forecast_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 40,
+          "excel_column": "AN",
+          "display_name": "所有供应",
+          "header_path": [
+            "所有供应"
+          ],
+          "source_header_cells": [
+            "AN3"
+          ],
+          "canonical_field": "all_supply_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 41,
+          "excel_column": "AO",
+          "display_name": "供需盈余量",
+          "header_path": [
+            "供需盈余量"
+          ],
+          "source_header_cells": [
+            "AO3"
+          ],
+          "canonical_field": "supply_demand_surplus_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 42,
+          "excel_column": "AP",
+          "display_name": "供需汇总",
+          "header_path": [
+            "供需汇总"
+          ],
+          "source_header_cells": [
+            "AP3"
+          ],
+          "canonical_field": "supply_demand_summary_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 43,
+          "excel_column": "AQ",
+          "display_name": "不参与MRP供需汇总",
+          "header_path": [
+            "不参与MRP供需汇总"
+          ],
+          "source_header_cells": [
+            "AQ3"
+          ],
+          "canonical_field": "non_mrp_supply_demand_summary_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 44,
+          "excel_column": "AR",
+          "display_name": "计划单",
+          "header_path": [
+            "计划单"
+          ],
+          "source_header_cells": [
+            "AR3"
+          ],
+          "canonical_field": "planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 45,
+          "excel_column": "AS",
+          "display_name": "已到期预测计划单",
+          "header_path": [
+            "已到期预测计划单"
+          ],
+          "source_header_cells": [
+            "AS3"
+          ],
+          "canonical_field": "expired_forecast_planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 46,
+          "excel_column": "AT",
+          "display_name": "未到期预测计划单",
+          "header_path": [
+            "未到期预测计划单"
+          ],
+          "source_header_cells": [
+            "AT3"
+          ],
+          "canonical_field": "unexpired_forecast_planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 47,
+          "excel_column": "AU",
+          "display_name": "多余不参与MRP库存",
+          "header_path": [
+            "多余不参与MRP库存"
+          ],
+          "source_header_cells": [
+            "AU3"
+          ],
+          "canonical_field": "excess_non_mrp_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 48,
+          "excel_column": "AV",
+          "display_name": "多余库存",
+          "header_path": [
+            "多余库存"
+          ],
+          "source_header_cells": [
+            "AV3"
+          ],
+          "canonical_field": "excess_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 49,
+          "excel_column": "AW",
+          "display_name": "多余采购数量",
+          "header_path": [
+            "多余采购数量"
+          ],
+          "source_header_cells": [
+            "AW3"
+          ],
+          "canonical_field": "excess_purchase_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 50,
+          "excel_column": "AX",
+          "display_name": "多余工单数量",
+          "header_path": [
+            "多余工单数量"
+          ],
+          "source_header_cells": [
+            "AX3"
+          ],
+          "canonical_field": "excess_work_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 51,
+          "excel_column": "AY",
+          "display_name": "多余pr数量",
+          "header_path": [
+            "多余pr数量"
+          ],
+          "source_header_cells": [
+            "AY3"
+          ],
+          "canonical_field": "excess_purchase_requisition_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 52,
+          "excel_column": "AZ",
+          "display_name": "最小包装",
+          "header_path": [
+            "最小包装"
+          ],
+          "source_header_cells": [
+            "AZ3"
+          ],
+          "canonical_field": "minimum_pack_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 53,
+          "excel_column": "BA",
+          "display_name": "最小订单量",
+          "header_path": [
+            "最小订单量"
+          ],
+          "source_header_cells": [
+            "BA3"
+          ],
+          "canonical_field": "minimum_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 54,
+          "excel_column": "BB",
+          "display_name": "ncnr",
+          "header_path": [
+            "ncnr"
+          ],
+          "source_header_cells": [
+            "BB3"
+          ],
+          "canonical_field": "non_cancelable_non_returnable_flag",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 55,
+          "excel_column": "BC",
+          "display_name": "组织在用项目",
+          "header_path": [
+            "组织在用项目"
+          ],
+          "source_header_cells": [
+            "BC3"
+          ],
+          "canonical_field": "organization_active_projects",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 56,
+          "excel_column": "BD",
+          "display_name": "集团在用项目",
+          "header_path": [
+            "集团在用项目"
+          ],
+          "source_header_cells": [
+            "BD3"
+          ],
+          "canonical_field": "enterprise_active_projects",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 57,
+          "excel_column": "BE",
+          "display_name": "最多项目",
+          "header_path": [
+            "最多项目"
+          ],
+          "source_header_cells": [
+            "BE3"
+          ],
+          "canonical_field": "top_project",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 58,
+          "excel_column": "BF",
+          "display_name": "所有项目",
+          "header_path": [
+            "所有项目"
+          ],
+          "source_header_cells": [
+            "BF3"
+          ],
+          "canonical_field": "all_projects",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 59,
+          "excel_column": "BG",
+          "display_name": "组织在用客户",
+          "header_path": [
+            "组织在用客户"
+          ],
+          "source_header_cells": [
+            "BG3"
+          ],
+          "canonical_field": "organization_active_customers",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 60,
+          "excel_column": "BH",
+          "display_name": "集团在用客户",
+          "header_path": [
+            "集团在用客户"
+          ],
+          "source_header_cells": [
+            "BH3"
+          ],
+          "canonical_field": "enterprise_active_customers",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 61,
+          "excel_column": "BI",
+          "display_name": "所有客户",
+          "header_path": [
+            "所有客户"
+          ],
+          "source_header_cells": [
+            "BI3"
+          ],
+          "canonical_field": "all_customers",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 62,
+          "excel_column": "BJ",
+          "display_name": "0~90天库存",
+          "header_path": [
+            "0~90天库存"
+          ],
+          "source_header_cells": [
+            "BJ3"
+          ],
+          "canonical_field": "inventory_age_0_90_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 63,
+          "excel_column": "BK",
+          "display_name": "90～180天库存",
+          "header_path": [
+            "90～180天库存"
+          ],
+          "source_header_cells": [
+            "BK3"
+          ],
+          "canonical_field": "inventory_age_90_180_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 64,
+          "excel_column": "BL",
+          "display_name": "180～360天库存",
+          "header_path": [
+            "180～360天库存"
+          ],
+          "source_header_cells": [
+            "BL3"
+          ],
+          "canonical_field": "inventory_age_180_360_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 65,
+          "excel_column": "BM",
+          "display_name": "360～540天库存",
+          "header_path": [
+            "360～540天库存"
+          ],
+          "source_header_cells": [
+            "BM3"
+          ],
+          "canonical_field": "inventory_age_360_540_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 66,
+          "excel_column": "BN",
+          "display_name": "540+天库存",
+          "header_path": [
+            "540+天库存"
+          ],
+          "source_header_cells": [
+            "BN3"
+          ],
+          "canonical_field": "inventory_age_540_plus_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 67,
+          "excel_column": "BO",
+          "display_name": "0~90天库存剩余",
+          "header_path": [
+            "0~90天库存剩余"
+          ],
+          "source_header_cells": [
+            "BO3"
+          ],
+          "canonical_field": "remaining_inventory_age_0_90_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 68,
+          "excel_column": "BP",
+          "display_name": "90～180天库存剩余",
+          "header_path": [
+            "90～180天库存剩余"
+          ],
+          "source_header_cells": [
+            "BP3"
+          ],
+          "canonical_field": "remaining_inventory_age_90_180_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 69,
+          "excel_column": "BQ",
+          "display_name": "180～360天库存剩余",
+          "header_path": [
+            "180～360天库存剩余"
+          ],
+          "source_header_cells": [
+            "BQ3"
+          ],
+          "canonical_field": "remaining_inventory_age_180_360_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 70,
+          "excel_column": "BR",
+          "display_name": "360～540库存剩余",
+          "header_path": [
+            "360～540库存剩余"
+          ],
+          "source_header_cells": [
+            "BR3"
+          ],
+          "canonical_field": "remaining_inventory_age_360_540_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 71,
+          "excel_column": "BS",
+          "display_name": "540+库存剩余",
+          "header_path": [
+            "540+库存剩余"
+          ],
+          "source_header_cells": [
+            "BS3"
+          ],
+          "canonical_field": "remaining_inventory_age_540_plus_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 72,
+          "excel_column": "BT",
+          "display_name": "规格型号",
+          "header_path": [
+            "规格型号"
+          ],
+          "source_header_cells": [
+            "BT3"
+          ],
+          "canonical_field": "specification_model",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 73,
+          "excel_column": "BU",
+          "display_name": "累计下单",
+          "header_path": [
+            "累计下单"
+          ],
+          "source_header_cells": [
+            "BU3"
+          ],
+          "canonical_field": "cumulative_ordered_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 74,
+          "excel_column": "BV",
+          "display_name": "累计交付",
+          "header_path": [
+            "累计交付"
+          ],
+          "source_header_cells": [
+            "BV3"
+          ],
+          "canonical_field": "cumulative_delivered_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 75,
+          "excel_column": "BW",
+          "display_name": "OPEN PO",
+          "header_path": [
+            "OPEN PO"
+          ],
+          "source_header_cells": [
+            "BW3"
+          ],
+          "canonical_field": "open_po_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 76,
+          "excel_column": "BX",
+          "display_name": "LT内需求数量",
+          "header_path": [
+            "LT内需求数量"
+          ],
+          "source_header_cells": [
+            "BX3"
+          ],
+          "canonical_field": "demand_within_lt_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 77,
+          "excel_column": "BY",
+          "display_name": "超物料LT Excess PO",
+          "header_path": [
+            "超物料LT Excess PO"
+          ],
+          "source_header_cells": [
+            "BY3"
+          ],
+          "canonical_field": "excess_po_beyond_material_lt_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 78,
+          "excel_column": "BZ",
+          "display_name": "KD最小包需求",
+          "header_path": [
+            "KD最小包需求"
+          ],
+          "source_header_cells": [
+            "BZ3"
+          ],
+          "canonical_field": "kit_minimum_pack_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "AUXILIARY_ONLY",
+          "business_confirmation_id": "DC-07-KD"
+        },
+        {
+          "column_index": 79,
+          "excel_column": "CA",
+          "display_name": "良品VMI库存数量(试产)",
+          "header_path": [
+            "良品VMI库存数量(试产)"
+          ],
+          "source_header_cells": [
+            "CA3"
+          ],
+          "canonical_field": "trial_good_vmi_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 80,
+          "excel_column": "CB",
+          "display_name": "良品非VMI库存数量(试产)",
+          "header_path": [
+            "良品非VMI库存数量(试产)"
+          ],
+          "source_header_cells": [
+            "CB3"
+          ],
+          "canonical_field": "trial_good_non_vmi_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 81,
+          "excel_column": "CC",
+          "display_name": "不良品库存数量(试产)",
+          "header_path": [
+            "不良品库存数量(试产)"
+          ],
+          "source_header_cells": [
+            "CC3"
+          ],
+          "canonical_field": "trial_defective_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 82,
+          "excel_column": "CD",
+          "display_name": "虚拟不良品库存(试产)",
+          "header_path": [
+            "虚拟不良品库存(试产)"
+          ],
+          "source_header_cells": [
+            "CD3"
+          ],
+          "canonical_field": "trial_virtual_defective_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 83,
+          "excel_column": "CE",
+          "display_name": "VMI在途订单数量(试产)",
+          "header_path": [
+            "VMI在途订单数量(试产)"
+          ],
+          "source_header_cells": [
+            "CE3"
+          ],
+          "canonical_field": "trial_vmi_in_transit_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 84,
+          "excel_column": "CF",
+          "display_name": "非VMI在途订单数量(试产)",
+          "header_path": [
+            "非VMI在途订单数量(试产)"
+          ],
+          "source_header_cells": [
+            "CF3"
+          ],
+          "canonical_field": "trial_non_vmi_in_transit_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 85,
+          "excel_column": "CG",
+          "display_name": "VMI在途送货数量(试产)",
+          "header_path": [
+            "VMI在途送货数量(试产)"
+          ],
+          "source_header_cells": [
+            "CG3"
+          ],
+          "canonical_field": "trial_vmi_in_transit_delivery_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 86,
+          "excel_column": "CH",
+          "display_name": "非VMI在途送货数量(试产)",
+          "header_path": [
+            "非VMI在途送货数量(试产)"
+          ],
+          "source_header_cells": [
+            "CH3"
+          ],
+          "canonical_field": "trial_non_vmi_in_transit_delivery_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 87,
+          "excel_column": "CI",
+          "display_name": "采购申请数量(试产)",
+          "header_path": [
+            "采购申请数量(试产)"
+          ],
+          "source_header_cells": [
+            "CI3"
+          ],
+          "canonical_field": "trial_purchase_requisition_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 88,
+          "excel_column": "CJ",
+          "display_name": "量产工单在制数量(试产)",
+          "header_path": [
+            "量产工单在制数量(试产)"
+          ],
+          "source_header_cells": [
+            "CJ3"
+          ],
+          "canonical_field": "trial_mass_production_wip_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 89,
+          "excel_column": "CK",
+          "display_name": "非标工单在制数量(试产)",
+          "header_path": [
+            "非标工单在制数量(试产)"
+          ],
+          "source_header_cells": [
+            "CK3"
+          ],
+          "canonical_field": "trial_nonstandard_wip_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 90,
+          "excel_column": "CL",
+          "display_name": "标准工单需求数量(试产)",
+          "header_path": [
+            "标准工单需求数量(试产)"
+          ],
+          "source_header_cells": [
+            "CL3"
+          ],
+          "canonical_field": "trial_standard_work_order_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 91,
+          "excel_column": "CM",
+          "display_name": "非标准工单需求数量(试产)",
+          "header_path": [
+            "非标准工单需求数量(试产)"
+          ],
+          "source_header_cells": [
+            "CM3"
+          ],
+          "canonical_field": "trial_nonstandard_work_order_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 92,
+          "excel_column": "CN",
+          "display_name": "计划单需求数量(试产)",
+          "header_path": [
+            "计划单需求数量(试产)"
+          ],
+          "source_header_cells": [
+            "CN3"
+          ],
+          "canonical_field": "trial_planned_order_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 93,
+          "excel_column": "CO",
+          "display_name": "人工需求数量(试产)",
+          "header_path": [
+            "人工需求数量(试产)"
+          ],
+          "source_header_cells": [
+            "CO3"
+          ],
+          "canonical_field": "trial_manual_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 94,
+          "excel_column": "CP",
+          "display_name": "长期预测需求(试产)",
+          "header_path": [
+            "长期预测需求(试产)"
+          ],
+          "source_header_cells": [
+            "CP3"
+          ],
+          "canonical_field": "trial_long_term_forecast_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 95,
+          "excel_column": "CQ",
+          "display_name": "所有供应(试产)",
+          "header_path": [
+            "所有供应(试产)"
+          ],
+          "source_header_cells": [
+            "CQ3"
+          ],
+          "canonical_field": "trial_all_supply_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 96,
+          "excel_column": "CR",
+          "display_name": "供需盈余量(试产)",
+          "header_path": [
+            "供需盈余量(试产)"
+          ],
+          "source_header_cells": [
+            "CR3"
+          ],
+          "canonical_field": "trial_supply_demand_surplus_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 97,
+          "excel_column": "CS",
+          "display_name": "供需汇总(试产)",
+          "header_path": [
+            "供需汇总(试产)"
+          ],
+          "source_header_cells": [
+            "CS3"
+          ],
+          "canonical_field": "trial_supply_demand_summary_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 98,
+          "excel_column": "CT",
+          "display_name": "计划单(试产)",
+          "header_path": [
+            "计划单(试产)"
+          ],
+          "source_header_cells": [
+            "CT3"
+          ],
+          "canonical_field": "trial_planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 99,
+          "excel_column": "CU",
+          "display_name": "已到期预测计划单(试产)",
+          "header_path": [
+            "已到期预测计划单(试产)"
+          ],
+          "source_header_cells": [
+            "CU3"
+          ],
+          "canonical_field": "trial_expired_forecast_planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 100,
+          "excel_column": "CV",
+          "display_name": "未到期预测计划单(试产)",
+          "header_path": [
+            "未到期预测计划单(试产)"
+          ],
+          "source_header_cells": [
+            "CV3"
+          ],
+          "canonical_field": "trial_unexpired_forecast_planned_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 101,
+          "excel_column": "CW",
+          "display_name": "多余库存(试产)",
+          "header_path": [
+            "多余库存(试产)"
+          ],
+          "source_header_cells": [
+            "CW3"
+          ],
+          "canonical_field": "trial_excess_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 102,
+          "excel_column": "CX",
+          "display_name": "多余采购数量(试产)",
+          "header_path": [
+            "多余采购数量(试产)"
+          ],
+          "source_header_cells": [
+            "CX3"
+          ],
+          "canonical_field": "trial_excess_purchase_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 103,
+          "excel_column": "CY",
+          "display_name": "多余工单数量(试产)",
+          "header_path": [
+            "多余工单数量(试产)"
+          ],
+          "source_header_cells": [
+            "CY3"
+          ],
+          "canonical_field": "trial_excess_work_order_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 104,
+          "excel_column": "CZ",
+          "display_name": "多余pr数量(试产)",
+          "header_path": [
+            "多余pr数量(试产)"
+          ],
+          "source_header_cells": [
+            "CZ3"
+          ],
+          "canonical_field": "trial_excess_purchase_requisition_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 105,
+          "excel_column": "DA",
+          "display_name": "实际需求合计",
+          "header_path": [
+            "实际需求合计"
+          ],
+          "source_header_cells": [
+            "DA3"
+          ],
+          "canonical_field": "actual_demand_total_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 106,
+          "excel_column": "DB",
+          "display_name": "实际需求合计(试产)",
+          "header_path": [
+            "实际需求合计(试产)"
+          ],
+          "source_header_cells": [
+            "DB3"
+          ],
+          "canonical_field": "trial_actual_demand_total_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        }
+      ],
+      "source_header_structure_sha256": "6309af7aa3bd5214e89b9b935ac766f816875fed382208d7e970789bdd186f18"
+    },
+    {
+      "report_id": 3,
+      "source_template": "报表3_计划备料半年预测表_最终模板.xlsx",
+      "sheet_name": "计划备料半年预测",
+      "header_rows": [
+        3
+      ],
+      "column_count": 23,
+      "sheet_structure": [
+        {
+          "sheet_name": "计划备料半年预测",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            3
+          ],
+          "merges": [
+            "A1:W1",
+            "A2:W2"
+          ],
+          "header_cells": {
+            "A3": "物料编码",
+            "B3": "BG",
+            "C3": "事业部",
+            "D3": "计划部",
+            "E3": "项目",
+            "F3": "客户项目",
+            "G3": "客户",
+            "H3": "品牌",
+            "I3": "产品类型",
+            "J3": "出货类型",
+            "K3": "业务模式",
+            "L3": "数据来源",
+            "M3": "数据版本",
+            "N3": "版本日期",
+            "O3": "预测月1",
+            "P3": "预测月2",
+            "Q3": "预测月3",
+            "R3": "预测月4",
+            "S3": "预测月5",
+            "T3": "预测月6",
+            "U3": "预测月7",
+            "V3": "汇总",
+            "W3": "累计发货"
+          }
+        },
+        {
+          "sheet_name": "版本日历",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [
+            "A22:D22"
+          ],
+          "header_cells": {
+            "A1": "数据版本",
+            "B1": "版本日期",
+            "C1": "是否有效",
+            "D1": "说明"
+          }
+        },
+        {
+          "sheet_name": "字段说明",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "字段/字段组",
+            "B1": "来源依据",
+            "C1": "作用",
+            "D1": "是否核心",
+            "E1": "备注"
+          }
+        }
+      ],
+      "columns": [
+        {
+          "column_index": 1,
+          "excel_column": "A",
+          "display_name": "物料编码",
+          "header_path": [
+            "物料编码"
+          ],
+          "source_header_cells": [
+            "A3"
+          ],
+          "canonical_field": "material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 2,
+          "excel_column": "B",
+          "display_name": "BG",
+          "header_path": [
+            "BG"
+          ],
+          "source_header_cells": [
+            "B3"
+          ],
+          "canonical_field": "business_group_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 3,
+          "excel_column": "C",
+          "display_name": "事业部",
+          "header_path": [
+            "事业部"
+          ],
+          "source_header_cells": [
+            "C3"
+          ],
+          "canonical_field": "business_unit_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 4,
+          "excel_column": "D",
+          "display_name": "计划部",
+          "header_path": [
+            "计划部"
+          ],
+          "source_header_cells": [
+            "D3"
+          ],
+          "canonical_field": "planning_department_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 5,
+          "excel_column": "E",
+          "display_name": "项目",
+          "header_path": [
+            "项目"
+          ],
+          "source_header_cells": [
+            "E3"
+          ],
+          "canonical_field": "project_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 6,
+          "excel_column": "F",
+          "display_name": "客户项目",
+          "header_path": [
+            "客户项目"
+          ],
+          "source_header_cells": [
+            "F3"
+          ],
+          "canonical_field": "customer_project_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 7,
+          "excel_column": "G",
+          "display_name": "客户",
+          "header_path": [
+            "客户"
+          ],
+          "source_header_cells": [
+            "G3"
+          ],
+          "canonical_field": "customer_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 8,
+          "excel_column": "H",
+          "display_name": "品牌",
+          "header_path": [
+            "品牌"
+          ],
+          "source_header_cells": [
+            "H3"
+          ],
+          "canonical_field": "brand_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 9,
+          "excel_column": "I",
+          "display_name": "产品类型",
+          "header_path": [
+            "产品类型"
+          ],
+          "source_header_cells": [
+            "I3"
+          ],
+          "canonical_field": "product_type",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 10,
+          "excel_column": "J",
+          "display_name": "出货类型",
+          "header_path": [
+            "出货类型"
+          ],
+          "source_header_cells": [
+            "J3"
+          ],
+          "canonical_field": "shipment_type",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 11,
+          "excel_column": "K",
+          "display_name": "业务模式",
+          "header_path": [
+            "业务模式"
+          ],
+          "source_header_cells": [
+            "K3"
+          ],
+          "canonical_field": "business_mode",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 12,
+          "excel_column": "L",
+          "display_name": "数据来源",
+          "header_path": [
+            "数据来源"
+          ],
+          "source_header_cells": [
+            "L3"
+          ],
+          "canonical_field": "forecast_source",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 13,
+          "excel_column": "M",
+          "display_name": "数据版本",
+          "header_path": [
+            "数据版本"
+          ],
+          "source_header_cells": [
+            "M3"
+          ],
+          "canonical_field": "forecast_version_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 14,
+          "excel_column": "N",
+          "display_name": "版本日期",
+          "header_path": [
+            "版本日期"
+          ],
+          "source_header_cells": [
+            "N3"
+          ],
+          "canonical_field": "forecast_version_date",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 15,
+          "excel_column": "O",
+          "display_name": "预测月1",
+          "header_path": [
+            "预测月1"
+          ],
+          "source_header_cells": [
+            "O3"
+          ],
+          "canonical_field": "forecast_qty_m0",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 1,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 0,
+            "header_cell": "O3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 16,
+          "excel_column": "P",
+          "display_name": "预测月2",
+          "header_path": [
+            "预测月2"
+          ],
+          "source_header_cells": [
+            "P3"
+          ],
+          "canonical_field": "forecast_qty_m1",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 2,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 1,
+            "header_cell": "P3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 17,
+          "excel_column": "Q",
+          "display_name": "预测月3",
+          "header_path": [
+            "预测月3"
+          ],
+          "source_header_cells": [
+            "Q3"
+          ],
+          "canonical_field": "forecast_qty_m2",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 3,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 2,
+            "header_cell": "Q3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 18,
+          "excel_column": "R",
+          "display_name": "预测月4",
+          "header_path": [
+            "预测月4"
+          ],
+          "source_header_cells": [
+            "R3"
+          ],
+          "canonical_field": "forecast_qty_m3",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 4,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 3,
+            "header_cell": "R3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 19,
+          "excel_column": "S",
+          "display_name": "预测月5",
+          "header_path": [
+            "预测月5"
+          ],
+          "source_header_cells": [
+            "S3"
+          ],
+          "canonical_field": "forecast_qty_m4",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 5,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 4,
+            "header_cell": "S3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 20,
+          "excel_column": "T",
+          "display_name": "预测月6",
+          "header_path": [
+            "预测月6"
+          ],
+          "source_header_cells": [
+            "T3"
+          ],
+          "canonical_field": "forecast_qty_m5",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 6,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 5,
+            "header_cell": "T3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 21,
+          "excel_column": "U",
+          "display_name": "预测月7",
+          "header_path": [
+            "预测月7"
+          ],
+          "source_header_cells": [
+            "U3"
+          ],
+          "canonical_field": "forecast_qty_m6",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 7,
+            "semantic_anchor": "forecast_version_month",
+            "offset": 6,
+            "header_cell": "U3",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 22,
+          "excel_column": "V",
+          "display_name": "汇总",
+          "header_path": [
+            "汇总"
+          ],
+          "source_header_cells": [
+            "V3"
+          ],
+          "canonical_field": "forecast_total_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 23,
+          "excel_column": "W",
+          "display_name": "累计发货",
+          "header_path": [
+            "累计发货"
+          ],
+          "source_header_cells": [
+            "W3"
+          ],
+          "canonical_field": "cumulative_shipped_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        }
+      ],
+      "source_header_structure_sha256": "aa4c71c711bb1bfc80c027f6393d246c99885f7f6c82b923ceb55d55f7fdd2b3"
+    },
+    {
+      "report_id": 4,
+      "source_template": "报表4_最新版13周预测表_最终模板.xlsx",
+      "sheet_name": "最新版13周预测",
+      "header_rows": [
+        2,
+        3
+      ],
+      "column_count": 44,
+      "sheet_structure": [
+        {
+          "sheet_name": "最新版13周预测",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            2,
+            3
+          ],
+          "merges": [
+            "A1:AR1",
+            "A2:A3",
+            "B2:B3",
+            "C2:C3",
+            "D2:D3",
+            "E2:E3",
+            "F2:F3",
+            "G2:G3",
+            "H2:H3",
+            "I2:I3",
+            "J2:J3",
+            "K2:K3",
+            "L2:L3",
+            "M2:M3",
+            "N2:N3",
+            "O2:O3",
+            "P2:P3",
+            "Q2:Q3",
+            "R2:R3",
+            "S2:S3",
+            "T2:T3",
+            "U2:U3",
+            "V2:V3",
+            "W2:W3",
+            "X2:X3",
+            "Y2:Y3",
+            "Z2:Z3",
+            "AA2:AA3",
+            "AB2:AB3",
+            "AC2:AC3",
+            "AQ2:AQ3",
+            "AR2:AR3"
+          ],
+          "header_cells": {
+            "A2": "物料编码",
+            "B2": "组织编码",
+            "C2": "规格型号",
+            "D2": "组织在用项目",
+            "E2": "集团在用项目",
+            "F2": "最多项目",
+            "G2": "品牌",
+            "H2": "物料说明",
+            "I2": "替代组",
+            "J2": "供应商",
+            "K2": "供应商(英文)",
+            "L2": "在用配置",
+            "M2": "PCBA配置",
+            "N2": "采购员",
+            "O2": "物控员",
+            "P2": "物控员名字",
+            "Q2": "物控员代码",
+            "R2": "MPQ",
+            "S2": "加工中提前期",
+            "T2": "OPEN PR",
+            "U2": "OPEN PO",
+            "V2": "ASN",
+            "W2": "其他供应",
+            "X2": "不良品子库",
+            "Y2": "虚拟不良品库存",
+            "Z2": "良品子库",
+            "AA2": "库存已抵扣需求",
+            "AB2": "历史累计下单总量",
+            "AC2": "数据快照日期",
+            "AD2": "第1周",
+            "AE2": "第2周",
+            "AF2": "第3周",
+            "AG2": "第4周",
+            "AH2": "第5周",
+            "AI2": "第6周",
+            "AJ2": "第7周",
+            "AK2": "第8周",
+            "AL2": "第9周",
+            "AM2": "第10周",
+            "AN2": "第11周",
+            "AO2": "第12周",
+            "AP2": "第13周",
+            "AQ2": "13周需求合计",
+            "AR2": "周均需求"
+          }
+        },
+        {
+          "sheet_name": "字段说明",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "字段组",
+            "B1": "字段",
+            "C1": "作用",
+            "D1": "重要性"
+          }
+        },
+        {
+          "sheet_name": "与报表2关联",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "关联维度",
+            "B1": "报表2：物料供需汇总",
+            "C1": "报表4：最新版13周预测",
+            "D1": "关系",
+            "E1": "说明"
+          }
+        }
+      ],
+      "columns": [
+        {
+          "column_index": 1,
+          "excel_column": "A",
+          "display_name": "物料编码",
+          "header_path": [
+            "物料编码"
+          ],
+          "source_header_cells": [
+            "A2"
+          ],
+          "canonical_field": "material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 2,
+          "excel_column": "B",
+          "display_name": "组织编码",
+          "header_path": [
+            "组织编码"
+          ],
+          "source_header_cells": [
+            "B2"
+          ],
+          "canonical_field": "organization_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 3,
+          "excel_column": "C",
+          "display_name": "规格型号",
+          "header_path": [
+            "规格型号"
+          ],
+          "source_header_cells": [
+            "C2"
+          ],
+          "canonical_field": "specification_model",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 4,
+          "excel_column": "D",
+          "display_name": "组织在用项目",
+          "header_path": [
+            "组织在用项目"
+          ],
+          "source_header_cells": [
+            "D2"
+          ],
+          "canonical_field": "organization_active_projects",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 5,
+          "excel_column": "E",
+          "display_name": "集团在用项目",
+          "header_path": [
+            "集团在用项目"
+          ],
+          "source_header_cells": [
+            "E2"
+          ],
+          "canonical_field": "enterprise_active_projects",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 6,
+          "excel_column": "F",
+          "display_name": "最多项目",
+          "header_path": [
+            "最多项目"
+          ],
+          "source_header_cells": [
+            "F2"
+          ],
+          "canonical_field": "top_project",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 7,
+          "excel_column": "G",
+          "display_name": "品牌",
+          "header_path": [
+            "品牌"
+          ],
+          "source_header_cells": [
+            "G2"
+          ],
+          "canonical_field": "brand_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 8,
+          "excel_column": "H",
+          "display_name": "物料说明",
+          "header_path": [
+            "物料说明"
+          ],
+          "source_header_cells": [
+            "H2"
+          ],
+          "canonical_field": "material_description",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 9,
+          "excel_column": "I",
+          "display_name": "替代组",
+          "header_path": [
+            "替代组"
+          ],
+          "source_header_cells": [
+            "I2"
+          ],
+          "canonical_field": "substitute_group_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 10,
+          "excel_column": "J",
+          "display_name": "供应商",
+          "header_path": [
+            "供应商"
+          ],
+          "source_header_cells": [
+            "J2"
+          ],
+          "canonical_field": "supplier_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 11,
+          "excel_column": "K",
+          "display_name": "供应商(英文)",
+          "header_path": [
+            "供应商(英文)"
+          ],
+          "source_header_cells": [
+            "K2"
+          ],
+          "canonical_field": "supplier_name_en",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 12,
+          "excel_column": "L",
+          "display_name": "在用配置",
+          "header_path": [
+            "在用配置"
+          ],
+          "source_header_cells": [
+            "L2"
+          ],
+          "canonical_field": "active_configurations",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 13,
+          "excel_column": "M",
+          "display_name": "PCBA配置",
+          "header_path": [
+            "PCBA配置"
+          ],
+          "source_header_cells": [
+            "M2"
+          ],
+          "canonical_field": "assembled_board_configurations",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 14,
+          "excel_column": "N",
+          "display_name": "采购员",
+          "header_path": [
+            "采购员"
+          ],
+          "source_header_cells": [
+            "N2"
+          ],
+          "canonical_field": "buyer_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 15,
+          "excel_column": "O",
+          "display_name": "物控员",
+          "header_path": [
+            "物控员"
+          ],
+          "source_header_cells": [
+            "O2"
+          ],
+          "canonical_field": "material_controller_account",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 16,
+          "excel_column": "P",
+          "display_name": "物控员名字",
+          "header_path": [
+            "物控员名字"
+          ],
+          "source_header_cells": [
+            "P2"
+          ],
+          "canonical_field": "material_controller_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 17,
+          "excel_column": "Q",
+          "display_name": "物控员代码",
+          "header_path": [
+            "物控员代码"
+          ],
+          "source_header_cells": [
+            "Q2"
+          ],
+          "canonical_field": "material_controller_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 18,
+          "excel_column": "R",
+          "display_name": "MPQ",
+          "header_path": [
+            "MPQ"
+          ],
+          "source_header_cells": [
+            "R2"
+          ],
+          "canonical_field": "minimum_pack_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 19,
+          "excel_column": "S",
+          "display_name": "加工中提前期",
+          "header_path": [
+            "加工中提前期"
+          ],
+          "source_header_cells": [
+            "S2"
+          ],
+          "canonical_field": "in_process_lt_days",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 20,
+          "excel_column": "T",
+          "display_name": "OPEN PR",
+          "header_path": [
+            "OPEN PR"
+          ],
+          "source_header_cells": [
+            "T2"
+          ],
+          "canonical_field": "open_purchase_requisition_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 21,
+          "excel_column": "U",
+          "display_name": "OPEN PO",
+          "header_path": [
+            "OPEN PO"
+          ],
+          "source_header_cells": [
+            "U2"
+          ],
+          "canonical_field": "open_po_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 22,
+          "excel_column": "V",
+          "display_name": "ASN",
+          "header_path": [
+            "ASN"
+          ],
+          "source_header_cells": [
+            "V2"
+          ],
+          "canonical_field": "advance_shipping_notice_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 23,
+          "excel_column": "W",
+          "display_name": "其他供应",
+          "header_path": [
+            "其他供应"
+          ],
+          "source_header_cells": [
+            "W2"
+          ],
+          "canonical_field": "other_supply_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 24,
+          "excel_column": "X",
+          "display_name": "不良品子库",
+          "header_path": [
+            "不良品子库"
+          ],
+          "source_header_cells": [
+            "X2"
+          ],
+          "canonical_field": "defective_subinventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 25,
+          "excel_column": "Y",
+          "display_name": "虚拟不良品库存",
+          "header_path": [
+            "虚拟不良品库存"
+          ],
+          "source_header_cells": [
+            "Y2"
+          ],
+          "canonical_field": "virtual_defective_inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 26,
+          "excel_column": "Z",
+          "display_name": "良品子库",
+          "header_path": [
+            "良品子库"
+          ],
+          "source_header_cells": [
+            "Z2"
+          ],
+          "canonical_field": "good_subinventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 27,
+          "excel_column": "AA",
+          "display_name": "库存已抵扣需求",
+          "header_path": [
+            "库存已抵扣需求"
+          ],
+          "source_header_cells": [
+            "AA2"
+          ],
+          "canonical_field": "inventory_net_of_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 28,
+          "excel_column": "AB",
+          "display_name": "历史累计下单总量",
+          "header_path": [
+            "历史累计下单总量"
+          ],
+          "source_header_cells": [
+            "AB2"
+          ],
+          "canonical_field": "historical_cumulative_ordered_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 29,
+          "excel_column": "AC",
+          "display_name": "数据快照日期",
+          "header_path": [
+            "数据快照日期"
+          ],
+          "source_header_cells": [
+            "AC2"
+          ],
+          "canonical_field": "snapshot_date",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 30,
+          "excel_column": "AD",
+          "display_name": "第1周",
+          "header_path": [
+            "第1周"
+          ],
+          "source_header_cells": [
+            "AD2"
+          ],
+          "canonical_field": "week_01_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 1,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 0,
+            "header_cell": "AD3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 31,
+          "excel_column": "AE",
+          "display_name": "第2周",
+          "header_path": [
+            "第2周"
+          ],
+          "source_header_cells": [
+            "AE2"
+          ],
+          "canonical_field": "week_02_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 2,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 1,
+            "header_cell": "AE3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 32,
+          "excel_column": "AF",
+          "display_name": "第3周",
+          "header_path": [
+            "第3周"
+          ],
+          "source_header_cells": [
+            "AF2"
+          ],
+          "canonical_field": "week_03_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 3,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 2,
+            "header_cell": "AF3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 33,
+          "excel_column": "AG",
+          "display_name": "第4周",
+          "header_path": [
+            "第4周"
+          ],
+          "source_header_cells": [
+            "AG2"
+          ],
+          "canonical_field": "week_04_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 4,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 3,
+            "header_cell": "AG3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 34,
+          "excel_column": "AH",
+          "display_name": "第5周",
+          "header_path": [
+            "第5周"
+          ],
+          "source_header_cells": [
+            "AH2"
+          ],
+          "canonical_field": "week_05_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 5,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 4,
+            "header_cell": "AH3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 35,
+          "excel_column": "AI",
+          "display_name": "第6周",
+          "header_path": [
+            "第6周"
+          ],
+          "source_header_cells": [
+            "AI2"
+          ],
+          "canonical_field": "week_06_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 6,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 5,
+            "header_cell": "AI3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 36,
+          "excel_column": "AJ",
+          "display_name": "第7周",
+          "header_path": [
+            "第7周"
+          ],
+          "source_header_cells": [
+            "AJ2"
+          ],
+          "canonical_field": "week_07_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 7,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 6,
+            "header_cell": "AJ3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 37,
+          "excel_column": "AK",
+          "display_name": "第8周",
+          "header_path": [
+            "第8周"
+          ],
+          "source_header_cells": [
+            "AK2"
+          ],
+          "canonical_field": "week_08_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 8,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 7,
+            "header_cell": "AK3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 38,
+          "excel_column": "AL",
+          "display_name": "第9周",
+          "header_path": [
+            "第9周"
+          ],
+          "source_header_cells": [
+            "AL2"
+          ],
+          "canonical_field": "week_09_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 9,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 8,
+            "header_cell": "AL3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 39,
+          "excel_column": "AM",
+          "display_name": "第10周",
+          "header_path": [
+            "第10周"
+          ],
+          "source_header_cells": [
+            "AM2"
+          ],
+          "canonical_field": "week_10_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 10,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 9,
+            "header_cell": "AM3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 40,
+          "excel_column": "AN",
+          "display_name": "第11周",
+          "header_path": [
+            "第11周"
+          ],
+          "source_header_cells": [
+            "AN2"
+          ],
+          "canonical_field": "week_11_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 11,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 10,
+            "header_cell": "AN3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 41,
+          "excel_column": "AO",
+          "display_name": "第12周",
+          "header_path": [
+            "第12周"
+          ],
+          "source_header_cells": [
+            "AO2"
+          ],
+          "canonical_field": "week_12_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 12,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 11,
+            "header_cell": "AO3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 42,
+          "excel_column": "AP",
+          "display_name": "第13周",
+          "header_path": [
+            "第13周"
+          ],
+          "source_header_cells": [
+            "AP2"
+          ],
+          "canonical_field": "week_13_forecast_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "week",
+            "slot_index": 13,
+            "semantic_anchor": "monday_on_or_after_dataset_snapshot",
+            "offset": 12,
+            "header_cell": "AP3",
+            "date_format": "yyyy-mm-dd"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 43,
+          "excel_column": "AQ",
+          "display_name": "13周需求合计",
+          "header_path": [
+            "13周需求合计"
+          ],
+          "source_header_cells": [
+            "AQ2"
+          ],
+          "canonical_field": "thirteen_week_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 44,
+          "excel_column": "AR",
+          "display_name": "周均需求",
+          "header_path": [
+            "周均需求"
+          ],
+          "source_header_cells": [
+            "AR2"
+          ],
+          "canonical_field": "weekly_average_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        }
+      ],
+      "source_header_structure_sha256": "77f4ec1bd977bc289132e9c6dc3e7d8fb1ebf3cdf8e8472ddb1228bf12194ad9"
+    },
+    {
+      "report_id": 5,
+      "source_template": "报表5_产品配置查询表_最终模板.xlsx",
+      "sheet_name": "产品配置查询",
+      "header_rows": [
+        3
+      ],
+      "column_count": 22,
+      "sheet_structure": [
+        {
+          "sheet_name": "产品配置查询",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            3
+          ],
+          "merges": [
+            "A1:V1",
+            "A2:V2"
+          ],
+          "header_cells": {
+            "A3": "行号",
+            "B3": "产品配置类型",
+            "C3": "产品配置名",
+            "D3": "产品名称",
+            "E3": "版本",
+            "F3": "物料编码",
+            "G3": "客户料号",
+            "H3": "所属事业部",
+            "I3": "计划部门",
+            "J3": "项目",
+            "K3": "客户项目名",
+            "L3": "研发代表",
+            "M3": "修改者",
+            "N3": "修改时间",
+            "O3": "状态",
+            "P3": "产品一级",
+            "Q3": "产品二级",
+            "R3": "产品三级",
+            "S3": "产品生命周期阶段",
+            "T3": "客户ID",
+            "U3": "客户代号",
+            "V3": "PDT团队名"
+          }
+        },
+        {
+          "sheet_name": "字段说明",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "字段",
+            "B1": "来源依据",
+            "C1": "业务含义/作用",
+            "D1": "重要性",
+            "E1": "备注"
+          }
+        },
+        {
+          "sheet_name": "使用逻辑",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "步骤",
+            "B1": "动作",
+            "C1": "使用字段/来源",
+            "D1": "输出/作用"
+          }
+        }
+      ],
+      "columns": [
+        {
+          "column_index": 1,
+          "excel_column": "A",
+          "display_name": "行号",
+          "header_path": [
+            "行号"
+          ],
+          "source_header_cells": [
+            "A3"
+          ],
+          "canonical_field": "row_number",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 2,
+          "excel_column": "B",
+          "display_name": "产品配置类型",
+          "header_path": [
+            "产品配置类型"
+          ],
+          "source_header_cells": [
+            "B3"
+          ],
+          "canonical_field": "product_config_type",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 3,
+          "excel_column": "C",
+          "display_name": "产品配置名",
+          "header_path": [
+            "产品配置名"
+          ],
+          "source_header_cells": [
+            "C3"
+          ],
+          "canonical_field": "product_config_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 4,
+          "excel_column": "D",
+          "display_name": "产品名称",
+          "header_path": [
+            "产品名称"
+          ],
+          "source_header_cells": [
+            "D3"
+          ],
+          "canonical_field": "product_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 5,
+          "excel_column": "E",
+          "display_name": "版本",
+          "header_path": [
+            "版本"
+          ],
+          "source_header_cells": [
+            "E3"
+          ],
+          "canonical_field": "product_config_version",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 6,
+          "excel_column": "F",
+          "display_name": "物料编码",
+          "header_path": [
+            "物料编码"
+          ],
+          "source_header_cells": [
+            "F3"
+          ],
+          "canonical_field": "material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 7,
+          "excel_column": "G",
+          "display_name": "客户料号",
+          "header_path": [
+            "客户料号"
+          ],
+          "source_header_cells": [
+            "G3"
+          ],
+          "canonical_field": "customer_material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 8,
+          "excel_column": "H",
+          "display_name": "所属事业部",
+          "header_path": [
+            "所属事业部"
+          ],
+          "source_header_cells": [
+            "H3"
+          ],
+          "canonical_field": "business_unit_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 9,
+          "excel_column": "I",
+          "display_name": "计划部门",
+          "header_path": [
+            "计划部门"
+          ],
+          "source_header_cells": [
+            "I3"
+          ],
+          "canonical_field": "planning_department_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 10,
+          "excel_column": "J",
+          "display_name": "项目",
+          "header_path": [
+            "项目"
+          ],
+          "source_header_cells": [
+            "J3"
+          ],
+          "canonical_field": "project_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 11,
+          "excel_column": "K",
+          "display_name": "客户项目名",
+          "header_path": [
+            "客户项目名"
+          ],
+          "source_header_cells": [
+            "K3"
+          ],
+          "canonical_field": "customer_project_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 12,
+          "excel_column": "L",
+          "display_name": "研发代表",
+          "header_path": [
+            "研发代表"
+          ],
+          "source_header_cells": [
+            "L3"
+          ],
+          "canonical_field": "research_representative_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 13,
+          "excel_column": "M",
+          "display_name": "修改者",
+          "header_path": [
+            "修改者"
+          ],
+          "source_header_cells": [
+            "M3"
+          ],
+          "canonical_field": "modified_by_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 14,
+          "excel_column": "N",
+          "display_name": "修改时间",
+          "header_path": [
+            "修改时间"
+          ],
+          "source_header_cells": [
+            "N3"
+          ],
+          "canonical_field": "modified_at",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 15,
+          "excel_column": "O",
+          "display_name": "状态",
+          "header_path": [
+            "状态"
+          ],
+          "source_header_cells": [
+            "O3"
+          ],
+          "canonical_field": "product_config_status",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 16,
+          "excel_column": "P",
+          "display_name": "产品一级",
+          "header_path": [
+            "产品一级"
+          ],
+          "source_header_cells": [
+            "P3"
+          ],
+          "canonical_field": "product_category_level_1",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 17,
+          "excel_column": "Q",
+          "display_name": "产品二级",
+          "header_path": [
+            "产品二级"
+          ],
+          "source_header_cells": [
+            "Q3"
+          ],
+          "canonical_field": "product_category_level_2",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 18,
+          "excel_column": "R",
+          "display_name": "产品三级",
+          "header_path": [
+            "产品三级"
+          ],
+          "source_header_cells": [
+            "R3"
+          ],
+          "canonical_field": "product_category_level_3",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 19,
+          "excel_column": "S",
+          "display_name": "产品生命周期阶段",
+          "header_path": [
+            "产品生命周期阶段"
+          ],
+          "source_header_cells": [
+            "S3"
+          ],
+          "canonical_field": "lifecycle_stage",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 20,
+          "excel_column": "T",
+          "display_name": "客户ID",
+          "header_path": [
+            "客户ID"
+          ],
+          "source_header_cells": [
+            "T3"
+          ],
+          "canonical_field": "customer_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 21,
+          "excel_column": "U",
+          "display_name": "客户代号",
+          "header_path": [
+            "客户代号"
+          ],
+          "source_header_cells": [
+            "U3"
+          ],
+          "canonical_field": "customer_short_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 22,
+          "excel_column": "V",
+          "display_name": "PDT团队名",
+          "header_path": [
+            "PDT团队名"
+          ],
+          "source_header_cells": [
+            "V3"
+          ],
+          "canonical_field": "product_team_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        }
+      ],
+      "source_header_structure_sha256": "0983a73589589f708277edab39a380bdb4311491b940a37c0e61f6a297a98244"
+    },
+    {
+      "report_id": 6,
+      "source_template": "报表6_囤料明细_最终模板.xlsx",
+      "sheet_name": "囤料明细",
+      "header_rows": [
+        3,
+        4,
+        5
+      ],
+      "column_count": 60,
+      "sheet_structure": [
+        {
+          "sheet_name": "囤料明细",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            3,
+            4,
+            5
+          ],
+          "merges": [
+            "A1:BH1",
+            "A2:BH2",
+            "A3:A5",
+            "B3:B5",
+            "C3:C5",
+            "D3:D5",
+            "E3:E5",
+            "F3:F5",
+            "G3:G5",
+            "H3:H5",
+            "I3:I5",
+            "J3:J5",
+            "K3:K5",
+            "L3:L5",
+            "M3:M5",
+            "N3:N5",
+            "O3:O5",
+            "P3:P5",
+            "Q3:Q5",
+            "R3:R5",
+            "S3:S5",
+            "T3:T5",
+            "U3:Z3",
+            "U4:U5",
+            "V4:V5",
+            "W4:W5",
+            "X4:X5",
+            "Y4:Y5",
+            "Z4:Z5",
+            "AA3:AL3",
+            "AA4:AB4",
+            "AC4:AD4",
+            "AE4:AF4",
+            "AG4:AH4",
+            "AI4:AJ4",
+            "AK4:AL4",
+            "AM3:AM5",
+            "AN3:BC3",
+            "AN4:AO4",
+            "AP4:AQ4",
+            "AR4:AS4",
+            "AT4:AU4",
+            "AV4:AW4",
+            "AX4:AY4",
+            "AZ4:BA4",
+            "BB4:BC4",
+            "BD3:BD5",
+            "BE3:BE5",
+            "BF3:BF5",
+            "BG3:BG5",
+            "BH3:BH5"
+          ],
+          "header_cells": {
+            "A3": "数据版本",
+            "B3": "版本日期",
+            "C3": "囤料性质",
+            "D3": "采购类别",
+            "E3": "分析类别",
+            "F3": "料号",
+            "G3": "型号",
+            "H3": "物料描述",
+            "I3": "库存单价",
+            "J3": "协议单价",
+            "K3": "计划囤料数量",
+            "L3": "计划囤料金额(万元)",
+            "M3": "库存数量",
+            "N3": "七天需求数量",
+            "O3": "总囤料数量（扣除7天需求）",
+            "P3": "总囤料金额(万元)",
+            "Q3": "囤料数量GAP分析(计划-实际)",
+            "R3": "囤货完成率",
+            "S3": "超目标囤料金额(万元)",
+            "T3": "囤料不足预警",
+            "U3": "需求预测数量-未来半年",
+            "AA3": "结余预测（库存-消耗）(万元)",
+            "AM3": "囤料消耗预警",
+            "AN3": "库龄分布(万元)",
+            "BD3": "囤料呆滞预警",
+            "BE3": "责任人",
+            "BF3": "责任人部门",
+            "BG3": "责任经理",
+            "BH3": "责任总监",
+            "U4": "未来第1月",
+            "V4": "未来第2月",
+            "W4": "未来第3月",
+            "X4": "未来第4月",
+            "Y4": "未来第5月",
+            "Z4": "未来第6月",
+            "AA4": "超30天未消耗",
+            "AC4": "超60天未消耗",
+            "AE4": "超90天未消耗",
+            "AG4": "超120天未消耗",
+            "AI4": "超150天未消耗",
+            "AK4": "超180天未消耗",
+            "AN4": "超30天",
+            "AP4": "超60天",
+            "AR4": "超90天",
+            "AT4": "超120天",
+            "AV4": "超150天",
+            "AX4": "超180天",
+            "AZ4": "超270天",
+            "BB4": "超365天",
+            "AA5": "数量",
+            "AB5": "金额",
+            "AC5": "数量",
+            "AD5": "金额",
+            "AE5": "数量",
+            "AF5": "金额",
+            "AG5": "数量",
+            "AH5": "金额",
+            "AI5": "数量",
+            "AJ5": "金额",
+            "AK5": "数量",
+            "AL5": "金额",
+            "AN5": "数量",
+            "AO5": "金额",
+            "AP5": "数量",
+            "AQ5": "金额",
+            "AR5": "数量",
+            "AS5": "金额",
+            "AT5": "数量",
+            "AU5": "金额",
+            "AV5": "数量",
+            "AW5": "金额",
+            "AX5": "数量",
+            "AY5": "金额",
+            "AZ5": "数量",
+            "BA5": "金额",
+            "BB5": "数量",
+            "BC5": "金额"
+          }
+        },
+        {
+          "sheet_name": "字段说明",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "字段/字段组",
+            "B1": "来源",
+            "C1": "业务含义",
+            "D1": "重要性",
+            "E1": "备注"
+          }
+        },
+        {
+          "sheet_name": "使用逻辑",
+          "state": "visible",
+          "dimension": null,
+          "pane": null,
+          "autofilter": null,
+          "header_rows": [
+            1
+          ],
+          "merges": [],
+          "header_cells": {
+            "A1": "步骤",
+            "B1": "动作",
+            "C1": "使用数据",
+            "D1": "作用/输出"
+          }
+        }
+      ],
+      "columns": [
+        {
+          "column_index": 1,
+          "excel_column": "A",
+          "display_name": "数据版本",
+          "header_path": [
+            "数据版本"
+          ],
+          "source_header_cells": [
+            "A3"
+          ],
+          "canonical_field": "stockpile_version_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 2,
+          "excel_column": "B",
+          "display_name": "版本日期",
+          "header_path": [
+            "版本日期"
+          ],
+          "source_header_cells": [
+            "B3"
+          ],
+          "canonical_field": "stockpile_version_date",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 3,
+          "excel_column": "C",
+          "display_name": "囤料性质",
+          "header_path": [
+            "囤料性质"
+          ],
+          "source_header_cells": [
+            "C3"
+          ],
+          "canonical_field": "stockpile_nature",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 4,
+          "excel_column": "D",
+          "display_name": "采购类别",
+          "header_path": [
+            "采购类别"
+          ],
+          "source_header_cells": [
+            "D3"
+          ],
+          "canonical_field": "purchasing_category",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 5,
+          "excel_column": "E",
+          "display_name": "分析类别",
+          "header_path": [
+            "分析类别"
+          ],
+          "source_header_cells": [
+            "E3"
+          ],
+          "canonical_field": "analysis_category",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 6,
+          "excel_column": "F",
+          "display_name": "料号",
+          "header_path": [
+            "料号"
+          ],
+          "source_header_cells": [
+            "F3"
+          ],
+          "canonical_field": "material_code",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 7,
+          "excel_column": "G",
+          "display_name": "型号",
+          "header_path": [
+            "型号"
+          ],
+          "source_header_cells": [
+            "G3"
+          ],
+          "canonical_field": "model",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 8,
+          "excel_column": "H",
+          "display_name": "物料描述",
+          "header_path": [
+            "物料描述"
+          ],
+          "source_header_cells": [
+            "H3"
+          ],
+          "canonical_field": "material_description",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 9,
+          "excel_column": "I",
+          "display_name": "库存单价",
+          "header_path": [
+            "库存单价"
+          ],
+          "source_header_cells": [
+            "I3"
+          ],
+          "canonical_field": "inventory_unit_price",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 10,
+          "excel_column": "J",
+          "display_name": "协议单价",
+          "header_path": [
+            "协议单价"
+          ],
+          "source_header_cells": [
+            "J3"
+          ],
+          "canonical_field": "agreement_unit_price",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 11,
+          "excel_column": "K",
+          "display_name": "计划囤料数量",
+          "header_path": [
+            "计划囤料数量"
+          ],
+          "source_header_cells": [
+            "K3"
+          ],
+          "canonical_field": "planned_stockpile_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 12,
+          "excel_column": "L",
+          "display_name": "计划囤料金额(万元)",
+          "header_path": [
+            "计划囤料金额(万元)"
+          ],
+          "source_header_cells": [
+            "L3"
+          ],
+          "canonical_field": "planned_stockpile_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 13,
+          "excel_column": "M",
+          "display_name": "库存数量",
+          "header_path": [
+            "库存数量"
+          ],
+          "source_header_cells": [
+            "M3"
+          ],
+          "canonical_field": "inventory_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 14,
+          "excel_column": "N",
+          "display_name": "七天需求数量",
+          "header_path": [
+            "七天需求数量"
+          ],
+          "source_header_cells": [
+            "N3"
+          ],
+          "canonical_field": "seven_day_demand_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 15,
+          "excel_column": "O",
+          "display_name": "总囤料数量（扣除7天需求）",
+          "header_path": [
+            "总囤料数量（扣除7天需求）"
+          ],
+          "source_header_cells": [
+            "O3"
+          ],
+          "canonical_field": "net_stockpile_qty_after_7d_demand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 16,
+          "excel_column": "P",
+          "display_name": "总囤料金额(万元)",
+          "header_path": [
+            "总囤料金额(万元)"
+          ],
+          "source_header_cells": [
+            "P3"
+          ],
+          "canonical_field": "total_stockpile_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 17,
+          "excel_column": "Q",
+          "display_name": "囤料数量GAP分析(计划-实际)",
+          "header_path": [
+            "囤料数量GAP分析(计划-实际)"
+          ],
+          "source_header_cells": [
+            "Q3"
+          ],
+          "canonical_field": "stockpile_qty_gap",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 18,
+          "excel_column": "R",
+          "display_name": "囤货完成率",
+          "header_path": [
+            "囤货完成率"
+          ],
+          "source_header_cells": [
+            "R3"
+          ],
+          "canonical_field": "stockpile_completion_ratio",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 19,
+          "excel_column": "S",
+          "display_name": "超目标囤料金额(万元)",
+          "header_path": [
+            "超目标囤料金额(万元)"
+          ],
+          "source_header_cells": [
+            "S3"
+          ],
+          "canonical_field": "excess_target_stockpile_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 20,
+          "excel_column": "T",
+          "display_name": "囤料不足预警",
+          "header_path": [
+            "囤料不足预警"
+          ],
+          "source_header_cells": [
+            "T3"
+          ],
+          "canonical_field": "stockpile_shortage_warning",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 21,
+          "excel_column": "U",
+          "display_name": "未来第1月",
+          "header_path": [
+            "需求预测数量-未来半年",
+            "未来第1月"
+          ],
+          "source_header_cells": [
+            "U3",
+            "U4"
+          ],
+          "canonical_field": "future_month_01_demand_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 1,
+            "semantic_anchor": "stockpile_version_month",
+            "offset": 1,
+            "header_cell": "U4",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 22,
+          "excel_column": "V",
+          "display_name": "未来第2月",
+          "header_path": [
+            "需求预测数量-未来半年",
+            "未来第2月"
+          ],
+          "source_header_cells": [
+            "U3",
+            "V4"
+          ],
+          "canonical_field": "future_month_02_demand_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 2,
+            "semantic_anchor": "stockpile_version_month",
+            "offset": 2,
+            "header_cell": "V4",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 23,
+          "excel_column": "W",
+          "display_name": "未来第3月",
+          "header_path": [
+            "需求预测数量-未来半年",
+            "未来第3月"
+          ],
+          "source_header_cells": [
+            "U3",
+            "W4"
+          ],
+          "canonical_field": "future_month_03_demand_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 3,
+            "semantic_anchor": "stockpile_version_month",
+            "offset": 3,
+            "header_cell": "W4",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 24,
+          "excel_column": "X",
+          "display_name": "未来第4月",
+          "header_path": [
+            "需求预测数量-未来半年",
+            "未来第4月"
+          ],
+          "source_header_cells": [
+            "U3",
+            "X4"
+          ],
+          "canonical_field": "future_month_04_demand_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 4,
+            "semantic_anchor": "stockpile_version_month",
+            "offset": 4,
+            "header_cell": "X4",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 25,
+          "excel_column": "Y",
+          "display_name": "未来第5月",
+          "header_path": [
+            "需求预测数量-未来半年",
+            "未来第5月"
+          ],
+          "source_header_cells": [
+            "U3",
+            "Y4"
+          ],
+          "canonical_field": "future_month_05_demand_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 5,
+            "semantic_anchor": "stockpile_version_month",
+            "offset": 5,
+            "header_cell": "Y4",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 26,
+          "excel_column": "Z",
+          "display_name": "未来第6月",
+          "header_path": [
+            "需求预测数量-未来半年",
+            "未来第6月"
+          ],
+          "source_header_cells": [
+            "U3",
+            "Z4"
+          ],
+          "canonical_field": "future_month_06_demand_qty",
+          "temporal_type": "dynamic",
+          "slot": {
+            "kind": "month",
+            "slot_index": 6,
+            "semantic_anchor": "stockpile_version_month",
+            "offset": 6,
+            "header_cell": "Z4",
+            "date_format": "YYYYMM"
+          },
+          "classification": "core",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 27,
+          "excel_column": "AA",
+          "display_name": "数量",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超30天未消耗",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AA4",
+            "AA5"
+          ],
+          "canonical_field": "remaining_after_30d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 28,
+          "excel_column": "AB",
+          "display_name": "金额",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超30天未消耗",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AA4",
+            "AB5"
+          ],
+          "canonical_field": "remaining_after_30d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 29,
+          "excel_column": "AC",
+          "display_name": "数量",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超60天未消耗",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AC4",
+            "AC5"
+          ],
+          "canonical_field": "remaining_after_60d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 30,
+          "excel_column": "AD",
+          "display_name": "金额",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超60天未消耗",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AC4",
+            "AD5"
+          ],
+          "canonical_field": "remaining_after_60d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 31,
+          "excel_column": "AE",
+          "display_name": "数量",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超90天未消耗",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AE4",
+            "AE5"
+          ],
+          "canonical_field": "remaining_after_90d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 32,
+          "excel_column": "AF",
+          "display_name": "金额",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超90天未消耗",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AE4",
+            "AF5"
+          ],
+          "canonical_field": "remaining_after_90d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 33,
+          "excel_column": "AG",
+          "display_name": "数量",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超120天未消耗",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AG4",
+            "AG5"
+          ],
+          "canonical_field": "remaining_after_120d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 34,
+          "excel_column": "AH",
+          "display_name": "金额",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超120天未消耗",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AG4",
+            "AH5"
+          ],
+          "canonical_field": "remaining_after_120d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 35,
+          "excel_column": "AI",
+          "display_name": "数量",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超150天未消耗",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AI4",
+            "AI5"
+          ],
+          "canonical_field": "remaining_after_150d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 36,
+          "excel_column": "AJ",
+          "display_name": "金额",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超150天未消耗",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AI4",
+            "AJ5"
+          ],
+          "canonical_field": "remaining_after_150d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 37,
+          "excel_column": "AK",
+          "display_name": "数量",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超180天未消耗",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AK4",
+            "AK5"
+          ],
+          "canonical_field": "remaining_after_180d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 38,
+          "excel_column": "AL",
+          "display_name": "金额",
+          "header_path": [
+            "结余预测（库存-消耗）(万元)",
+            "超180天未消耗",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AA3",
+            "AK4",
+            "AL5"
+          ],
+          "canonical_field": "remaining_after_180d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 39,
+          "excel_column": "AM",
+          "display_name": "囤料消耗预警",
+          "header_path": [
+            "囤料消耗预警"
+          ],
+          "source_header_cells": [
+            "AM3"
+          ],
+          "canonical_field": "stockpile_consumption_warning",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 40,
+          "excel_column": "AN",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超30天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AN4",
+            "AN5"
+          ],
+          "canonical_field": "inventory_age_over_30d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 41,
+          "excel_column": "AO",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超30天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AN4",
+            "AO5"
+          ],
+          "canonical_field": "inventory_age_over_30d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 42,
+          "excel_column": "AP",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超60天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AP4",
+            "AP5"
+          ],
+          "canonical_field": "inventory_age_over_60d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 43,
+          "excel_column": "AQ",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超60天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AP4",
+            "AQ5"
+          ],
+          "canonical_field": "inventory_age_over_60d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 44,
+          "excel_column": "AR",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超90天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AR4",
+            "AR5"
+          ],
+          "canonical_field": "inventory_age_over_90d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 45,
+          "excel_column": "AS",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超90天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AR4",
+            "AS5"
+          ],
+          "canonical_field": "inventory_age_over_90d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 46,
+          "excel_column": "AT",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超120天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AT4",
+            "AT5"
+          ],
+          "canonical_field": "inventory_age_over_120d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 47,
+          "excel_column": "AU",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超120天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AT4",
+            "AU5"
+          ],
+          "canonical_field": "inventory_age_over_120d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 48,
+          "excel_column": "AV",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超150天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AV4",
+            "AV5"
+          ],
+          "canonical_field": "inventory_age_over_150d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 49,
+          "excel_column": "AW",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超150天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AV4",
+            "AW5"
+          ],
+          "canonical_field": "inventory_age_over_150d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 50,
+          "excel_column": "AX",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超180天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AX4",
+            "AX5"
+          ],
+          "canonical_field": "inventory_age_over_180d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 51,
+          "excel_column": "AY",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超180天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AX4",
+            "AY5"
+          ],
+          "canonical_field": "inventory_age_over_180d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 52,
+          "excel_column": "AZ",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超270天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AZ4",
+            "AZ5"
+          ],
+          "canonical_field": "inventory_age_over_270d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 53,
+          "excel_column": "BA",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超270天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "AZ4",
+            "BA5"
+          ],
+          "canonical_field": "inventory_age_over_270d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 54,
+          "excel_column": "BB",
+          "display_name": "数量",
+          "header_path": [
+            "库龄分布(万元)",
+            "超365天",
+            "数量"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "BB4",
+            "BB5"
+          ],
+          "canonical_field": "inventory_age_over_365d_qty",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 55,
+          "excel_column": "BC",
+          "display_name": "金额",
+          "header_path": [
+            "库龄分布(万元)",
+            "超365天",
+            "金额"
+          ],
+          "source_header_cells": [
+            "AN3",
+            "BB4",
+            "BC5"
+          ],
+          "canonical_field": "inventory_age_over_365d_amount_ten_thousand",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 56,
+          "excel_column": "BD",
+          "display_name": "囤料呆滞预警",
+          "header_path": [
+            "囤料呆滞预警"
+          ],
+          "source_header_cells": [
+            "BD3"
+          ],
+          "canonical_field": "stockpile_obsolescence_warning",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "DEFERRED_BUSINESS_FORMULA"
+        },
+        {
+          "column_index": 57,
+          "excel_column": "BE",
+          "display_name": "责任人",
+          "header_path": [
+            "责任人"
+          ],
+          "source_header_cells": [
+            "BE3"
+          ],
+          "canonical_field": "owner_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 58,
+          "excel_column": "BF",
+          "display_name": "责任人部门",
+          "header_path": [
+            "责任人部门"
+          ],
+          "source_header_cells": [
+            "BF3"
+          ],
+          "canonical_field": "owner_department_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 59,
+          "excel_column": "BG",
+          "display_name": "责任经理",
+          "header_path": [
+            "责任经理"
+          ],
+          "source_header_cells": [
+            "BG3"
+          ],
+          "canonical_field": "owner_manager_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        },
+        {
+          "column_index": 60,
+          "excel_column": "BH",
+          "display_name": "责任总监",
+          "header_path": [
+            "责任总监"
+          ],
+          "source_header_cells": [
+            "BH3"
+          ],
+          "canonical_field": "owner_director_name",
+          "temporal_type": "static",
+          "slot": null,
+          "classification": "auxiliary",
+          "business_status": "CONFIRMED"
+        }
+      ],
+      "source_header_structure_sha256": "a466ca0b52d4be200054274b1c29473029473aef2030f13e0e92e0c973ab6e86"
+    }
+  ],
+  "status_definitions": {
+    "CONFIRMED": "Confirmed field meaning; not a promise that every optional source value exists.",
+    "DEFERRED_BUSINESS_FORMULA": "Unconfirmed auxiliary derivation must remain nullable until explicitly resolved.",
+    "AUXILIARY_ONLY": "Display label only; never used in core calculations. Full terminology still needs business confirmation."
+  }
+}

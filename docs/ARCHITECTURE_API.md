@@ -414,3 +414,11 @@ OperationalEvidenceGenerationService在单事务内锁定GENERATING dataset，�
 scripts/phase5c_maintenance.py仅用于本次显式授权的草稿纠偏：备份至Git忽略目录并验证checksum；重建前要求唯一demo且GENERATING、010版本、全部表指纹与备份一致。仅DROP指定九表（不用CASCADE），DDL和重新生成处于同一外层事务；任何异常回滚旧schema与数据；提交前检查所有上游表含运行元数据的指纹未变。它不是公开API、常规reset接口或自动repair路径。
 
 CLI使用generator角色、只输出聚合摘要，异常只报告异常类、不输出SQL/参数/凭据/逐条Truth。无Report路由/导出或诊断、决策、Agent、LLM。
+
+## 18. Phase 6A Reporting domain boundary
+
+`app.reporting`提供三项内部能力：精确表头manifest、只读SQL View定义、`ReportSemanticService`/`ReportReconciliationValidator`。数据流固定为 `platform normalized facts → reporting semantic views → Phase 6B API/Excel`；本阶段不注册report router，也不生成Excel。
+
+六张canonical输出的展示字段顺序共同引用机器manifest。动态槽位从normalized long views读取；未来exporter只负责pivot/header/format/file，不重新实现超期、版本选择、供需或Stockpile逻辑。技术lineage ID位于内部View尾部，不属于最终display contract。
+
+API数据库角色可SELECT reporting schema，但继续不能SELECT evaluation或raw Forecast/Operational facts。公开FastAPI/OpenAPI仍只有健康/就绪接口，不出现Truth、Report endpoint或诊断答案。聚合summary不含逐PO、Cause或causal Project。

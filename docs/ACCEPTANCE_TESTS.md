@@ -290,7 +290,7 @@ API 必须区分：无任何 as-of 有效版本；有匹配版本但物料无记
 
 ### `AT-050` Stockpile 派生公式
 
-库龄阈值语义测试立即启用：30/60/90/120/150/180/270/365 天均为累计超过阈值，较高阈值数量/金额不得大于较低阈值。金额、GAP、完成率、结余和预警的最终展示数值公式测试标记 `DEFERRED_TO_REPORT_VIEW / DC-12`，不属于 Phase 1 blocked；底层数量与连续结余已在 Phase 5C 验证，最终展示映射固定后补齐对应测试，且验证这些字段不参与五类根因判断。
+库龄阈值语义测试立即启用：30/60/90/120/150/180/270/365 天均为累计超过阈值，较高阈值数量/金额不得大于较低阈值。Phase6A对已有事实支持的数量GAP/安全完成率验算；金额和预警等缺正式公式字段标记 `DEFERRED_BUSINESS_FORMULA / DC-12` 并保持null，不属于blocked，且不参与五类根因判断。
 
 ---
 
@@ -476,8 +476,8 @@ Report 3/4/6 JSON 使用 `months`/`weeks`/`buckets` 数组，不把 `202609`、`
 
 | ID | 延后至后续阶段的测试 |
 |---|---|
-| `DC-03` | DEFERRED_TO_REPORT_VIEW：Report 2 辅助供需汇总、多余库存/采购/工单/PR 等最终 Mock 公式；三个核心字段与盈余公式测试已启用 |
-| `DC-12` | DEFERRED_TO_REPORT_VIEW：Report 6 金额、GAP、完成率、结余、预警的最终 Mock 公式；累计库龄语义测试已启用 |
+| `DC-03` | DEFERRED_BUSINESS_FORMULA：Report 2缺正式公式的辅助汇总/excess列在View中保持null；三个核心字段及组件对账已通过 |
+| `DC-12` | PARTIALLY_MAPPED / DEFERRED_BUSINESS_FORMULA：已有事实支持的数量GAP、完成率、长表结余/库龄已验收；金额/预警等保持null |
 
 ### 18.4 已固化的 Synthetic Config（不是企业规则）
 
@@ -615,3 +615,23 @@ Phase 4 收尾时 Git 为 `GIT_IDENTITY_BLOCKED`。之后用户已配置 reposit
 - 四个健康/就绪端点真实HTTP200；在线OpenAPI、公共代码/示例隔离通过。临时API已关闭；普通API角色对九张raw表及evaluation.scenario_truth实际SELECT均被42501拒绝。
 - Forbidden-term标准扫描156文件，另补扫描1个私有维护脚本；真实合成数据库38表450558行，发现0。GitHub hygiene通过；备份、环境文件与数据库卷不提交，没有创建remote或push。此前本地测试密码若尚未人工轮换，仍建议轮换；本轮不修改凭据。
 - 无新增业务阻塞；DC-15仍RESOLVED_AS_SYNTHETIC_CONFIG，DC-16与KD仍待确认；DC-03/DC-12最终展示映射留Phase6。没有实现Final Report Views、Report APIs、Excel Export、Diagnosis、Decision Engine、Agent或LLM。
+
+## 24. Phase 6A 验收映射
+
+- AT-001～AT-012中不依赖HTTP/Excel的dataset、粒度、主键、Primary Organization、Lifecycle/Config关联项由六个canonical views验证。
+- AT-020～AT-032中不依赖HTTP/Excel的daily-final-valid、严格Anchor前后、七自然月、13周Monday-start、Project→Material合计、累计发货和共享Demand lineage由long views与reconciliation验证。
+- AT-044～AT-053中current Stockpile、历史as-of可执行、六自然月、连续balance、累计age、target=0安全除法由Report 6长表与calculator验证。
+- AT-056～AT-061的数据库权限和Truth leakage继续通过；API角色可读reporting但不能读evaluation/raw restricted facts。
+- AT-062～AT-068的精确字段/顺序和动态槽位已固化为机器manifest及字段mapping；HTTP序列化与Excel实际文件仍留Phase6B，不把manifest通过误报成导出通过。
+- AT-069～AT-071禁止词/project命名/KD辅助边界继续适用。AT-072～AT-076依赖Report HTTP API，保持Phase6B待验收。
+
+新增测试覆盖严格超期等号边界、Schedule开放量、六表grain与公式、Report3窗口、Report4零需求保行、Report5 lifecycle、Report6 current/as-of/月/结余/库龄、跨表orphan与Demand lineage、deterministic semantic hash及真实角色权限。DC-03/DC-12 deferred字段必须为NULL；DC-07-KD与DC-16状态不得被测试转成业务假设。
+
+### Phase 6A 实测记录（2026-08-29）
+
+- 开发库010→011成功；专用测试库在最终全量中完成`downgrade base → upgrade head`，revision为`011_report_semantic_views`。历史001～010无修改。
+- Demo：Report1 115行；Report2 60行；Report3 canonical 6300行、long 9450行；Report4 60个Material、780个周行、9个零需求Material；Report5 272行；Report6 24行、144个未来月行。
+- current Report6选中2026-08-26，不读取合法的snapshot+7反例2026-09-02。115条PO历史as-of为74 hit / 41 miss；selector均可执行。
+- 16项cross-report、component、MPM及Demand lineage reconciliation错误合计0；semantic hash为`c9628312839ac5c5ca0f51e6c1694897e05bfaece70e9ee6282f6f02cee579d9`。
+- 最终唯一一次全量：**404 passed / 0 failed / 0 skipped，446.81秒**；保留1条既有Starlette/httpx弃用警告。
+- 四个健康/就绪HTTP端点均200；在线OpenAPI泄漏词0。Forbidden-term与repository hygiene通过。Dataset仍`GENERATING`，最终business_content_hash仍为null。

@@ -551,6 +551,21 @@ Monthly/Weekly Project/Shipment 都含 `demand_signal_id`；物料周表通过 S
 - 组件以snapshot×component_key唯一，含side、organization_type_scope、source_domain，以及可空inventory_snapshot_id/po_line_schedule_id/demand_signal_id/project_id/source_forecast_version_id。来源FK均含dataset；需求和PO组件的必需来源由CHECK约束，语义一致性由Validator检查。component_qty对应第8节抽象quantity。
 - Stockpile Version日期/sequence唯一、名称唯一。Record包含target/actual/inventory数量和7日/本月剩余需求；period限定1～6。target与tag分别映射原planned_stockpile_qty与stockpile_nature。价格/金额/责任展示可后续关联主数据，不提前固化未知公式。
 - Forecast/Balance/Age通过(dataset, version, material)复合FK引用Record，防止产生未计划物料的子事实。Forecast每月唯一并校验月首/非负/非空JSON lineage；多Project来源数组通过Validator逐项对账，不声明虚假的单Signal FK。
-- Balance每月唯一，demand/inbound非负，opening/closing是可负净额；数据库强制closing=opening+inbound-demand，Validator强制跨月连续。原第11.4节的30/60/...天展示与金额暂为DEFERRED_TO_REPORT_VIEW。
+- Balance每月唯一，demand/inbound非负，opening/closing是可负净额；数据库强制closing=opening+inbound-demand，Validator强制跨月连续。原第11.4节的30/60/...天金额仍为DEFERRED_BUSINESS_FORMULA。
 - 两类Age保存age_threshold_days/age_qty，阈值和数量CHECK、父键/阈值唯一；跨行单调和父数量上界由Validator验证。
 - 仅Generator写raw facts，API不授予raw SELECT，Evaluation隔离保持。无Report Views或业务路由。DC-03/DC-12展示公式推迟至Report View，DC-16不变。
+
+## 21. Phase 6A / 011 Reporting semantic views
+
+`011_report_semantic_views` 新增 `reporting` schema，历史001～010不修改。Canonical Views为：
+
+- `report1_overdue_po_detail`
+- `report2_material_supply_demand`
+- `report3_forecast_history`
+- `report4_latest_13w_forecast`
+- `report5_product_configuration`
+- `report6_stockpile_detail`
+
+辅助 normalized Views为 `report3_forecast_history_long`、`report4_weekly_forecast_long`、`report4_weekly_project_long`、`report6_stockpile_history`、`report6_stockpile_forecast_long`、`report6_stockpile_balance_long`、`report6_stockpile_age_long` 和 `overdue_consumption_context`。本节取代第13节尚未落地的 `platform.view_report_*` 建议名；最终实现不在 platform schema复制Report facts。
+
+所有 View 仅依赖 `platform`/`reporting`，不得依赖 `evaluation`。`system_a_api`与`system_a_evaluator`获得 reporting USAGE/SELECT；API仍只可读取既有 dataset元数据与这些report views，不获得raw operational/forecast表权限。Migration downgrade按依赖逆序删除Views和reporting schema。

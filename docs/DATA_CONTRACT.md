@@ -570,13 +570,13 @@ LIMIT 1
 | ID | 状态 | 固化结果 / 后续边界 |
 |---|---|---|
 | `DC-01/DC-02` | RESOLVED | Report 1 固定为 Header → Line → Schedule/Shipment，事实粒度为 PO号+PO行+发运号；开放数量按 schedule 级公式计算，评测绑定 `po_line_schedule_id`。 |
-| `DC-03` | DEFERRED_TO_REPORT_VIEW（不阻塞 Phase 5C） | 根因分析只依赖三个核心字段及固定盈余公式；其余辅助展示字段的最终 Mock 映射留待 Report View 阶段固定。 |
+| `DC-03` | DEFERRED_BUSINESS_FORMULA（不阻塞 Phase 6A） | 三个核心字段与盈余公式已由 Report 2 View/组件对账固化；缺正式公式的辅助列显式返回 null，不发明规则。 |
 | `DC-04` | RESOLVED | V1 一个 Material 一个 Primary Inventory Organization，Report 2/4 每物料一行；最多项目按最新 13 周 Project 贡献量。 |
 | `DC-05/DC-06` | RESOLVED | Monday-start；Forecast 默认每周一版；同日取最大有效 `sequence_no`，无效版本跳过。 |
 | `DC-07` | PARTIALLY_RESOLVED（不阻塞 Phase 1） | `BG/PDT/PCBA` 可保留；内部使用可解释英文名。仅 `KD` 完整释义仍为 `NEEDS_BUSINESS_CONFIRMATION`，且 KD 只作辅助展示。 |
 | `DC-08/DC-09` | RESOLVED | 累计发货按 Material × Project 从 dataset 历史起点累计至版本日；Report 4 供应商字段为 code，英文列为 `supplier_name_en`。 |
 | `DC-10/DC-11` | RESOLVED | Project 1:N Product Config、Product Config N:M Material；V1 生命周期为项目级历史，至少 NPI/MASS_PRODUCTION/EOL，After-sales 不是 lifecycle。 |
-| `DC-12` | DEFERRED_TO_REPORT_VIEW（不阻塞 Phase 5C） | Report 6 金额、GAP、完成率、结余和预警为辅助模拟字段；底层数量与连续结余公式已固定，最终展示 Mock 映射留待 Report View 阶段。 |
+| `DC-12` | PARTIALLY_MAPPED / DEFERRED_BUSINESS_FORMULA（不阻塞 Phase 6A） | 已有 target/actual 事实支持数量GAP与安全完成率；底层月结余/累计库龄由长表提供。金额和预警等缺正式公式的辅助列保持 null。 |
 | `DC-13/DC-14` | RESOLVED | 未来第 1 月为版本月下一自然月；库龄阈值为累计超过。 |
 | `DC-15` | `RESOLVED_AS_SYNTHETIC_CONFIG` | Phase 4 已通过 `ScenarioGenerationConfig` 固定需求变化与 After-sales 默认 Mock 阈值，完整参数见 `SCENARIO_RULES.md`；参数可配置并进入 Scenario signature，不是企业真实硬规则。 |
 | `DC-16` | `NEEDS_BUSINESS_CONFIRMATION`（不阻塞 Phase 1） | 正式售后处置、保留量与保供周期仍待确认；不得自行生成正式 `expected_action`。 |
@@ -614,4 +614,15 @@ Phase 5A.1 将临时预算恢复/扣减改为持续有效的源计划状态，�
 - Stockpile forecast保持Version×Material×Month六个自然月，汇总该物料所有Project在version_date的有效日需求。demand_lineage JSON数组保存每个Project、Signal和数量；Validator逐项验证完整性、dataset归属、as-of修订和数量，不选任意单个Signal充当物料总量。
 - target_stockpile_qty对应后续planned_stockpile_qty，stockpile_tag对应stockpile_nature；inventory_qty与actual_stockpile_qty在Mock V1相等。target是囤料周期内预测之和，actual按配置完成比例派生；target=0的基础完成率返回null。
 - 月结余首期为inventory减版本日至本月末需求；后续opening等于上月closing，closing=opening+inbound-demand。净结余允许为负并保留缺口，不截断；这不是最终模板30/60/...天或金额公式。
-- DC-03辅助汇总/excess及DC-12金额、GAP、预警和最终展示完成率映射状态为DEFERRED_TO_REPORT_VIEW；不阻塞核心事实。DC-16仍为NEEDS_BUSINESS_CONFIRMATION。
+- DC-03辅助汇总/excess及DC-12金额/预警等缺正式公式字段在Phase6A显式标记DEFERRED_BUSINESS_FORMULA并返回null；已有数量事实支持的GAP/安全完成率按本合同派生。均不阻塞核心语义。DC-16仍为NEEDS_BUSINESS_CONFIRMATION。
+
+## 14. Phase 6A 六报表语义合同
+
+- 精确展示列序只取六个“最终模板”，机器契约为 `backend/app/reporting/report_header_manifest.json`；逐字段 lineage 见 `docs/REPORT_FIELD_MAPPING.md`。动态月/周只固化槽位，不在数据库物理列中固定未来日期。
+- 六个 canonical source 位于 `reporting` schema。Report 3 与 Report 6 的动态月份保持 normalized long；Report 4 固定13个周槽，同时保留 Material×Week 与 Project×Week 长表。
+- Report 1 严格筛选 `overdue_days > 0`，按 PO Header→Line→Schedule 粒度，并保留中性 reference project；View 不依赖或暴露 Evaluation Truth。
+- Report 2 每 Material×Primary Organization 一行，核心供需再次与 component aggregate 对账；零需求 Material 仍在 Report 4 保留完整13周零值行。
+- Report 3 先按日取最大有效 sequence，再选择严格早于 Anchor 的 Baseline 与严格晚于 Anchor 的前三版；辅助 long source支持后五版。Anchor 同日版本不入窗口。
+- Report 6 current source只取 `version_date <= dataset snapshot_date` 的最新有效最终版本。历史诊断继续使用 `order_date` as-of selector，两者不混用；snapshot+7反例 fixture 合法但不得进入 current report。
+- `report_semantic_content_hash`只覆盖六个 canonical semantic output及必要动态长表，未写入 `dataset_versions.business_content_hash`。
+- DC-03/DC-12 缺公式辅助列保持 `DEFERRED_BUSINESS_FORMULA`/null；KD保持 `AUXILIARY_ONLY`且完整释义待确认；DC-16售后正式处置仍待确认且源报表不输出 expected_action。
