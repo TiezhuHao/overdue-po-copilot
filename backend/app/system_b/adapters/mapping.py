@@ -14,6 +14,7 @@ def supply_demand(row: dto.SupplyDemandDTO, context: dict) -> models.MaterialSup
         employee_code=values.pop("mpm_code"),
         employee_name=values.pop("mpm_name"),
         department_name=values.pop("mpm_department_name"),
+        employee_id=values.pop("mpm_employee_id"),
     )
     return models.MaterialSupplyDemand(**values, **context, mpm=contact)
 
@@ -24,8 +25,11 @@ def forecast(row: dto.ForecastDTO, context: dict) -> models.ForecastSnapshot:
 
 def weekly_forecast(row: dto.WeeklyForecastDTO, context: dict) -> models.WeeklyForecastSnapshot:
     values = row.model_dump()
+    evidence = values.pop("weeks")
     weeks = tuple(models.WeekForecast(week_index=index, forecast_qty=values.pop(f"week_{index:02d}_forecast_qty"))
                   for index in range(1, 14))
+    if evidence is not None:
+        weeks = tuple(models.WeekForecast(**item) for item in sorted(evidence, key=lambda item: item["week_index"]))
     return models.WeeklyForecastSnapshot(**(values | context), weeks=weeks)
 
 

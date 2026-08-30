@@ -46,7 +46,7 @@ class Evidence(CanonicalModel):
     dataset_version_id: UUID
     snapshot_date: CalendarDate
     material_code: str
-    # Unavailable through the current REST projection; never fabricate an ID.
+    # Nullable for legacy REST responses; enriched responses reuse source identity.
     material_id: UUID | None = None
 
 
@@ -74,6 +74,7 @@ class PurchaseOrder(Evidence):
     close_status: str
     can_close: StrictBool
     completion_at: AwareDatetime | None
+    po_header_id: UUID | None = None
     po_line_schedule_id: UUID | None = None
     po_line_id: UUID | None = None
     po_reference_project_id: UUID | None = None
@@ -91,6 +92,10 @@ class MaterialMpmContact(CanonicalModel):
 
 
 class MaterialSupplyDemand(Evidence):
+    supply_demand_snapshot_id: UUID | None = None
+    inventory_snapshot_id: UUID | None = None
+    supply_snapshot_date: CalendarDate | None = None
+    inventory_snapshot_date: CalendarDate | None = None
     inventory_organization_code: str
     material_lt_days: NonnegativeInt
     all_supply_qty: Quantity
@@ -124,12 +129,21 @@ class ForecastSnapshot(Evidence):
     cumulative_shipped_qty: Quantity
     project_id: UUID | None = None
     forecast_version_id: UUID | None = None
+    forecast_version_sequence: PositiveInt | None = None
+    forecast_anchor_date: CalendarDate | None = None
+    window_position: NonnegativeInt | None = None
+    horizon_start_month: CalendarDate | None = None
+    horizon_end_month_exclusive: CalendarDate | None = None
 
 
 class WeekForecast(CanonicalModel):
     week_index: Annotated[int, Field(strict=True, ge=1, le=13)]
     forecast_qty: Quantity
     week_start_date: CalendarDate | None = None
+
+
+class ProjectWeekForecast(WeekForecast):
+    project_id: UUID
 
 
 class WeeklyForecastSnapshot(Evidence):
@@ -145,6 +159,9 @@ class WeeklyForecastSnapshot(Evidence):
     top_project: str | None
     organization_id: UUID | None = None
     weekly_forecast_snapshot_id: UUID | None = None
+    forecast_snapshot_date: CalendarDate | None = None
+    source_forecast_version_id: UUID | None = None
+    project_contributions: tuple[ProjectWeekForecast, ...] | None = None
 
 
 class ProductConfig(Evidence):
@@ -174,7 +191,7 @@ class AgeQuantity(CanonicalModel):
 
 
 class StockpileRecord(Evidence):
-    """Current stockpile report only; never an order-date historical match."""
+    """Versioned material evidence; page selection records the requested as-of date."""
 
     stockpile_version_name: str
     stockpile_version_date: CalendarDate
@@ -190,7 +207,16 @@ class StockpileRecord(Evidence):
     stockpile_version_id: UUID | None = None
     stockpile_record_id: UUID | None = None
     actual_stockpile_qty: Quantity | None = None
+    organization_id: UUID | None = None
+    stockpile_version_sequence: PositiveInt | None = None
     currency: str | None = None
+
+
+class StockpileSelection(CanonicalModel):
+    as_of_date: CalendarDate
+    stockpile_version_id: UUID | None = None
+    stockpile_version_date: CalendarDate | None = None
+    sequence_no: PositiveInt | None = None
 
 
 T = TypeVar("T", bound=CanonicalModel)
@@ -203,3 +229,4 @@ class CanonicalPage(CanonicalModel, Generic[T]):
     page_size: Annotated[int, Field(strict=True, ge=1, le=500)]
     total: NonnegativeInt
     items: tuple[T, ...]
+    stockpile_selection: StockpileSelection | None = None

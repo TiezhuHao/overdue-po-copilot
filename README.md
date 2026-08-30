@@ -5,7 +5,7 @@ A synthetic procurement data platform and future AI copilot for overdue purchase
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
 System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型与确定性指标计算，诊断与决策支持将在后续阶段实现。
 
-**System A: COMPLETE · System B: Phase 1B Analytics · Synthetic data only.**
+**System A: COMPLETE · Integration: Phase 1C Evidence Contracts · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -191,7 +191,7 @@ backend/
   app/api/             read-only dataset/report/health routes
   app/finalization/    private publication CLI/service
   app/system_b/        canonical models, HTTP adapter, deterministic analytics
-  alembic/versions/    immutable migration history 001–011
+  alembic/versions/    migrations 001–012; 012 adds read-only evidence views
   db/bootstrap/        roles and grants
   tests/               unit and PostgreSQL integration tests
 docs/                  contracts, architecture, setup and review
@@ -214,7 +214,7 @@ data/                  placeholders; local generated data is ignored
 |---|---|
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
-| Schema | `011_report_semantic_views` |
+| Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
 | System B | Phase 1B：确定性 Analytics 已实现；诊断、决策、Agent 与业务前端未实现 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
@@ -234,12 +234,12 @@ Canonical Models 与 System A HTTP Adapter，复用现有 Settings、httpx、pyt
 [分层设计 ADR](docs/adr/0001-system-b-layer-boundaries.md)。
 运行 `python -m pytest tests/test_system_b_adapter.py` 可在 backend 目录无服务、无数据库测试 Adapter。
 
-当前 REST 缺少多数内部关联 ID、PO 单价/币种、历史囤料 as-of 查询、完整版本与项目周预测接口。
-因此这些基础模型不代表后续全部 Analytics 输入已经齐全；缺失值不推算、不伪造。
+Phase 1C已补充稳定身份、Forecast版本序号/窗口、周日期/项目周贡献与历史囤料as-of/version查询。
+仍缺PO单价/币种、完整Forecast版本目录与供应承诺口径；缺失值不推算、不伪造。
 Phase 1B 已增加纯 Analytics 与薄服务：年龄/阈值、13周聚合、物料消耗、源供需盈余、库存覆盖，
 以及仅在稳定身份和时间范围可核验时可用的显式同月 Forecast 比较。
-当前 REST 的 PO 跨记录消耗、自动版本比较、confirmed/planned 供应口径、金额与 Top 3 仍受契约阻塞，
-不靠猜测补齐。详见 [Analytics 指标与可用性](docs/analytics-metrics.md)。
+已有PO跨记录消耗可使用新增稳定ID；自动版本选择和Top 3算法未开发，confirmed/planned供应口径与金额仍blocked。
+详见 [Analytics 指标与可用性](docs/analytics-metrics.md) 及 [证据契约](docs/evidence-contracts.md)。
 运行 `python -m pytest tests/test_system_b_analytics.py -q` 验证纯计算，无网络/数据库依赖。
 Diagnosis Engine、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
 

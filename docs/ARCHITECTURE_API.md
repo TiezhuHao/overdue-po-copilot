@@ -1,5 +1,7 @@
 # System A Architecture & API 规划
 
+当前Phase 1C实际REST增量以`data-contracts.md`和`evidence-contracts.md`为准；下文早期规划中的路径/包装不等于已发布接口。仍保留六个既有Report GET路径，新增稳定ID筛选、R4日期/项目周贡献及R6 as_of_date/version筛选。响应仍为平铺分页envelope；仅R6额外带stockpile_selection，不增加诊断路由。
+
 ## 1. 范围
 
 本文件定义 System A 的组件、数据流和 REST API 契约。Phase 6B 已实现六张报表只读 API、Dataset 元数据 API、Manifest 驱动 Excel 导出与 Dataset finalization；Agent、Copilot 与前端仍属于 System B。

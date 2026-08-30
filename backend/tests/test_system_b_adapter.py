@@ -346,11 +346,11 @@ def test_out_of_range_page_is_valid_empty_and_empty_iterator_stops():
 
 
 @pytest.mark.parametrize("report_id,method,path,model", REPORTS)
-def test_unknown_answers_and_unexposed_ids_do_not_cross_boundary(report_id, method, path, model):
+def test_public_identity_passes_but_unknown_answers_do_not_cross_boundary(report_id, method, path, model):
     row = source_row(report_id) | {"cause_type": "TRIAL", "expected_action": "private",
                                   "causal_project_id": str(OTHER_DID), "material_id": str(OTHER_DID)}
     result = fetch(report_id, envelope([row])).items[0]
-    assert result.material_id is None
+    assert result.material_id == OTHER_DID
     assert not {"cause_type", "expected_action", "causal_project_id"}.intersection(result.model_dump())
 
 
@@ -392,7 +392,7 @@ def test_uuid_required_and_no_unimplemented_filter_forwarding():
         with pytest.raises(TypeError):
             adapter.purchase_orders(str(DID))
         with pytest.raises(TypeError):
-            adapter.stockpile(DID, as_of_date=date(2025, 1, 1))
+            adapter.forecast_history(DID, anchor_date=date(2025, 1, 1))
 
 
 @pytest.mark.parametrize("url", ["ftp://invalid.test", "https://user:pass@invalid.test", "https://invalid.test/?token=x"])

@@ -569,3 +569,7 @@ Monthly/Weekly Project/Shipment 都含 `demand_signal_id`；物料周表通过 S
 辅助 normalized Views为 `report3_forecast_history_long`、`report4_weekly_forecast_long`、`report4_weekly_project_long`、`report6_stockpile_history`、`report6_stockpile_forecast_long`、`report6_stockpile_balance_long`、`report6_stockpile_age_long` 和 `overdue_consumption_context`。本节取代第13节尚未落地的 `platform.view_report_*` 建议名；最终实现不在 platform schema复制Report facts。
 
 所有 View 仅依赖 `platform`/`reporting`，不得依赖 `evaluation`。`system_a_api`与`system_a_evaluator`获得 reporting USAGE/SELECT；API仍只可读取既有 dataset元数据与这些report views，不获得raw operational/forecast表权限。Migration downgrade按依赖逆序删除Views和reporting schema。
+
+## 22. Phase 1C / 012 Evidence contract
+
+`012_evidence_contract`仅新增五个白名单视图，定义在`app/reporting/evidence_views.py`：Forecast版本、Weekly Snapshot、Supply/Inventory来源身份及Stockpile历史月/库龄明细。复用所有原始主键，业务表DDL、001–011和旧reporting视图均不变；仅向既有API/evaluator角色授予新增视图SELECT，不授予原表权限。升级/降级不写业务事实；dataset生成schema_version不会因部署视图而被改写。详见`evidence-contracts.md`。

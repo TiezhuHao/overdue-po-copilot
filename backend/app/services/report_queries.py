@@ -5,6 +5,8 @@ from uuid import UUID
 from sqlalchemy import text
 
 from app.reporting.report_header_manifest import get_report_manifest
+from app.schemas.evidence import evidence_fields
+from app.services.evidence_queries import enriched_source, HISTORICAL_STOCKPILE_SOURCE, weekly_details
 
 
 class ReportQueryError(ValueError):
@@ -75,6 +77,15 @@ REPORTS = {
     },
 }
 
+# Stable selectors supplement, never replace, display filters.
+for report_id, names in {
+    1: ("material_id", "po_line_schedule_id", "po_header_id", "po_line_id", "po_reference_project_id"),
+    2: ("material_id",), 3: ("material_id", "project_id", "po_line_schedule_id", "forecast_version_id"),
+    4: ("material_id",), 5: ("material_id", "project_id"), 6: ("material_id",),
+}.items():
+    prefix = "r." if report_id == 3 else ""
+    REPORTS[report_id]["filters"].update({key: f"{prefix}{key}=:{key}" for key in names})
+
 
 class ReportQueryService:
     def __init__(self, executor):
@@ -111,12 +122,15 @@ class ReportQueryService:
             "FROM platform.dataset_versions WHERE dataset_version_id=:did"
         ), {"did": dataset_id}).mappings().first()
 
-    def page(self, report_id, dataset, page, page_size, filters):
+    def page(self, report_id, dataset, page, page_size, filters, *, source_override=None):
         definition = REPORTS[report_id]
         alias = "r" if report_id == 3 else ""
-        source = f"reporting.{definition['view']}" + (" r" if alias else "")
+        source = source_override or enriched_source(report_id, definition["view"])
         clauses = [(("r." if alias else "") + "dataset_version_id=:did")]
         params: dict[str, Any] = {"did": dataset.dataset_version_id, "limit": page_size, "offset": (page - 1) * page_size}
+        if report_id == 6 and filters.get("_selected_version") is not None:
+            clauses.append("stockpile_version_id=:selected_version")
+            params["selected_version"] = filters["_selected_version"]
         for key, value in filters.items():
             if value is None or key not in definition["filters"]:
                 continue
@@ -134,28 +148,55 @@ class ReportQueryService:
         rows = list(self.executor.execute(text(
             f"SELECT * FROM {source} WHERE {where} ORDER BY {definition['order']} LIMIT :limit OFFSET :offset"
         ), params).mappings())
-        return total, [self._public_row(report_id, dict(row)) for row in rows]
+        public = [self._public_row(report_id, dict(row)) for row in rows]
+        if report_id == 4:
+            weekly_details(self.executor, dataset.dataset_version_id, public)
+        return total, public
 
     @staticmethod
     def _public_row(report_id, row):
         fields = [column["canonical_field"] for column in get_report_manifest(report_id)["columns"]
                   if not column["slot"] or report_id == 4]
         result = {field: row.get(field) for field in fields}
+        result.update({field: row.get(field) for field in evidence_fields(report_id)})
         if report_id == 3:
             result.update({key: row[key] for key in ("po_line_schedule_id", "forecast_month", "forecast_qty", "window_role")})
         return result
 
     def report6_page(self, dataset, page, page_size, filters):
-        total, rows = self.page(6, dataset, page, page_size, filters)
+        as_of = filters.get("as_of_date") or dataset.snapshot_date
+        if as_of > dataset.snapshot_date:
+            raise ReportQueryError("AS_OF_AFTER_DATASET_SNAPSHOT")
+        params = {"did": dataset.dataset_version_id, "as_of": as_of}
+        predicate = ""
+        if filters.get("stockpile_version_id") is not None:
+            predicate = " AND stockpile_version_id=:vid"
+            params["vid"] = filters["stockpile_version_id"]
+        version = self.executor.execute(text(
+            "SELECT DISTINCT stockpile_version_id,version_date,sequence_no FROM reporting.report6_stockpile_history "
+            "WHERE dataset_version_id=:did AND is_valid AND version_date<=:as_of" + predicate +
+            " ORDER BY version_date DESC,sequence_no DESC LIMIT 1"
+        ), params).mappings().first()
+        self.stockpile_selection = {"as_of_date": as_of, "stockpile_version_id": None,
+                                    "stockpile_version_date": None, "sequence_no": None}
+        if version is None:
+            if filters.get("stockpile_version_id") is not None:
+                raise ReportQueryError("STOCKPILE_VERSION_NOT_AVAILABLE")
+            return 0, []
+        self.stockpile_selection.update(stockpile_version_id=version["stockpile_version_id"],
+                                        stockpile_version_date=version["version_date"], sequence_no=version["sequence_no"])
+        historical = filters.get("as_of_date") is not None or filters.get("stockpile_version_id") is not None
+        total, rows = self.page(6, dataset, page, page_size, filters | {"_selected_version": version["stockpile_version_id"]},
+                                source_override=HISTORICAL_STOCKPILE_SOURCE if historical else None)
         for row in rows:
-            material_code = row["material_code"]
+            params = {"did": dataset.dataset_version_id, "mid": row["material_id"], "vid": row["stockpile_version_id"]}
             dynamic = list(self.executor.execute(text(
-                "SELECT l.forecast_month period,l.forecast_qty quantity FROM reporting.report6_stockpile_forecast_long l "
-                "JOIN reporting.report6_stockpile_detail m USING(dataset_version_id,material_id) WHERE l.dataset_version_id=:did AND m.material_code=:code ORDER BY l.forecast_month"
-            ), {"did": dataset.dataset_version_id, "code": material_code}).mappings())
+                "SELECT forecast_month period,forecast_qty quantity FROM reporting.stockpile_forecast_evidence "
+                "WHERE dataset_version_id=:did AND stockpile_version_id=:vid AND material_id=:mid ORDER BY forecast_month"
+            ), params).mappings())
             ages = list(self.executor.execute(text(
-                "SELECT l.age_threshold_days threshold_days,l.age_qty quantity FROM reporting.report6_stockpile_age_long l "
-                "JOIN reporting.report6_stockpile_detail m USING(dataset_version_id,material_id) WHERE l.dataset_version_id=:did AND m.material_code=:code ORDER BY l.age_threshold_days"
-            ), {"did": dataset.dataset_version_id, "code": material_code}).mappings())
+                "SELECT age_threshold_days threshold_days,age_qty quantity FROM reporting.stockpile_age_evidence "
+                "WHERE dataset_version_id=:did AND stockpile_version_id=:vid AND material_id=:mid ORDER BY age_threshold_days"
+            ), params).mappings())
             row["future_months"], row["inventory_age_quantities"] = dynamic, ages
         return total, rows

@@ -1,6 +1,6 @@
-# System B — Phase 0 / Phase 1A / Phase 1B
+# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C
 
-已实现 REST Adapter、Canonical Models 和 Phase 1B 确定性 Analytics；不实现 Diagnosis、Decision、Agent 或业务前端。System A 的数据生成、数据库角色、迁移和业务公式保持不变。
+已实现REST Adapter、Canonical Models和Phase 1B确定性Analytics；Phase 1C补充公开证据身份与时间契约。不实现Diagnosis、Decision、Agent或业务前端。新增012只读视图migration，不改Generator、业务事实、历史迁移、既有公式或原表权限。
 
 ## Repository inspection
 
@@ -12,9 +12,9 @@
 | 六报表 | `backend/app/api/reports.py`；均为 GET 分页列表；实际路径见数据契约 |
 | Dataset | `backend/app/api/datasets.py` 提供列表与按 UUID 查询；列表包含各状态 |
 | DTO | `backend/app/schemas/reports.py` 从 Manifest 创建六个 Item，多数字段为可空 `Any`，不能作为 B 的强类型领域契约 |
-| 字段投影 | `backend/app/services/report_queries.py::_public_row` 只保留展示列；R3 额外保留 schedule ID、月份、数量和窗口角色 |
+| 字段投影 | `_public_row`保留既有展示列及独立证据白名单；R4增加周/项目周数组，R6增加历史选择元数据 |
 | SQLAlchemy | `backend/app/models/platform/`：procurement、relationships、world_relationships、forecasts、operational 等；Material → MPM 是物料关系 |
-| Migration | `backend/alembic/versions/001` 至 `011`；内部 View 有稳定 ID，但多数没有穿过 REST 投影 |
+| Migration | 001–011不变；012补五个窄证据视图，现有内部ID穿过REST投影，不开放raw表 |
 | 测试 | `backend/tests/test_report_api.py` 覆盖六路由、分页、过滤、真实 API 角色与 OpenAPI 防泄漏；这些测试需要专用 PostgreSQL |
 | 配置 | `backend/app/core/config.py` 与根目录 `.env.example`；复用 Settings 增加 B 的 HTTP 参数 |
 | Docker | `docker-compose.dev.yml` 是 PostgreSQL 本地运行入口；根 compose 仍是早期骨架，缺容器 API DB 配置；本次不修改 |
@@ -47,6 +47,8 @@ flowchart LR
 `analytics/models.py` 提供轻量分组指标状态；`analytics/calculations.py` 实现显式日期的年龄/阈值、完整13周聚合、消耗、源供需盈余、库存覆盖和条件成立的显式同月 Forecast 比较。`analytics/service.py` 只编排这些纯函数，接收 canonical 对象，不导入 Adapter、httpx、Settings 或数据库。没有新增 Analytics endpoint。
 
 同一 R4 行的物料级消耗和库存覆盖可直接计算；PO 与 Forecast 跨记录计算要求稳定 ID，不能退回名称 Join。confirmed/planned 供应口径、金额、Top 3 与自动版本比较等仍 blocked，不能因增加计算函数而宣称上游数据缺口已解决。完整公式、单位、availability 和依赖见 [analytics-metrics.md](analytics-metrics.md)。
+
+Phase 1C通过真实REST补齐R1/R4身份、R3版本/项目、R4项目周事实和R6历史选择；解除PO消费与周日期的原身份阻塞。Top 3原始证据已齐但算法未实现；自动窗口选择仍未开发。新增证据边界与剩余缺口见 [evidence-contracts.md](evidence-contracts.md)。
 
 未来 Diagnosis 执行已确认的判断顺序和五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
 

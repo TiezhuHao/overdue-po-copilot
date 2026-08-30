@@ -53,5 +53,5 @@ def test_migration_upgrade_reaches_head(migrated_database: Engine) -> None:
                 )
             ).scalars()
         )
-    assert revision == "011_report_semantic_views"
+    assert revision == "012_evidence_contract"
     assert schemas == {"platform", "evaluation", "reporting"}

@@ -1,6 +1,6 @@
 # System A REST → System B canonical contract
 
-Phase 1A 消费端契约；不替代 `DATA_CONTRACT.md` 的业务基线。来源是实际 `api/reports.py`、`schemas/reports.py`、`services/report_queries.py` 和 `reporting/view_definitions.py`。本阶段不修改 System A。
+Phase 1A–1C 消费端契约；不替代 `DATA_CONTRACT.md` 的业务基线。来源是实际 route/schema、report queries 及 reporting views。Phase 1C 增加中性身份/时间证据，部署需要新增 migration `012_evidence_contract`；001–011、Generator、业务事实及 Excel manifest 不变。
 
 ## Actual REST inventory
 
@@ -41,7 +41,7 @@ A 允许 UUID 或名称选择 dataset；无选择器时取最新 READY，显式�
 | R2.non_vmi_in_transit_order_qty, non_vmi_in_transit_delivery_qty, open_po_qty, purchase_requisition_qty | 同名 | Decimal?；第一项为 OPEN_PO 组件、第二项为 IN_TRANSIT；open_po_qty 已含二者，禁止重复求和；IN_TRANSIT 不是 ASN |
 | R2.organization_active_projects, enterprise_active_projects, top_project | 同名 | tuple[str, ...]?、tuple[str, ...]?、str?；展示名称，禁止当稳定 Join 键 |
 | R2.mpm_code, mpm_name, mpm_department_name | mpm.employee_code, employee_name, department_name | MaterialMpmContact；str；仅挂在物料对象，不挂项目 |
-| R3.po_line_schedule_id, material_code, project_name | ForecastSnapshot 同名 | UUID, str, str；schedule 是唯一额外公开的事实 ID |
+| R3.po_line_schedule_id, material_code, project_name | ForecastSnapshot 同名 | UUID, str, str；schedule 关联 R1，稳定物料/项目 ID 见增量表 |
 | R3.forecast_version_name/date, window_role | 同名 | str, date, BASELINE/POST；预选窗口元数据不是分析结论 |
 | R3.forecast_month, forecast_qty, forecast_total_qty, cumulative_shipped_qty | 同名 | date（自然月首日）, Decimal ×3；total 和累计发货在月行重复，不得跨月份求和 |
 | R4.material_code, organization_code, snapshot_date | WeeklyForecastSnapshot 同名 | str, str, date；snapshot 与 envelope 一致 |
@@ -51,7 +51,7 @@ A 允许 UUID 或名称选择 dataset；无选择器时取最新 READY，显式�
 | R4.top_project | 同名 | str?；仅 top 1 展示名称，无项目贡献量 |
 | R5.material_code, project_name, product_config_type/name/version/status, business_unit_name, planning_department_name, lifecycle_stage | ProductConfig 同名 | str；lifecycle enum NPI/MASS_PRODUCTION/EOL；一行 Config × Material，不能按项目去重 |
 | R5.customer_code, customer_project_name, modified_at | 同名 | str?, str?, timezone-aware datetime? |
-| R6.material_code, stockpile_version_name/date | StockpileRecord 同名 | str, str, date；当前 snapshot 时有效的 stockpile version，不等于 dataset version |
+| R6.material_code, stockpile_version_name/date | StockpileRecord 同名 | str, str, date；默认当前有效版本，也可显式历史 as-of/version，不等于 dataset version |
 | R6.stockpile_nature | stockpile_tag | str；直接保留公开标签，不推断业务原因 |
 | R6.planned_stockpile_qty | target_stockpile_qty | Decimal |
 | R6.inventory_qty, seven_day_demand_qty, stockpile_qty_gap, stockpile_completion_ratio | 同名 | Decimal, Decimal, Decimal, Decimal?；target 为 0 时 ratio=null，不重算；ratio 是倍数，1 表示 100%，不强制上限 1 |
@@ -67,28 +67,56 @@ A 允许 UUID 或名称选择 dataset；无选择器时取最新 READY，显式�
 
 R3 是 schedule × material × project × version × month 的长表，每个版本展示 M0…M+6 共 **7 个月**，不是机械假定六个月。A 已按日取最大有效 sequence，严格 Anchor 前 baseline 与后 3 版；B 不重选窗口或标注需求变化。一个 Forecast 可能为多个 PO schedule 重复出现，不得无键去重或全局累加。
 
-R4 是 Material 总量及 13 周槽位，不能冒充 project-level Forecast。与 R3 分开模型，避免把汇总量用于项目 Top 3；`WeekForecast.week_start_date` 留 null，因为公开 API 未包含 weekly snapshot ID/原始日期。周历仍遵循已固化 Monday-start，但 B 不以 envelope 的 dataset 日期猜测源 weekly snapshot 日期。
+R4 保留 Material 总量及13周宽槽位，新增 `weeks` 日期长数组及 `project_contributions` 项目周事实数组。项目事实不排名、不输出责任，不把 Top 1 名称当稳定键。Adapter 解包源日期，不按 envelope 日期猜测周历。旧 REST 无新增字段时仍兼容，日期/身份保留 null。
 
-缺口预留字段：所有物料行的 material_id；PO 的 po_line_schedule_id / po_line_id / po_reference_project_id / supplier_id / organization_id / unit_price / currency；R2 的 organization_id、MPM employee_id；R3 的 project_id / forecast_version_id；R4 的 organization_id / weekly_forecast_snapshot_id；R5 的 project_id / product_config_id；R6 的 stockpile_version_id / stockpile_record_id / actual_stockpile_qty / currency。这些均为 null，明确表示未通过 API 暴露；不生成替代 UUID、不由名称匹配、不由库存或 GAP 反推缺失实际量。
+### Phase 1C additive identity / time mapping
+
+所有稳定键以 `dataset_version_id` 为作用域；不能跨 dataset 仅按实体 UUID 关联。编码和名称是 display/business key，不能替代稳定 ID。API 新字段独立于 Excel manifest，旧列不删除/重命名。新增字段在 Schema/DTO 中 nullable 以兼容旧响应；真实012投影的必需身份由集成测试核验非空。源明确可空的 PO reference project 不补造。
+
+| REST additions | Canonical / join meaning |
+|---|---|
+| 六报表 material_id | 原 Material master UUID，同 dataset 复用；不为报表单独造 ID |
+| R1 po_header_id, po_line_id, po_line_schedule_id, po_reference_project_id, supplier_id, organization_id | 同名；Header→Line→Schedule。material/reference project 属于 Line，供应商属于 Header；project 仅参考项目 |
+| R2 organization_id, supply_demand_snapshot_id, inventory_snapshot_id, supply_snapshot_date, inventory_snapshot_date | 同名；明确来源快照，不能将 dataset 日期无条件当事实快照日期 |
+| R2 mpm_employee_id | mpm.employee_id；通过 Inventory 引用的 Material MPM assignment，仍是物料关系 |
+| R3 material_id, project_id, forecast_version_id, forecast_version_sequence | 同名；版本顺序为日期 + 同日 sequence；投影只包含有效最终版本 |
+| R3 forecast_anchor_date, window_position, horizon_start_month, horizon_end_month_exclusive | 同名；窗口位置0是 baseline，1–3是 post；horizon 为版本月起7个月的半开区间，不是全部存储月事实 |
+| R4 organization_id, weekly_forecast_snapshot_id, forecast_snapshot_date, source_forecast_version_id | 同名；weekly snapshot 与 forecast version、dataset 是三种不同身份 |
+| R4 weeks[].week_index/week_start_date/forecast_qty | Canonical weeks；13个唯一连续 Monday-start 槽位，与旧宽槽数量逐项一致，否则 Adapter 拒绝 |
+| R4 project_contributions[].project_id/week_index/week_start_date/forecast_qty | 同名；上层 material/organization/weekly snapshot 提供共同作用域；复合键为 scope + project + week；空数组与 null 不同 |
+| R5 project_id, product_config_id | 同名；Config×Material 粒度不变，lifecycle_stage 为 dataset snapshot 时项目生命周期，不是历史全轨迹 |
+| R6 organization_id, stockpile_version_id, stockpile_record_id, stockpile_version_sequence, actual_stockpile_qty | 同名；直接公开原始实际数量，绝不从 inventory/gap 推算；R6 没有真实 project FK，不增加 project_id |
+| R6 envelope.stockpile_selection | CanonicalPage.stockpile_selection：as_of_date、选中 version ID/date/sequence；默认无此元数据的旧响应只支持当前查询 |
+
+新筛选均为精确匹配 UUID，与旧筛选 AND 组合：R1 material_id/po_header_id/po_line_id/po_line_schedule_id/po_reference_project_id；R2 material_id；R3 material_id/project_id/po_line_schedule_id/forecast_version_id；R4 material_id；R5 material_id/project_id；R6 material_id/stockpile_version_id，另加 ISO date `as_of_date`。其余旧参数保持。不存在对应事实则为空页，不回退名称。
+
+### Version and temporal semantics
+
+- Dataset version 是固定合成世界的身份；envelope snapshot_date 是业务截止日，不是 Forecast revision。既有 dataset provenance 不因仅增加 view 的迁移而改写。
+- Forecast version 的 `forecast_version_date` 与 `forecast_version_sequence` 明确时间。R3 沿用 daily-final-valid：同日选最大有效 sequence，无效版本跳过；不以数组顺序、UUID 或 created_at 排序。默认仍为严格 Anchor 前 baseline + 后3版、每版7个月；不宣称覆盖全版本目录或任意 horizon。
+- R4 的 forecast_snapshot_date 来自 Weekly Snapshot，周日期来自对应公开长表；source_forecast_version_id 是其实际来源 FK。项目周事实以同一 weekly snapshot、物料、主组织为 scope，不把 dataset 当预测版本。
+- R6 默认 as_of=dataset.snapshot_date；指定 as_of 时只选 version_date<=as_of 的有效最大日期/sequence。显式 version ID 可查看某个有效历史修订，不自动升级为同日最终版，仍必须 <=as_of<=dataset.snapshot_date；跨 dataset、无效/未来/不存在的显式版本返回422。as_of 晚于 dataset snapshot 同样422，不自动截断。
+- 选中版本的 ID/date/sequence 即使无匹配物料也保留；没有有效版本则三者均 null。空页必须结合 selection 和 total 解读，不能把分页越界当成无记录。Adapter 校验请求/页/行版本一致性；历史请求遇到旧响应缺 selection 明确失败。
+- 历史 R6 的数量、未来六个月和累计库龄均绑定选中 version + material，不混入当前版本。历史模式不附当前协议价或无历史证明的辅助展示值，保留 null；material_code 仅使用稳定主数据展示。默认当前模式旧展示值不变。stockpile version_date 表示证据版本生效日，不等于 Forecast 月份或 PO 下单日。
 
 ## Contract gaps and follow-up gates
 
 | ID | Evidence / impact | Required future action |
 |---|---|---|
-| B-G01 | `_public_row` 丢弃内部关联 ID，R1 甚至没有 R3 使用的 schedule ID；R3/R5 只有项目名称 | 增补中性稳定 ID 的 REST 契约后才能做可靠跨表 Join；B 不直接读 View/DB 绕过边界 |
+| B-G01 | 已解决核心六表身份与 R1/R4 Join；所有关联限定同dataset | 实际REST→Adapter跨报表验证；B仍不读DB |
 | B-G02 | R1 没有 PO unit_price/currency，PoLine 也未建订单价格字段 | 后续明确采购价格来源与货币契约；超期金额目前不可算；不能借用 R6 agreement price |
-| B-G03 | R6 route 无 as_of_date 或 PO ID；公共接口只返回当前版本，也无 matched_version/record_found 包装 | 历史囤料按 order_date 查询的 API 尚缺；空列表不能区分无版本和无记录；禁止将当前囤料用于历史判断 |
-| B-G04 | R6 未公开 actual_stockpile_qty、record/version ID、currency | 后续补中性字段；库存不等于正式 actual contract，B 不反推；无 project 是当前 Material 粒度本身，不强加项目 |
-| B-G05 | R3 只有默认 baseline+3、7个月投影，无任意 Anchor、版本 ID/sequence/valid、长 horizon 或选择2–5版的 REST 参数 | 默认展示数据可用；完整、可审计的版本比较/延后识别仍受限，后续补 API 后再做完整 Analytics |
-| B-G06 | R4 未公开 weekly snapshot ID、week dates 与 project weekly facts；snapshot 字段来自 dataset | 需要中性周长表和项目贡献 API 才能可靠填日期与计算项目 exposure Top 3 |
+| B-G03 | 已解决 R6 as_of/version 与选中版本元数据 | 按 PO.order_date 显式调用；本轮不生成囤料诊断 |
+| B-G04 | actual quantity、record/version ID 已解决；currency仍缺 | 不借协议价计算PO金额；R6是Material粒度，不强加project |
+| B-G05 | 版本ID/sequence/horizon/物料项目ID已解决；仍只有默认baseline+3的7月投影 | 全版本目录、任意Anchor/2–5 post/额外重叠月份及历史lifecycle查询仍为候选；当前范围可显式比较同月，不实现自动选择算法 |
+| B-G06 | 已解决 weekly snapshot ID/date、周历、项目周贡献 | Top 3计算本轮未实现；新增事实不等于已做排名或归因 |
 | B-G07 | R2/4 的 ASN、PR 与多个辅助字段可空，UOM/货币及 Dataset schema/generator version 不完整 | 保留 null 与来源名，不把 IN_TRANSIT 伪装 ASN，不假设金额单位；由后续契约确定 |
-| B-G08 | A schema 多数为 Any 且默认 null；响应/OpenAPI 不保证数字类型，B 必须独立校验消费字段 | 本次消费端 validation 已落实；A 强类型化为后续独立改进，不扩大本次 scope |
+| B-G08 | 旧展示字段多数为 Any；新增UUID/date/周Decimal为显式类型 | 旧展示字段全面强类型化仍候选，B继续独立校验 |
 
 这是已实现 API 与设计覆盖度的工程缺口，不是授权更改业务公式。涉及正式业务含义的既有 KD 释义、售后对策等继续 `NEEDS_BUSINESS_CONFIRMATION`；不阻塞本阶段 Adapter，但不能宣称后续全部 Analytics 已具备数据。
 
 ## Phase 1B consumption note
 
-Analytics 保持本契约及 canonical 字段不变，实施范围见 [analytics-metrics.md](analytics-metrics.md)。
+Phase 1C 不增加 Analytics 算法；已有算法通过增强 Canonical 输入解除部分身份/周日期阻塞，见 [analytics-metrics.md](analytics-metrics.md)。
 R4 同行 open PO/available inventory 与13周桶可用于物料级消耗/覆盖；跨 PO/R4 不用名称或编码替代稳定 ID。
 现有 all_supply 是 System A 源供需总量，不能自行更名为 confirmed supply；PR 不自动加入 confirmed/planned 汇总。
 confirmed/planned 的供应承诺、排重及组成定义列为 B-G07 的 System A Contract Enrichment candidate。

@@ -1,5 +1,7 @@
 # System A 数据契约
 
+Phase 1C仅增强公开REST证据身份、版本与历史筛选，未改变本文件六表业务公式或最终Excel展示契约。实际增量见`data-contracts.md`、`evidence-contracts.md`；不把项目贡献或参考项目解释为责任。
+
 ## 1. 文档状态与基线
 
 本文件固化 System A 六类最终 Report 的展示契约、规范化存储关系、时间口径与跨表约束。依据仅包括 V2.0 Word 方案和六个“最终模板”Excel；模板内的业务字段均保留。无法从基线确定的定义使用 `NEEDS_BUSINESS_CONFIRMATION`，不得在实现时自行补全。

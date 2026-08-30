@@ -11,6 +11,8 @@ System B Phase 1B 的增量验收见 `backend/tests/test_system_b_analytics.py` 
 
 ## 1. 目的与执行门禁
 
+Phase 1C增量见`test_evidence_contracts.py`与`test_evidence_contract_integration.py`：实际REST→Adapter六表稳定Join、显式版本同月比较、项目周数量对账、stockpile历史选择/三种匹配状态、截止日/跨dataset隔离与012降升不改事实。原有report/API真实角色、Analytics和泄漏检查继续回归；不能只验证字段存在。
+
 本文件定义未来实现的自动验收合同。测试分为 unit、integration、contract、acceptance 和 static scan。只有确实依赖 `NEEDS_BUSINESS_CONFIRMATION` 的测试才标记为显式 blocked/xfail（附问题 ID）；已确认项必须转为可执行断言，已授权延后至 Generator 的事项标记为 deferred 而不是 Phase 1 blocked。
 
 System A 完成的最低条件：

@@ -30,14 +30,14 @@
 - 消耗/覆盖结果超过13周时，仅表示按当前窗口均值的比例估计，不代表已有13周以后的 Forecast，也不生成消耗完成日期或到货时序。
 - `calculate_po_aging` 必须显式传 as_of_date；服务固定传 PO.snapshot_date。纯函数可用于显式历史日期，但不声称还原当时收到数量/Forecast。服务不使用 due_date 或上游 overdue_days 替代原始时间输入。
 - 13 周必须 index=1…13 且无重复，输入顺序可乱但不能缺桶。纯窗口函数接受 Canonical WeekForecast 序列，因此可以表达一个未完整收集的窗口；不放宽 Phase 1A 对完整 WeeklyForecastSnapshot 的 13 项校验。
-- 周日期全为 null 是当前 API 的正常限制，不阻止基于 13 个完整 index 的数量/周指标。若提供日期，则必须全部提供、Monday-start、连续相隔 7 天；部分提供视为不完整窗口。完整日期输出结束日为最后周起日+7天（exclusive）。
+- 周日期全为 null 仍兼容旧 API，不阻止基于13个完整index的数量/周指标。Phase 1C已公开源周日期。若提供日期，则必须全部提供、Monday-start、连续相隔7天；部分提供视为不完整窗口。完整日期输出结束日为最后周起日+7天（exclusive）。
 - 每个物料沿用其来源数量单位；UOM 尚未公开，不做跨物料合计或单位换算。低层标量函数不会自行关联实体，调用者必须提供同一物料/单位的分子与周桶。
 
 ## Identity and service boundary
 
 `AnalyticsService.analyze_material_forecast(forecast)` 使用 **同一个** WeeklyForecastSnapshot 中的 open_po_qty、good_subinventory_qty 和 weeks，故无需猜测跨表 Join，可直接用于当前 REST 返回值。它输出物料总 open PO 的消耗，不是某条超期 PO 的消耗；也不是到货时序模拟或 MRP。
 
-`AnalyticsService.analyze_purchase_order(po, forecast=None)` 输出 schedule 粒度标识、年龄和条件成立时的 PO 消耗。跨记录必须同 dataset、同 snapshot、非空且相同的 material_id / organization_id；不能按物料名称或编码补 ID。当前 REST 对应 ID 缺失，所以其年龄可用，PO 消耗明确 MISSING_STABLE_ID（未提供 Forecast 则 MISSING_FORECAST）。不把未经验证的 Forecast 附到该 PO 的计算结果中。
+`AnalyticsService.analyze_purchase_order(po, forecast=None)` 输出 schedule 粒度标识、年龄和条件成立时的 PO 消耗。跨记录必须同 dataset、同 snapshot、非空且相同的 material_id / organization_id；不能按物料名称或编码补 ID。Phase 1C已公开这些ID，现有算法可消费真实REST配对；旧响应缺ID仍为MISSING_STABLE_ID（未提供Forecast则MISSING_FORECAST）。不把未经验证的Forecast附到该PO的计算结果中。
 
 `calculate_supply_demand(source)` 只处理一条 R2 canonical row。nullable PR 以原值保留为来源信息，不加入源 all_supply，既有 open_po_qty 已含 OPEN_PO + IN_TRANSIT，不能再加一次在途量；IN_TRANSIT 不是 ASN。R2 实际需求是既有近端源窗口，与 13 周 Forecast 不是同一个分母。
 
@@ -56,7 +56,7 @@
 3. 显式 previous.version_date < current.version_date <= snapshot_date，两个 version ID 不同。
 4. 数量合法，保持同一物料的来源单位。
 
-同日不同版本因缺 sequence 语义仍不可比；不按 UUID 大小、数组顺序、版本名称或 BASELINE/POST 标签排序。名称变化不覆盖稳定 ID。此函数对已具备明确标识的 canonical 输入可测试、可计算；**当前 REST 缺这些标识，自动版本比较仍 blocked**。测试构造的明确 ID 不代表已发布新 API，不伪造数据源。
+现有函数仍拒绝同日不同版本，不按UUID大小、数组顺序、版本名称或BASELINE/POST标签排序。Phase 1C公开稳定身份与sequence，使真实REST中严格不同日期、同物料/项目/月份的显式pair可计算；本轮没有修改Analytics或新增自动挑版功能。R3每个版本日只公开最终有效修订，完整版本目录/任意horizon仍不在当前契约内。
 
 ## Availability semantics
 
@@ -86,17 +86,17 @@
 
 ## Blocked by upstream contract
 
-以下均为 **System A Contract Enrichment candidate**，不在 Phase 1B 修改上游：
+Phase 1B未改上游；下表按Phase 1C证据增强后的实际状态更新。没有新增Analytics算法：
 
 | Blocked metric | Why / missing contract |
 |---|---|
 | overdue amount | B-G02：缺 PO 单价与币种；不借协议价，不默认货币，不计算伪金额 |
-| project exposure Top 3 | B-G06：缺项目周贡献明细及稳定关联；top_project 名称只有 Top 1，不生成排名或 responsible_project |
-| 自动 Forecast previous/current 与完整 horizon 变化 | B-G01/B-G05：缺版本/项目/物料 ID、完整版本及可对齐月窗口；显式同月纯函数不消除此缺口 |
-| 当前 REST 的 PO 级 consumption | B-G01：缺 R1/R4 物料和组织稳定 ID；当前仅可安全计算同一 R4 行的物料级 open PO consumption |
+| project exposure Top 3（尚未实现） | B-G06原始项目周贡献与稳定关联已补齐；排名算法留后续独立阶段，不生成责任项目 |
+| 自动 Forecast previous/current 与完整 horizon 变化 | B-G05部分解决：已公开版本/项目/物料ID及sequence；仍无完整版本目录/任意Anchor与额外重叠月份，自动选择不在本轮范围 |
+| REST的PO级consumption（身份阻塞已解除） | R1/R4已提供material/organization ID，既有算法可按同dataset/snapshot/identity使用；缺证据仍按原availability处理 |
 | confirmed_supply_qty / planned_supply_qty | B-G07：PR/ASN可空，IN_TRANSIT不是ASN，open PO已含在途；缺供应承诺状态、组成、排重和单位语义，不能强套 inventory + ASN + PO (+ PR) |
 | confirmed/planned gap 与 coverage | 依赖上一项；不把 all_supply 偷换成 confirmed，也不把 PR 当成确认供应 |
-| 周窗口实际日历日期 | B-G06：源 weekly snapshot ID / 周日期未公开；数量型13周指标可用，但不伪造日期 |
+| 周窗口实际日历日期（已解除） | B-G06已提供weekly snapshot ID/date与周日期；旧接口响应无日期时仍不伪造 |
 
 原有 NEEDS_BUSINESS_CONFIRMATION 事项不在本阶段解决。没有新增最终原因类型、业务阈值或责任路径。
 

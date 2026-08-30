@@ -3,7 +3,7 @@
 from typing import Annotated, Generic, Literal, TypeVar
 from uuid import UUID
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StrictBool
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StrictBool, model_validator
 
 from app.system_b.models import CalendarDate, LifecycleStage, NonnegativeInt, PositiveInt, Quantity
 
@@ -28,6 +28,13 @@ class DatasetListDTO(SourceDTO):
 
 
 class PurchaseOrderDTO(SourceDTO):
+    material_id: UUID | None = None
+    po_header_id: UUID | None = None
+    po_line_id: UUID | None = None
+    po_line_schedule_id: UUID | None = None
+    po_reference_project_id: UUID | None = None
+    supplier_id: UUID | None = None
+    organization_id: UUID | None = None
     material_code: str
     po_number: str
     po_line_number: PositiveInt
@@ -54,6 +61,13 @@ class PurchaseOrderDTO(SourceDTO):
 
 
 class SupplyDemandDTO(SourceDTO):
+    material_id: UUID | None = None
+    organization_id: UUID | None = None
+    supply_demand_snapshot_id: UUID | None = None
+    inventory_snapshot_id: UUID | None = None
+    mpm_employee_id: UUID | None = None
+    supply_snapshot_date: CalendarDate | None = None
+    inventory_snapshot_date: CalendarDate | None = None
     material_code: str
     inventory_organization_code: str
     material_lt_days: NonnegativeInt
@@ -76,6 +90,14 @@ class SupplyDemandDTO(SourceDTO):
 
 
 class ForecastDTO(SourceDTO):
+    material_id: UUID | None = None
+    project_id: UUID | None = None
+    forecast_version_id: UUID | None = None
+    forecast_version_sequence: PositiveInt | None = None
+    forecast_anchor_date: CalendarDate | None = None
+    window_position: NonnegativeInt | None = None
+    horizon_start_month: CalendarDate | None = None
+    horizon_end_month_exclusive: CalendarDate | None = None
     material_code: str
     po_line_schedule_id: UUID
     project_name: str
@@ -88,7 +110,24 @@ class ForecastDTO(SourceDTO):
     cumulative_shipped_qty: Quantity
 
 
+class WeekEvidenceDTO(SourceDTO):
+    week_index: Annotated[int, Field(strict=True, ge=1, le=13)]
+    week_start_date: CalendarDate
+    forecast_qty: Quantity
+
+
+class ProjectWeekDTO(WeekEvidenceDTO):
+    project_id: UUID
+
+
 class WeeklyForecastDTO(SourceDTO):
+    material_id: UUID | None = None
+    organization_id: UUID | None = None
+    weekly_forecast_snapshot_id: UUID | None = None
+    source_forecast_version_id: UUID | None = None
+    forecast_snapshot_date: CalendarDate | None = None
+    weeks: list[WeekEvidenceDTO] | None = None
+    project_contributions: list[ProjectWeekDTO] | None = None
     material_code: str
     organization_code: str
     snapshot_date: CalendarDate
@@ -114,8 +153,34 @@ class WeeklyForecastDTO(SourceDTO):
     defective_subinventory_qty: Quantity | None
     top_project: str | None
 
+    @model_validator(mode="after")
+    def validate_week_evidence(self):
+        if self.weeks is not None:
+            ordered = sorted(self.weeks, key=lambda week: week.week_index)
+            if [week.week_index for week in ordered] != list(range(1, 14)):
+                raise ValueError("incomplete or duplicate week evidence")
+            for week in ordered:
+                if (week.week_start_date.weekday() != 0
+                        or (week.week_start_date - ordered[0].week_start_date).days != 7 * (week.week_index - 1)
+                        or week.forecast_qty != getattr(self, f"week_{week.week_index:02d}_forecast_qty")):
+                    raise ValueError("inconsistent week evidence")
+        if self.project_contributions is not None:
+            if self.weeks is None:
+                raise ValueError("project evidence requires week evidence")
+            seen = set()
+            dates = {week.week_index: week.week_start_date for week in self.weeks}
+            for item in self.project_contributions:
+                key = (item.project_id, item.week_index)
+                if key in seen or item.week_start_date != dates[item.week_index] or item.forecast_qty < 0:
+                    raise ValueError("invalid project week evidence")
+                seen.add(key)
+        return self
+
 
 class ProductConfigDTO(SourceDTO):
+    material_id: UUID | None = None
+    project_id: UUID | None = None
+    product_config_id: UUID | None = None
     material_code: str
     project_name: str
     product_config_type: str
@@ -141,6 +206,12 @@ class AgeQuantityDTO(SourceDTO):
 
 
 class StockpileDTO(SourceDTO):
+    material_id: UUID | None = None
+    organization_id: UUID | None = None
+    stockpile_version_id: UUID | None = None
+    stockpile_record_id: UUID | None = None
+    actual_stockpile_qty: Quantity | None = None
+    stockpile_version_sequence: PositiveInt | None = None
     material_code: str
     stockpile_version_name: str
     stockpile_version_date: CalendarDate
@@ -158,6 +229,22 @@ class StockpileDTO(SourceDTO):
 S = TypeVar("S", bound=SourceDTO)
 
 
+class StockpileSelectionDTO(SourceDTO):
+    as_of_date: CalendarDate
+    stockpile_version_id: UUID | None = None
+    stockpile_version_date: CalendarDate | None = None
+    sequence_no: PositiveInt | None = None
+
+    @model_validator(mode="after")
+    def validate_selection(self):
+        values = (self.stockpile_version_id, self.stockpile_version_date, self.sequence_no)
+        if any(value is None for value in values) and not all(value is None for value in values):
+            raise ValueError("incomplete version selection")
+        if self.stockpile_version_date is not None and self.stockpile_version_date > self.as_of_date:
+            raise ValueError("future version selection")
+        return self
+
+
 class ReportPageDTO(SourceDTO, Generic[S]):
     dataset_version_id: UUID
     snapshot_date: CalendarDate
@@ -165,3 +252,4 @@ class ReportPageDTO(SourceDTO, Generic[S]):
     page_size: Annotated[int, Field(strict=True, ge=1, le=500)]
     total: NonnegativeInt
     items: list[S]
+    stockpile_selection: StockpileSelectionDTO | None = None

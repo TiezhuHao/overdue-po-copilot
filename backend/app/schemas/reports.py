@@ -5,6 +5,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, create_model
 
 from app.reporting.report_header_manifest import get_report_manifest
+from app.schemas.evidence import StockpileSelection, evidence_fields
 
 
 class TemporalQuantity(BaseModel):
@@ -48,6 +49,7 @@ def _item_model(report_id: int, *, normalized_dynamic: bool = False) -> type[Bas
     if normalized_dynamic and report_id == 6:
         fields["future_months"] = (list[TemporalQuantity], ...)
         fields["inventory_age_quantities"] = (list[AgeQuantity], ...)
+    fields.update(evidence_fields(report_id))
     return create_model(
         f"Report{report_id}Item",
         __config__=ConfigDict(extra="forbid"),
@@ -67,4 +69,7 @@ Report2Page = ReportPage[Report2Item]
 Report3Page = ReportPage[Report3Item]
 Report4Page = ReportPage[Report4Item]
 Report5Page = ReportPage[Report5Item]
-Report6Page = ReportPage[Report6Item]
+
+
+class Report6Page(ReportPage[Report6Item]):
+    stockpile_selection: StockpileSelection | None = None
