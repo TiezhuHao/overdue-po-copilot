@@ -3,9 +3,9 @@
 A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
 
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、参数化业务诊断与只读处置映射。六个判断分支覆盖原五类原因；缺证据、缺参数或正式处置规格时保持未决。
+System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、参数化业务诊断、只读处置映射与结构化LangGraph编排。六个判断分支覆盖原五类原因；缺证据、缺参数或正式处置规格时保持未决。
 
-**System A: COMPLETE · System B: Phase 3 — deterministic diagnosis and decision · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 4A — read-only LangGraph foundation, no LLM · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 3：参数化诊断与确定性处置映射/trace已实现；售后处置、缺参/缺证据保持未决，Agent/业务前端未实现 |
+| System B | Phase 4A：四个typed Tool与只读LangGraph已实现；售后处置/缺参/缺证据保持未决，未接LLM或业务前端 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -257,7 +257,10 @@ Phase 2C售后为显式13周参数模式，不宣称企业阈值已确认或已�
 Phase 3增加 [Decision Engine](docs/decision-engine.md)，先审计并建立 [处置规格](docs/decision-rule-specification.md)，再按诊断类型+主规则+版本映射只读动作。
 消费分支显式使用已确认6个月Policy；试产交物料MPM，客户/内部呆滞分别沟通客户/事业部，售后DC-16仍无正式动作。
 不自动取消/改期、不联系外部人员、不重新诊断。运行 `python -m pytest tests/test_system_b_decision.py -q` 验证动作、边界、缺失与来源。
-LangGraph Agent、Next.js Dashboard / Copilot 仍未实现；没有内置诊断企业阈值或Demo profile。
+Phase 4A新增 [Agent Foundation](docs/agent-architecture.md)：四个版本化Pydantic Tool、稳定ID请求、六节点LangGraph及单次执行trace。
+Graph直接消费既有Analytics/Diagnosis/Decision结果；缺证据与未决状态不会被Agent覆盖。LangGraph及必要传递依赖固定在现有requirements中，外部tracing显式关闭。
+运行 `python -m pytest tests/test_system_b_agent_tools.py tests/test_system_b_agent_graph.py -q` 验证工具和真实Graph。
+尚未连接LLM、生成自然语言答案或开发最终Copilot UI；无持久化memory、采购操作执行或内置诊断企业阈值。
 
 ## Disclaimer
 

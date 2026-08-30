@@ -1,10 +1,10 @@
-# System B — Phase 0 through Phase 3
+# System B — Phase 0 through Phase 4A
 
-已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C补齐六个参数化分支，覆盖原五类原因。Phase 3新增只读Decision映射，售后处置仍因DC-16未决。Agent和业务前端未实现。本阶段不修改System A、Generator、数据库、Analytics公式或Diagnosis规则。
+已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C补齐六个参数化分支，覆盖原五类原因。Phase 3新增只读Decision映射，售后处置仍因DC-16未决。Phase 4A增加typed Tool与无LLM的LangGraph结构化编排。未开发业务前端；不修改System A、Generator、数据库或已有业务公式/规则。
 
 ## Repository inspection
 
-现有 Python 工程是 `backend/app`，依赖固定于 `backend/requirements.txt`，使用 Python 3.12、Pydantic 2、pydantic-settings、httpx、pytest。继续复用，不新建服务栈或引入依赖。
+现有 Python 工程是 `backend/app`，依赖固定于 `backend/requirements.txt`，使用 Python 3.12、Pydantic 2、pydantic-settings、httpx、pytest。继续复用服务栈；Phase 4A仅增加LangGraph及其必要依赖闭包。
 
 | 检查项 | 实际位置与结论 |
 |---|---|
@@ -18,7 +18,7 @@
 | 测试 | `backend/tests/test_report_api.py` 覆盖六路由、分页、过滤、真实 API 角色与 OpenAPI 防泄漏；这些测试需要专用 PostgreSQL |
 | 配置 | `backend/app/core/config.py` 与根目录 `.env.example`；复用 Settings 增加 B 的 HTTP 参数 |
 | Docker | `docker-compose.dev.yml` 是 PostgreSQL 本地运行入口；根 compose 仍是早期骨架，缺容器 API DB 配置；本次不修改 |
-| Frontend | 现有 Next.js 页面只是占位；`agent/` 保留目录，不进入本阶段 |
+| Frontend | 现有 Next.js 页面只是占位；顶层`agent/`仍保留，当前编排在`backend/app/system_b/agent/` |
 
 早期 `ARCHITECTURE_API.md` §7 中的单物料路径、嵌套返回和 as-of 参数不等于已实现 REST。以实际 route / schema / public projection 为本阶段适配依据；差异记录在 [data-contracts.md](data-contracts.md)，不覆盖或悄悄修改原业务规格。
 
@@ -34,7 +34,7 @@ flowchart LR
     Assembler --> Diagnosis[Diagnosis Foundation + Business Policy + Trace]
     Diagnosis --> Decision[Deterministic Decision + Action Trace]
     Assembler --> Decision
-    Decision -.-> Agent[Agent]
+    Decision --> Agent[Typed Tools + Read-only LangGraph]
     Agent -.-> Frontend[Dashboard / Copilot]
 ```
 
@@ -59,9 +59,11 @@ Phase 2A只判断阈值资格、历史囤料记录存在和可比较Forecast负�
 
 Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`；Phase 2C增加`parameters.py`，由调用者提供独立版本化BusinessDiagnosisPolicy。原`diagnose`保持foundation兼容；`diagnose_business(bundle, policy)`可选择六分支唯一主原因。TRIAL仍由R1组织决定；其它分支使用唯一top项目、对应CURRENT_STATE、显式阈值及严格高优先级排除。参数全文/fingerprint与used_policy_fields进入结果。完整条件见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。
 
-`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但诊断企业参数权威值仍须调用者明确提供。Agent/前端仍未实现；任何层都不得绕过REST读取A的隐藏答案。
+`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但诊断企业参数权威值仍须调用者明确提供。自然语言交互/前端仍未实现；任何层都不得绕过REST读取A的隐藏答案。
 
 `decision/models.py`、`rules.py`、`engine.py`消费BusinessDiagnosisResult+EvidenceBundle，按主原因/规则ID/版本匹配六个处置入口。实际五种动作源于已固化规格；消费分支使用显式选择的正式6个月Policy，售后DC-16无动作。客户与内部呆滞分别沟通客户/事业部；MPM仅按物料关联。核验证据派生但不重新诊断，不调用HTTP/DB、不执行操作。输入、动作、缺口及trace见 [decision-engine.md](decision-engine.md)，逐条来源见 [decision-rule-specification.md](decision-rule-specification.md)。
+
+`agent/models.py`定义结构化Request/Tool/Response；`tools.py`通过Adapter加载同dataset/snapshot的稳定ID证据，再调用已有Assembler、Diagnosis和Decision；`state.py`只传投影/引用；`graph.py`以六个确定性节点编排，工具失败即停止后续业务调用。没有业务公式或动作规则复制，原始工件仅在单次session保留，最终证据目录只导出一次。依赖固定LangGraph 1.2.11，关闭外部tracing且无checkpointer；不接LLM、模型SDK、DB或写操作。详见 [agent-architecture.md](agent-architecture.md)。
 
 ## Operational contract
 
@@ -103,3 +105,5 @@ with SystemAAdapter() as adapter:
 `python -m pytest tests/test_system_b_diagnosis_completion.py` 验证六分支Golden正例/排除、显式参数、项目并列、完整Anchor窗口、缺证据保护及参数/事实provenance。
 
 `python -m pytest tests/test_system_b_decision.py` 验证六路径动作、6个月边界、缺证据/参数、售后规格阻断、不同主规则同原因、trace、防串用与确定性。
+
+`python -m pytest tests/test_system_b_agent_tools.py tests/test_system_b_agent_graph.py` 验证工具schema/错误、真实LangGraph路径、只读GET、引用、缺证据保护、状态隔离与无外部tracing。没有真实LLM测试依赖。
