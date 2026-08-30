@@ -1,5 +1,10 @@
 # System A Acceptance Tests
 
+System B Phase 0 / Phase 1A 的增量验收见 `backend/tests/test_system_b_adapter.py`：
+六类正常/空返回、404/5xx/其他状态、网络 timeout、损坏响应、nullable、Decimal/date/timezone、
+显式 dataset 与分页一致性、Material → MPM、实际 FastAPI 路由兼容和无隐藏答案/DB 依赖。
+这些测试无需运行服务或数据库，不替代下列 System A 集成验收。
+
 ## 1. 目的与执行门禁
 
 本文件定义未来实现的自动验收合同。测试分为 unit、integration、contract、acceptance 和 static scan。只有确实依赖 `NEEDS_BUSINESS_CONFIRMATION` 的测试才标记为显式 blocked/xfail（附问题 ID）；已确认项必须转为可执行断言，已授权延后至 Generator 的事项标记为 deferred 而不是 Phase 1 blocked。

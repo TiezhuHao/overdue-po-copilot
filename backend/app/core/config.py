@@ -1,6 +1,6 @@
 from functools import lru_cache
 
-from pydantic import SecretStr
+from pydantic import Field, HttpUrl, SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -16,6 +16,17 @@ class Settings(BaseSettings):
     app_name: str = "Overdue PO Copilot - System A"
     api_v1_prefix: str = "/api/v1"
     log_level: str = "INFO"
+
+    # Optional for System A startup; required when constructing the System B adapter.
+    system_a_base_url: HttpUrl | None = None
+    system_a_timeout_seconds: float = Field(default=10.0, gt=0, allow_inf_nan=False)
+
+    @field_validator("system_a_base_url")
+    @classmethod
+    def validate_system_a_base_url(cls, value: HttpUrl | None) -> HttpUrl | None:
+        if value and (value.username or value.password or value.query or value.fragment):
+            raise ValueError("SYSTEM_A_BASE_URL must not include credentials, query or fragment")
+        return value
 
     database_url_owner: SecretStr = SecretStr(
         "postgresql+psycopg://system_a_owner:change_me@localhost:5432/overdue_po_copilot?connect_timeout=3"
