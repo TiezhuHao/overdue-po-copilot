@@ -6,8 +6,9 @@ Synthetic data only. 以下步骤用于新的本地开发环境；不连接真�
 
 ## 1. Prerequisites and local configuration
 
-需要 Python 3.12、Git、Docker Desktop（PostgreSQL 16 容器）。Excel 使用 requirements
-中的 openpyxl，不需要 npm、Node.js、Office 或私有运行时。
+System A 需要 Python 3.12、Git、Docker Desktop（PostgreSQL 16 容器）。Excel 使用 requirements
+中的 openpyxl，不需要 Office 或私有运行时。完整 v1.0 前端另需 Node.js 24 和 pnpm 11.19.0；
+System B 与前端启动命令见[根 README](../README.md#quick-start)。
 先在仓库根目录检查：
 
 ```powershell
@@ -70,7 +71,7 @@ Get-Content -Raw db/bootstrap/002_grants.sql |
 & .\.venv\Scripts\python.exe -m alembic current
 ```
 
-预期 head 为 `011_report_semantic_views`。从 backend 启动时 Settings 自动读取 `../.env`。
+预期 head 为 `012_evidence_contract`。从 backend 启动时 Settings 自动读取 `../.env`。
 已导出的同名环境变量优先于文件；如果连接到错误数据库，检查当前会话是否有旧变量。
 
 ## 4. Full demo generation and publication

@@ -1,292 +1,227 @@
 # Overdue PO Copilot
 
-A synthetic procurement data platform with a bounded natural-language copilot for overdue purchase-order diagnosis and decision support.
+面向采购人员的超期采购订单诊断与决策支持系统：用确定性引擎计算和判断，用有证据约束的 Copilot 组织中文回答。
 
-采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、参数化业务诊断、只读处置映射、LangGraph编排与受约束自然语言入口。六个判断分支覆盖原五类原因；缺证据、缺参数或正式处置规格时保持未决，模型不能覆盖业务结果。
+**v1.0 求职展示版 · Synthetic data only · Read-only · 本地演示**
 
-**System A: COMPLETE · System B: Phase 5 — Next.js Product MVP + grounded Copilot · Synthetic data only.**
+> **Real OpenAI smoke not executed.** 本次封版进程未配置 OpenAI key/model。真实 REST、LangGraph、业务引擎和浏览器链路已通过 deterministic fallback 演示。模拟模型测试不是模型准确率，也不代表真实模型已验收。此版本标记不表示已创建 GitHub Release 或 tag。
 
-正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
-Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
+## What it solves
 
-## Why this project
+超期 PO 不只是“找出老订单”。采购人员还需要把历史 Forecast、当前项目生命周期、供需、下单时囤料证据、项目贡献和消耗周期放在一致的身份与时间口径下，才能判断原因与处置路径。
 
-真实企业数据通常分散在多个系统中，且不能作为公开演示数据。独立随机生成六张报表又会造成跨表数量、版本和项目关系矛盾。
-本项目先生成统一的 Synthetic Enterprise World，再派生规范化事实、六张报表、API 和 Excel。
-这样可以在不使用真实企业记录的前提下，测试时间口径、数据血缘、权限与未来诊断逻辑。
+本项目将问题拆成可检查的步骤：数据是否属于同一订单和快照 → 指标是多少 → 规则能否确定原因 → 正式规格允许什么动作 → 用中文解释证据。缺字段、缺参数、存在歧义或动作尚未确认时，明确保持未决。
+
+真实 ERP、计划与 BI 系统无法作为公开求职数据源，所以 System A 先构建统一、可重复的合成企业世界，再派生六类报表、REST API 和 Excel。System B 通过 REST 集成，不读取隐藏答案或直接连接数据库。
+
+## Product Screenshots
+
+以下均为当前产品、真实公开 API 和 `demo-master-v1` 的浏览器截图，没有合成 UI 或预置前端答案。
+
+### Dashboard
+
+![采购工作台](docs/screenshots/dashboard.jpg)
+
+### PO Detail / Diagnosis / Decision
+
+![订单诊断与只读处置](docs/screenshots/diagnosis-decision.jpg)
+
+### Contextual Copilot
+
+![中文 Copilot 与订单指标](docs/screenshots/po-detail.jpg)
+
+## Demo Flow
+
+1. 打开 [本地工作台](http://localhost:3000)，选择 `demo-master-v1`，业务 snapshot 为 `2026-08-26`。
+2. 点击 **PO-000015 / 行3 / 发运1**，查看开放量、433天订单年龄、254天阈值和179天越界。
+3. 输入 **“为什么这个 PO 超期？应该怎么办？”**。
+4. 查看 `TRIAL` 诊断及 `REQUEST_MPM_CONFIRMATION` / MPM，再展开 **Evidence & Trace** 核对规则、版本与快照。
+
+无 key 时显示“确定性回答”。演示记录由公开 API 选取，ID 只用于文档指引，不硬编码在前端。可另看 `PO-000031 / 行2 / 发运1` 的未决状态，说明未知值和缺参数不会被包装成确定结论。
 
 ## Architecture
 
 ```mermaid
-flowchart TD
-    Config["Generation Config: seed + snapshot + versions"] --> Dataset["Dataset Version: GENERATING"]
-    Dataset --> Master["Synthetic Master World"]
-    Master --> PO["Procurement Facts: Header → Line → Schedule"]
-    PO --> Truth["Scenario Ground Truth<br/>evaluation-only · not exposed to API"]
-    Master --> Evidence["Evidence Foundation: lifecycle + product configs + shared demand"]
-    PO --> Evidence
-    Truth -. "generator-only planning" .-> Evidence
-    Evidence --> Forecast["Forecast Evidence: monthly + 13-week"]
-    Forecast --> Operations["Operational Evidence: inventory + supply/demand + stockpile"]
-    PO --> Operations
-    Truth -. "generator-only stockpile plan" .-> Operations
-    Evidence --> Views["Six Canonical Report Views"]
-    PO --> Views
-    Forecast --> Views
-    Operations --> Views
-    Views --> API["Read-only REST API"]
-    Views --> Excel["Manifest-driven Excel"]
-    Views --> Finalize["Validation + business_content_hash → READY"]
-    classDef private fill:#fff0e6,stroke:#b45309,stroke-dasharray:5 5;
-    class Truth private;
+flowchart LR
+    A["System A<br/>Synthetic Enterprise World / PostgreSQL"] --> REST["六类 Report REST API"]
+    REST --> AD["Adapter<br/>Canonical Domain Models"]
+    AD --> AN["Analytics<br/>确定性指标"]
+    AN --> DI["Diagnosis<br/>原因 / 未决"]
+    DI --> DE["Decision<br/>只读动作 / 规格缺口"]
+    DE --> LG["LangGraph<br/>工具编排 / 状态 / Trace"]
+    LG --> CP["Copilot API<br/>身份校验 / Grounding / Fallback"]
+    CP --> NX["Next.js<br/>Dashboard / Detail / Copilot"]
+    REST -->|"轻量列表经同源代理"| NX
+    OA["OpenAI"] --- INT["Intent extraction"]
+    OA --- ANSWER["Answer composition"]
+    INT --> CP
+    CP --> ANSWER
+    ANSWER -->|"受校验的草稿"| CP
 ```
 
-运行时数据流固定为 normalized platform facts → canonical reporting views → API / Excel。
-公开查询不会读取隐藏答案，也不会重新实现报表业务公式。
+主链表示业务结果依赖；实际 LangGraph 依次调用 Context、Analytics、Diagnosis、Decision 四个工具。所有受支持意图目前都运行完整依赖链，未实现局部计算优化。OpenAI 不连接数据库或诊断规则。
 
-## System A — Mock Enterprise Data Platform
+[System B 架构](docs/system-b-architecture.md) · [Agent 架构](docs/agent-architecture.md) · [Copilot 契约](docs/copilot.md) · [前端设计](docs/frontend-mvp.md)
 
-- seed、固定 `snapshot_date`、生成器版本和配置决定合成世界；稳定 UUID 与内容 hash 支持复现。
-- PostgreSQL dataset-scoped 复合外键和有效日期约束保证跨 Dataset 隔离及时间关系一致。
-- Alembic migrations 001–011 建立主数据、采购事实、历史证据与 reporting views；012 补充只读证据视图。
-- 每个生成阶段使用事务；缺失/部分前置世界拒绝生成，不静默补齐。
-- Finalization 校验一致性并写入最终 hash，原子切换 `GENERATING → READY`。
-- READY 在 Generator 服务入口拒绝改写，重新 finalization 检测内容变化；这不是对 owner 直接 SQL 的数据库级不可变锁。
+## Why not put business logic in the LLM?
 
-## Six Business Reports
+采购核心规则需要确定、可测试、可追溯、可审计。模型只提取受控意图、提供有限路由输入，并从允许的表述中组织回答；确定性 Resolver 验证身份，应用控制工具调用。
 
-| Report | Purpose | Grain | Main role |
-|---|---|---|---|
-| 1 — Overdue PO Detail | 展示严格超期的 PO 与未交数量 | PO Header × Line × Schedule/Shipment | 排查入口 |
-| 2 — Material Supply-Demand | 汇总供应、实际需求和盈余 | 每 Material 一行，V1 主库存组织 | 供需背景 |
-| 3 — Historical Forecast | 展示 Anchor 前后预测证据 | Schedule × Material × Project × Version × Month（API 长表） | 需求变化分析输入 |
-| 4 — Latest 13-Week Forecast | 展示最新 13 周需求，保留零需求物料 | 每 Material 一行，13 个周槽位 | 未来消耗输入 |
-| 5 — Product Configuration | 展示配置物料与项目生命周期 | 有效 Product Config × Material | 项目/配置证据 |
-| 6 — Stockpile Detail | 展示 snapshot 时有效的当前囤料计划 | 最新有效 Stockpile Version × Material | 囤料证据；历史 as-of 查询另按 PO order date |
+回答校验要求 reason 来自 Diagnosis、action/owner 来自 Decision、数值来自 Analytics，引用存在且事实与限制完整。改数、捏造动作、替换角色或无依据措辞都会导致整份模型草稿被丢弃，回退到同一证据的确定性回答。v1.0 中文表述有意受限，不是任意自由生成。
 
-六个最终 Excel 的列数为 **37 / 106 / 23 / 44 / 22 / 60**。
-列序与多级表头只有一份[机器 Manifest](backend/app/reporting/report_header_manifest.json)，
-[字段映射](docs/REPORT_FIELD_MAPPING.md)说明各列来源，不在 API、View 和 exporter 分别维护列序。
+## Key Features
 
-## Data Consistency / Ground Truth
+- **一致的数据基础**：固定 seed/snapshot、稳定 UUID、dataset 隔离，Forecast 报表同源，隐藏真值与普通 API 分离。
+- **六类业务报表**：超期 PO、物料供需、历史 Forecast、最新13周 Forecast、产品配置、囤料；Manifest 驱动 Excel 导出。
+- **确定性 Analytics**：aging、消耗、可比 Forecast、项目贡献等，保留 Decimal 与可计算状态；前端只展示公开投影。
+- **五类原因、六个判断分支**：TRIAL、DEMAND_ADJUSTMENT、AFTER_SALES、STOCKPILE、客户/内部两条 PROJECT_OBSOLESCENCE 路径。
+- **独立 Decision**：按正式规则映射只读建议，不重判原因，不把未决当作默认动作。
+- **可追溯 Copilot**：精确实体消歧、规则/版本引用、grounding 校验和模型失败安全回退。
+- **中文产品界面**：数据集、筛选、分页、订单详情、临时聊天和证据展开；首页不逐行运行 Agent。
 
-Ground Truth 是合成场景的预期答案，只存在于隔离的 `evaluation` schema，供 Generator/Evaluation/测试使用。
-Cause-first 生成让业务证据与测试目标一致；生产式 API 使用 `system_a_api`，不能读取 Truth 或受限 raw tables。
-
-Report 3、4、6 的预测都来自同一 Underlying Demand Signal 和持续生效的日期修订。
-Report 2 供应与采购开放量、库存组件对账；Stockpile 的月预测保留同源 lineage。
-所有“当前”都使用 Dataset snapshot，不使用机器日期；同日版本取最大有效 sequence。
-
-辅助字段中尚未确认的公式保持 null；`KD` 仅作辅助展示、释义待确认，
-售后正式处置规则仍待业务确认。System A 不把这些空缺编造成诊断结论。
+Dashboard 总数是超期**发运行**，不是去重 PO Header；其他 KPI 是**本页**已知 ID 去重，不冒充全数据集统计。无金额、savings、风险分数或虚构性能指标。
 
 ## Tech Stack
 
-Python 3.12（已验证）、FastAPI、Pydantic、SQLAlchemy 2、PostgreSQL 16、Alembic、
-pytest、NumPy/SciPy；精确版本在 [requirements.txt](backend/requirements.txt)。
-Excel 使用公开依赖 [openpyxl 3.1.5](https://pypi.org/project/openpyxl/3.1.5/)，与其余 Python 依赖一起安装。
-Docker Compose用于本地PostgreSQL。Next.js 16.3.1 App Router现提供中文工作台、订单分析和上下文Copilot，不在浏览器计算采购规则或调用OpenAI。
+| Layer | Implemented stack |
+|---|---|
+| Backend | Python 3.12、FastAPI、Pydantic、SQLAlchemy 2、Decimal |
+| Database | PostgreSQL 16、Alembic migrations 001–012、角色隔离 |
+| Agent / LLM | LangGraph 1.2.11、官方 OpenAI SDK 3.6.0 / Responses Structured Outputs |
+| Frontend | Next.js 16.3.1 App Router、React 19.2.8、TypeScript 5.9.3、普通 CSS |
+| Testing | pytest、SDK模拟传输、Node test runner、React rendering tests、真实浏览器 smoke |
+| Local deployment | Docker Compose 运行 PostgreSQL；System A/B 与 Next.js 单独启动 |
+
+依赖以 [Python requirements](backend/requirements.txt) 和 [pnpm lockfile](frontend/pnpm-lock.yaml) 为准。前端已验证 Node 24 / pnpm 11.19.0，没有大型 UI/chart framework。
 
 ## Quick Start
 
-使用 Windows PowerShell，从仓库根目录开始。需要 Python 3.12 与运行中的 Docker Desktop，
-不需要连接真实企业系统。
+使用 Windows PowerShell，克隆后从仓库根目录开始。需要 Python 3.12、Node 24、pnpm 11.19.0 和已启动的 Docker Desktop。
 
-1. 按[本地运行手册](docs/LOCAL_SETUP.md)准备 `.env`、PostgreSQL 角色/密码与测试数据库。
-2. 安装 `backend/requirements.txt`，执行 Alembic upgrade 和 grants bootstrap。
-3. 顺序运行 Master → Procurement → Scenario → Evidence → Forecast → Operational CLI。
-4. 执行 finalization，然后在 `backend/` 启动 API：
+**首次初始化**：按 [本地环境手册第1–4节](docs/LOCAL_SETUP.md) 复制 `.env.example`、设置本地密码、启动 PostgreSQL、建立角色、安装 Python 依赖、执行已有 migration/grants，并按固定 seed 顺序生成与 finalization。预期为 migration `012_evidence_contract` 和 READY 的 `demo-master-v1`。不依赖私有 Word/Excel 或本机运行时，Excel 使用 openpyxl。
 
-```powershell
-python -m app.finalization.cli --dataset-version-name demo-master-v1
-python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
-```
+仅使用 `docker-compose.dev.yml` 的 PostgreSQL 服务。根目录 `docker-compose.yml` / Dockerfiles 为早期骨架，不是完整 v1.0 启动入口；本阶段未改造容器部署。不要对已有 READY dataset 重跑 Generator，不删除已有数据卷。
 
-上述 `python` 指已激活的 backend venv；手册给出无需激活的完整 PowerShell 命令。
-推荐使用 `docker-compose.dev.yml` 仅启动 PostgreSQL。
-根目录 `docker-compose.yml` 是早期三服务骨架，尚未配置容器 API 数据库连接，不能当作完整启动命令。
-不要对已发布 READY Dataset 重跑生成步骤，也不要对开发数据库执行测试重建。
+打开三个终端，**每个终端从仓库根目录开始**：
 
-## API Examples
-
-API 默认只选择最新 READY Dataset；没有 READY 返回 `NO_READY_DATASET`（404）。
-可以显式指定 `dataset_version_name` 或 `dataset_version_id`，包含开发用 GENERATING Dataset。
-分页默认为 1/100，page_size 上限 500。Dataset 列表会展示各状态的安全元数据。
+**1. System A**
 
 ```powershell
-Invoke-RestMethod "http://localhost:8000/api/v1/datasets"
-Invoke-RestMethod "http://localhost:8000/api/v1/reports/overdue-pos?dataset_version_name=demo-master-v1&page_size=2"
-Invoke-RestMethod "http://localhost:8000/api/v1/reports/latest-13w-forecast?page_size=2"
+cd backend
+& .\.venv\Scripts\python.exe -m alembic current
+& .\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-报表分页结构示意（空 items 仅省略行内容）：
-
-```json
-{
-  "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
-  "snapshot_date": "2026-08-26",
-  "page": 1,
-  "page_size": 2,
-  "total": 115,
-  "items": []
-}
-```
-
-交互接口文档：`http://localhost:8000/docs`；完整路径与筛选参数以 `/openapi.json` 为准。
-六个 GET 路径：`overdue-pos`、`material-supply-demand`、`forecast-history`、
-`latest-13w-forecast`、`product-configurations`、`stockpile`。
-`/health` 检查进程；`/ready` 检查数据库连接和 migration head，不等于 Dataset 已 READY。
-当前没有用户认证层，仅用于本机合成数据演示，不应直接暴露到公网。
-
-## Excel Export
-
-安装 `backend/requirements.txt` 后，在 `backend/` 执行：
+**2. System B**
 
 ```powershell
-python -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir ../exports
+cd backend
+$env:SYSTEM_A_BASE_URL="http://127.0.0.1:8000/api/v1"
+& .\.venv\Scripts\python.exe -m uvicorn app.system_b.copilot.api:app --host 127.0.0.1 --port 8100 --env-file ../.env
 ```
 
-生成六个 `.xlsx`；Report 3 按 Forecast Version 分 Sheet 展开版本月起 7 个月，
-Report 4 展开 Monday-start 的 13 周，Report 6 展开版本月之后 6 个自然月。
-`exports/` 默认忽略，不提交正式导出文件。模板来源已固化成 Manifest，运行时不需要原始 Excel。
+**3. Frontend**
 
-无需 npm、Node、Microsoft Excel 或私有运行时。Exporter 只负责列序、透视、动态表头和格式，
-继续从 canonical views 读取业务值；未确认字段保留 blank/null。
-重复导出的单元格值及行列顺序一致，不要求包含时间戳的 xlsx 二进制完全一致。
-可按[干净环境 smoke 流程](docs/LOCAL_SETUP.md#clean-environment-smoke)重新安装公开依赖后导出六张表。
+```powershell
+cd frontend
+if (-not (Test-Path .env.local)) { Copy-Item .env.example .env.local }
+pnpm install --frozen-lockfile
+pnpm run build
+pnpm start --hostname 127.0.0.1 --port 3000
+```
+
+打开 [http://localhost:3000](http://localhost:3000)。开发时可用 `pnpm dev`。重新 build 前先在自己的终端停止 Next.js；日志不要写到会被构建清理的 `.next` 目录。
+
+## API / Environment
+
+| Service / variable | Local value / meaning |
+|---|---|
+| System A | `http://127.0.0.1:8000/api/v1`；[Swagger](http://127.0.0.1:8000/docs) |
+| System B | `POST http://127.0.0.1:8100/api/v1/copilot/query`；[Swagger](http://127.0.0.1:8100/docs) |
+| Frontend | `http://localhost:3000` |
+| SYSTEM_A_BASE_URL | B → A 的公开 REST 地址，包含 `/api/v1` |
+| SYSTEM_A_API_BASE_URL / SYSTEM_B_API_BASE_URL | Next.js 服务器代理目标，见 `frontend/.env.example` |
+| OPENAI_API_KEY | 可选，仅服务器进程使用；不提交、不进入客户端或日志 |
+| OPENAI_MODEL | 使用模型时须显式指定，没有默认模型；本轮未配置 |
+| OPENAI_TEMPERATURE | 默认0；模型不支持时设为 `null` 省略 |
+| COPILOT_DIAGNOSIS_POLICY / COPILOT_DECISION_POLICY | 可信服务器配置，默认 null；缺参数保持未决，不注入测试阈值 |
+
+Next.js 使用固定白名单同源代理，无须开放通配 CORS。浏览器没有 OpenAI SDK 或 key。API 使用 `system_a_api` 数据库角色，不为绕过权限错误改用 owner。
+
+官方调用使用 strict schema 和 `store=False`，后者不等于供应商层面的零数据保留保证；见 [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) 与 [Responses API](https://developers.openai.com/api/reference/python/resources/responses/methods/create)。仅发送本项目合成数据。完整选项见 [.env.example](.env.example) 和 [Copilot 文档](docs/copilot.md)。
 
 ## Testing
 
-公开可复现性修复后的最终单次全量回归，在干净公开依赖环境中执行：
-**471 passed / 0 failed / 0 skipped**，844.98 秒，1 条既有 Starlette/httpx 弃用警告。
-完整记录与六表 smoke 见[公开复现验收](docs/PUBLIC_REPRODUCIBILITY.md)。
-
-Phase 6B checkpoint `a968492` 的最后一次全量记录：
-**439 passed / 0 failed / 0 skipped**，810.33 秒，1 条既有 Starlette/httpx 弃用警告。
-该 439 项结果仅为历史 checkpoint 记录。
-
-覆盖 schema/migrations、确定性、Dataset 隔离、业务规则、Forecast 选择、
-跨报表对账、权限、API、Excel 和 finalization。Final Review 新增真实 API 角色端到端覆盖，
-修复 Report 6 raw-table 越界读取；历史 targeted 结果见[审查记录](docs/FINAL_REVIEW.md)。
-现有 Excel 集成测试直接使用 openpyxl 导出并重开文件，覆盖全部业务值、精确表头、格式、
-零/空值及重复导出确定性，不调用私有工具验收。
+后端在 `backend` 执行，完整测试须先按 [本地手册第6节](docs/LOCAL_SETUP.md) 配置并加载专用 `TEST_DATABASE_URL` / `TEST_DATABASE_ADMIN_URL`。测试重建专用 test 数据库，不能指向开发库。
 
 ```powershell
-# 在 backend/；完整测试另需手册中的 TEST_* 连接
-python -m pytest
-python ../scripts/check_forbidden_terms.py
+python -m pytest -q
+python -m pip check
+python -m tests.release_evaluation
 ```
 
-集成测试只允许数据库名含 `test` 的专用数据库，会执行 `downgrade base → upgrade head`。
-不要指向开发/共享数据库。未配置测试连接时出现 skipped，不可据此声称完整验收通过。
+这里 `python` 指已激活的 backend venv，也可用手册中的显式 `.venv` 路径。默认完整 pytest 排除收费 `llm_integration`，不表示真实模型通过。
+
+前端在 `frontend` 执行：
+
+```powershell
+pnpm run lint
+pnpm run typecheck
+pnpm run test
+pnpm run build
+```
+
+本轮完整封版结果：
+
+| Check | Result |
+|---|---|
+| Backend full pytest | **996 passed / 0 failed / 0 skipped / 1 deselected**（收费模型 opt-in） |
+| Python dependency check | `pip check` 通过 |
+| Frontend | lint、typecheck、production build通过；**13 passed / 0 failed / 0 skipped** |
+| Release evaluation | **25/25**，已包含在996项内，不能重复相加 |
+| Repository | hygiene、secret/local-path、generated garbage、diff检查通过；forbidden扫描281文件通过 |
+
+执行边界和本地验证限制见 [封版验证记录](docs/release-verification.md)。
+
+## Evaluation
+
+[Evaluation 说明](docs/evaluation.md) 提供25个可重复执行用例和 JSON summary：4类意图路由、4类实体解析、7类业务场景、4类安全场景、6类 grounding 检查。真实引擎运行，模型输出为脚本模拟；每个用例重复两次验证确定性。
+
+**25/25 是离线回归用例通过率，不是模型准确率。** Real OpenAI smoke not executed；未来应单独验证完整中文问法和 Analytics-only 问法，不把两条 smoke 外推为统计准确率。
+
+## Known Limitations
+
+- **PO price/currency** 缺失，不能计算超期金额，也不借囤料协议价推算。
+- **ASN/PR confirmed supply** 的承诺、排重和组成契约未确定。`all_supply_qty` 仅表示源报表汇总，不冒充 confirmed/planned supply。
+- **Historical lifecycle**：公开接口支持 snapshot 当前状态，不提供任意下单时点生命周期查询。
+- **DC-16**：售后正式动作、保留量及保供周期尚未确认；不补造动作。零需求动作、持续消耗 owner 也保留规格缺口。
+- 非试产业务需要显式、经确认的 Policy；测试参数不是部署默认值。Forecast 公开窗口不等于完整版本目录。
+- Copilot 公开投影没有全部 Analytics 或逐项 required checks，UI 不补算。数量单位缺统一 UOM 转换；贡献项目不表示责任项目。
+- 无 write-back、无 authentication、无 persistent memory；无邮件、供应商集成或自动取消/改期。
+- 真实模型尚未验收；模型仅在既定事实表述内编排，不支持无限制自由回答。
+- 仅本地演示。数据库 Compose 端口需防火墙保护，不要公开无认证的 A/B/前端端口。
 
 ## Repository Structure
 
 ```text
 backend/
-  app/generators/       deterministic world generation
-  app/domain/          shared business calculations
-  app/reporting/       canonical views, manifest, Excel
-  app/api/             read-only dataset/report/health routes
-  app/finalization/    private publication CLI/service
-  app/system_b/        canonical models, adapter, analytics, diagnosis foundation
-  alembic/versions/    migrations 001–012; 012 adds read-only evidence views
-  db/bootstrap/        roles and grants
-  tests/               unit and PostgreSQL integration tests
-docs/                  contracts, architecture, setup and review
-examples/              small synthetic aggregate checkpoint summaries
-scripts/               forbidden-term checks
-frontend/              initial placeholder only
-agent/                 reserved directories only
-data/                  placeholders; local generated data is ignored
+  app/                    System A 数据、报表、生成与 API
+    system_b/             Adapter / Analytics / Diagnosis / Decision / Agent / Copilot
+  alembic/                数据库 migrations
+  db/bootstrap/           角色与授权
+  tests/                  单元、契约、集成与离线发布评估
+frontend/
+  app/                    页面和固定目标代理
+  components/             工作台、详情、证据、Copilot
+  lib/                    API client、消费契约与展示
+  tests/                  Node / React rendering tests
+docs/                     规格、启动、评估、面试说明与真实截图
+scripts/                  仓库检查与现有维护工具
+examples/                 无逐条隐藏答案的公开示例
 ```
 
-保留工程代码、migration、测试、Manifest、规格与小型聚合示例。
-`.env`、数据卷、venv、node_modules、缓存、日志、备份和导出均不属于公开内容。
-原始 Word/Excel 不随仓库分发，也不作为业务数据源。
-`examples/*_summary.json` 是各阶段历史快照；最终 READY 状态见
-[system_a_final_summary.json](examples/system_a_final_summary.json)。
+[30秒介绍与面试问答](docs/interview-guide.md) · [六报表字段映射](docs/REPORT_FIELD_MAPPING.md) · [数据契约](docs/data-contracts.md) · [公开环境复现记录](docs/PUBLIC_REPRODUCIBILITY.md)
 
-## System Status
+## License
 
-| Component | Status |
-|---|---|
-| System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
-| Demo Dataset | READY |
-| Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 5：真实报表Dashboard、PO Detail、Diagnosis/Decision、Evidence及上下文Copilot；仅本地只读演示 |
-| Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
-
-最终业务 hash：
-`f91717e3af70a518caf31673fd5f733f1e12b2dfb9598b1e7c0cec20c36ac199`。
-本次 Excel 可移植性修复不修改 Dataset facts、Truth、业务阈值或历史 migration。
-
-## Roadmap — System B
-
-已完成 Phase 0 + Phase 1A：独立 `backend/app/system_b/` 命名空间中的
-Canonical Models 与 System A HTTP Adapter，复用现有 Settings、httpx、pytest，无新增依赖。
-通过 `.env.example` 的 `SYSTEM_A_BASE_URL`（包含 API 前缀）和
-`SYSTEM_A_TIMEOUT_SECONDS` 配置访问；不直接读取 System A 数据库。
-
-参见 [System B 架构与调用示例](docs/system-b-architecture.md)、
-[实际 REST 字段映射与缺口](docs/data-contracts.md)、
-[分层设计 ADR](docs/adr/0001-system-b-layer-boundaries.md)。
-运行 `python -m pytest tests/test_system_b_adapter.py` 可在 backend 目录无服务、无数据库测试 Adapter。
-
-Phase 1C已补充稳定身份、Forecast版本序号/窗口、周日期/项目周贡献与历史囤料as-of/version查询。
-仍缺PO单价/币种、完整Forecast版本目录与供应承诺口径；缺失值不推算、不伪造。
-Phase 1B 已增加纯 Analytics 与薄服务：年龄/阈值、13周聚合、物料消耗、源供需盈余、库存覆盖，
-以及仅在稳定身份和时间范围可核验时可用的显式同月 Forecast 比较。
-已有PO跨记录消耗可使用新增稳定ID；自动版本选择和Top 3算法未开发，confirmed/planned供应口径与金额仍blocked。
-详见 [Analytics 指标与可用性](docs/analytics-metrics.md) 及 [证据契约](docs/evidence-contracts.md)。
-运行 `python -m pytest tests/test_system_b_analytics.py -q` 验证纯计算，无网络/数据库依赖。
-Phase 2A增加 [Diagnosis Foundation](docs/diagnosis-engine.md)：统一Evidence Bundle、字段provenance、三态规则接口与确定性trace。
-原foundation入口只实现超期阈值资格、历史囤料记录存在和可比较Forecast负向变化三个支持规则，`primary_reason`始终为空。
-当前lifecycle不能替代下单日历史lifecycle，参考项目/最大贡献项目不自动成为责任项目。
-运行 `python -m pytest tests/test_system_b_diagnosis.py -q` 验证固定证据下的纯规则；无网络或数据库依赖。
-Phase 2B新增`diagnose_business`入口：满足LT+240严格超期、稳定身份完整且R1组织为TRIAL时，输出唯一TRIAL主原因及组织/aging来源。
-按 [正式规则审计与规范](docs/diagnosis-rule-specification.md) 固定业务优先级；量产不是第六类原因，NPI/EOL不自动决定试产或售后。
-Phase 2B当时未完成的五个分支已在Phase 2C补齐：变化幅度、后移、售后持续性及有效标签均来自调用者版本化Policy，不继承Generator的Synthetic阈值。
-运行 `python -m pytest tests/test_system_b_business_diagnosis.py -q` 验证Golden scenarios、排除条件、policy与确定性。
-Phase 2C新增中性项目贡献ranking/唯一top、完整R3 Anchor窗口的共同月份比较和后移匹配量；并列、全零、缺月份或项目lifecycle不对应均保持未决。
-`diagnose_business(bundle, policy)`可输出TRIAL、DEMAND_ADJUSTMENT、AFTER_SALES、STOCKPILE以及客户/内部两个PROJECT_OBSOLESCENCE分支。
-内部呆滞仅在所有高优先级分支均明确排除后成立；缺Policy不是false。规则、参数全文/版本/fingerprint和事实来源均可追溯。
-Phase 2C售后为显式13周参数模式，不宣称企业阈值已确认或已验证6月模式；top contributing project不等于责任项目。
-运行 `python -m pytest tests/test_system_b_diagnosis_completion.py -q` 验证六分支正反例、参数切换、并列和严格fallback。
-Phase 3增加 [Decision Engine](docs/decision-engine.md)，先审计并建立 [处置规格](docs/decision-rule-specification.md)，再按诊断类型+主规则+版本映射只读动作。
-消费分支显式使用已确认6个月Policy；试产交物料MPM，客户/内部呆滞分别沟通客户/事业部，售后DC-16仍无正式动作。
-不自动取消/改期、不联系外部人员、不重新诊断。运行 `python -m pytest tests/test_system_b_decision.py -q` 验证动作、边界、缺失与来源。
-Phase 4A新增 [Agent Foundation](docs/agent-architecture.md)：四个版本化Pydantic Tool、稳定ID请求、六节点LangGraph及单次执行trace。
-Graph直接消费既有Analytics/Diagnosis/Decision结果；缺证据与未决状态不会被Agent覆盖。LangGraph及必要传递依赖固定在现有requirements中，外部tracing显式关闭。
-运行 `python -m pytest tests/test_system_b_agent_tools.py tests/test_system_b_agent_graph.py -q` 验证工具和真实Graph。
-Phase 4B新增[自然语言Copilot](docs/copilot.md)：官方OpenAI Responses SDK、strict intent、精确PO/material消歧、Agent结果投影、grounding校验和确定性fallback。模型选择已有事实的中文措辞与顺序，不支持任意自由改写；原因、owner、动作与数字均不可越过既有引擎。
-服务器配置`OPENAI_API_KEY`及`OPENAI_MODEL`，所有调用`store=False`；无key时，提供明确结构化selector仍可使用fallback。真实API smoke默认deselect，当前仅验证模拟模型及SDK模拟传输，未声称真实中文准确率。
-独立入口为`app.system_b.copilot.api:app`，仅一个`POST /api/v1/copilot/query`；启动与参数见Copilot文档。不改变System A OpenAPI。无认证或生产部署能力，不应公开本地演示端口。
-Phase 5提供Next.js产品MVP：Dashboard轻量查询、按schedule进入Detail完整分析、中文追问和证据折叠区。无持久化memory、采购操作执行或内置诊断企业阈值，缺Policy及售后DC-16仍保持未决。
-
-## Product Screens
-
-实际本地生产构建截图，数据来自公开API，不是前端假数据。完整运行与契约限制见[前端MVP说明](docs/frontend-mvp.md)。
-
-![采购工作台](docs/screenshots/dashboard.jpg)
-
-![订单分析与Copilot](docs/screenshots/po-detail.jpg)
-
-## Run locally — Product MVP
-
-依次启动三个进程，保留各自终端；以下命令分别从仓库根目录开始。完整环境初始化见[本地运行手册](docs/LOCAL_SETUP.md)。
-
-1. System A：进入`backend`，激活Python环境，确认`python -m alembic upgrade head`已部署现有012证据视图，再运行`python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`。
-2. System B：进入`backend`，设置`SYSTEM_A_BASE_URL=http://127.0.0.1:8000/api/v1`，运行`python -m uvicorn app.system_b.copilot.api:app --host 127.0.0.1 --port 8100 --env-file ../.env`。OpenAI key/model仅在此服务器配置；无key可用明确PO身份的确定性fallback。
-3. Frontend：进入`frontend`，初次复制`.env.example`为`.env.local`，执行`pnpm install --frozen-lockfile`、`pnpm run build`、`pnpm start --hostname 127.0.0.1 --port 3000`。已有本地配置时先核对，不覆盖。Node 24 / pnpm 11.19.0已验证。
-
-打开[本地工作台](http://localhost:3000)，选择`demo-master-v1`，进入`PO-000015 / 行3 / 发运1`，向Copilot询问“为什么这个PO超期？应该怎么办？”。演示记录从真实公开报表选取；详见[演示路径](docs/frontend-mvp.md)。System B接口为`http://127.0.0.1:8100/api/v1/copilot/query`。
-
-前端仅通过Next.js同源固定目标代理读取A/B，不需放开FastAPI CORS。所有数量/原因/动作源于后端；KPI区分筛选发运行总数与本页去重数。未公开的coverage/Forecast change/required checks显示缺口，未伪造金额或规则。没有认证，勿将演示端口公开。
-
-## Disclaimer
-
-**Synthetic data only.** 不包含真实公司订单、供应商交易、物料或项目记录；不能用于真实企业运营。
-本项目展示确定性业务规则、合成企业数据、数据血缘和可测试 API 如何组成采购决策支持基础。
-当前为本地演示工程，不宣称生产部署或认证安全能力。许可证：[MIT License](LICENSE)。
+[MIT](LICENSE)。全部业务数据为合成数据，不包含真实企业订单或私有资料，不宣称线上客户、节省金额或生产部署能力。
