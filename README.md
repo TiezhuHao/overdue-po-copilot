@@ -3,9 +3,9 @@
 A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
 
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配与标准模型，分析与决策支持将在后续阶段实现。
+System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型与确定性指标计算，诊断与决策支持将在后续阶段实现。
 
-**System A: COMPLETE · System B: Phase 0 + Phase 1A · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 1B Analytics · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -190,7 +190,7 @@ backend/
   app/reporting/       canonical views, manifest, Excel
   app/api/             read-only dataset/report/health routes
   app/finalization/    private publication CLI/service
-  app/system_b/        typed canonical models and HTTP-only System A adapter
+  app/system_b/        canonical models, HTTP adapter, deterministic analytics
   alembic/versions/    immutable migration history 001–011
   db/bootstrap/        roles and grants
   tests/               unit and PostgreSQL integration tests
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema | `011_report_semantic_views` |
-| System B | Phase 0 + Phase 1A：架构、Canonical Models、REST Adapter；后续引擎未实现 |
+| System B | Phase 1B：确定性 Analytics 已实现；诊断、决策、Agent 与业务前端未实现 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -236,7 +236,12 @@ Canonical Models 与 System A HTTP Adapter，复用现有 Settings、httpx、pyt
 
 当前 REST 缺少多数内部关联 ID、PO 单价/币种、历史囤料 as-of 查询、完整版本与项目周预测接口。
 因此这些基础模型不代表后续全部 Analytics 输入已经齐全；缺失值不推算、不伪造。
-Analytics Engine、Diagnosis Engine、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
+Phase 1B 已增加纯 Analytics 与薄服务：年龄/阈值、13周聚合、物料消耗、源供需盈余、库存覆盖，
+以及仅在稳定身份和时间范围可核验时可用的显式同月 Forecast 比较。
+当前 REST 的 PO 跨记录消耗、自动版本比较、confirmed/planned 供应口径、金额与 Top 3 仍受契约阻塞，
+不靠猜测补齐。详见 [Analytics 指标与可用性](docs/analytics-metrics.md)。
+运行 `python -m pytest tests/test_system_b_analytics.py -q` 验证纯计算，无网络/数据库依赖。
+Diagnosis Engine、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
 
 ## Disclaimer
 

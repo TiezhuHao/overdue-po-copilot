@@ -85,3 +85,11 @@ R4 是 Material 总量及 13 周槽位，不能冒充 project-level Forecast。�
 | B-G08 | A schema 多数为 Any 且默认 null；响应/OpenAPI 不保证数字类型，B 必须独立校验消费字段 | 本次消费端 validation 已落实；A 强类型化为后续独立改进，不扩大本次 scope |
 
 这是已实现 API 与设计覆盖度的工程缺口，不是授权更改业务公式。涉及正式业务含义的既有 KD 释义、售后对策等继续 `NEEDS_BUSINESS_CONFIRMATION`；不阻塞本阶段 Adapter，但不能宣称后续全部 Analytics 已具备数据。
+
+## Phase 1B consumption note
+
+Analytics 保持本契约及 canonical 字段不变，实施范围见 [analytics-metrics.md](analytics-metrics.md)。
+R4 同行 open PO/available inventory 与13周桶可用于物料级消耗/覆盖；跨 PO/R4 不用名称或编码替代稳定 ID。
+现有 all_supply 是 System A 源供需总量，不能自行更名为 confirmed supply；PR 不自动加入 confirmed/planned 汇总。
+confirmed/planned 的供应承诺、排重及组成定义列为 B-G07 的 System A Contract Enrichment candidate。
+显式同月 Forecast 比较纯函数的存在不表示当前 REST 已具备自动版本比较能力。

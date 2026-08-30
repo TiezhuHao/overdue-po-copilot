@@ -1,6 +1,6 @@
-# System B — Phase 0 / Phase 1A
+# System B — Phase 0 / Phase 1A / Phase 1B
 
-本阶段实现 REST Adapter 和 Canonical Models；不实现 Analytics、Diagnosis、Decision、Agent 或业务前端。System A 的数据生成、数据库角色、迁移和业务公式保持不变。
+已实现 REST Adapter、Canonical Models 和 Phase 1B 确定性 Analytics；不实现 Diagnosis、Decision、Agent 或业务前端。System A 的数据生成、数据库角色、迁移和业务公式保持不变。
 
 ## Repository inspection
 
@@ -28,8 +28,8 @@
 flowchart LR
     A[System A REST API] --> Adapter[HTTP Adapter + private source DTO]
     Adapter --> Canonical[Canonical Models]
-    Canonical -. future .-> Analytics[Analytics]
-    Analytics -.-> Diagnosis[Diagnosis]
+    Canonical --> Analytics[Deterministic Analytics]
+    Analytics -. future .-> Diagnosis[Diagnosis]
     Diagnosis -.-> Decision[Decision]
     Decision -.-> Agent[Agent]
     Agent -.-> Frontend[Dashboard / Copilot]
@@ -44,7 +44,11 @@ flowchart LR
 - `adapters/errors.py`：typed upstream errors，不将失败当作空数据，不记录原响应、URL 凭证或 validation input。
 - 配置继续使用 `app.core.config.Settings`。System A 启动无需提供 B 的 URL；创建 Adapter 时才要求配置有效 URL。
 
-未来 Analytics 才计算年龄、阈值、超期金额、需求变动、消耗与覆盖；Diagnosis 执行已确认的判断顺序和五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
+`analytics/models.py` 提供轻量分组指标状态；`analytics/calculations.py` 实现显式日期的年龄/阈值、完整13周聚合、消耗、源供需盈余、库存覆盖和条件成立的显式同月 Forecast 比较。`analytics/service.py` 只编排这些纯函数，接收 canonical 对象，不导入 Adapter、httpx、Settings 或数据库。没有新增 Analytics endpoint。
+
+同一 R4 行的物料级消耗和库存覆盖可直接计算；PO 与 Forecast 跨记录计算要求稳定 ID，不能退回名称 Join。confirmed/planned 供应口径、金额、Top 3 与自动版本比较等仍 blocked，不能因增加计算函数而宣称上游数据缺口已解决。完整公式、单位、availability 和依赖见 [analytics-metrics.md](analytics-metrics.md)。
+
+未来 Diagnosis 执行已确认的判断顺序和五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
 
 ## Operational contract
 
@@ -71,8 +75,10 @@ with SystemAAdapter() as adapter:
             print(forecast.forecast_month, forecast.forecast_qty)
 ```
 
-示例 ID/编码仅示意；真实值来自 Dataset API 和当前公开报表。禁止按名称猜 UUID。后续稳定 Join、历史囤料和完整预测比较必须先解决合同缺口。
+示例 ID/编码仅示意；真实值来自 Dataset API 和当前公开报表。禁止按名称猜 UUID。后续稳定 Join、历史囤料和完整预测比较必须先解决合同缺口。获取 canonical 对象后可调用 AnalyticsService；调用示例见指标文档。
 
 ## Verification
 
 `python -m pytest tests/test_system_b_adapter.py` 无需真实 HTTP 服务或数据库。测试通过 MockTransport 和 FastAPI dependency override 验证错误语义、类型、分页、映射、防泄漏和实际路由兼容。全量回归使用 `python -m pytest`；无专用测试数据库时 PostgreSQL 用例按既有规则 skip，不能把它描述为完整数据库验收。
+
+`python -m pytest tests/test_system_b_analytics.py` 额外验证纯指标、固定日期边界、零/缺失/非法数量、不完整 horizon、版本比较条件与无 HTTP/clock 依赖。Analytics 不产生诊断或采购动作。
