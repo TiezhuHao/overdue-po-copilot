@@ -7,9 +7,8 @@ System A 用可重复的合成业务世界提供这套证据基础；未来 Syst
 
 **System A: COMPLETE · System B: NOT STARTED · Synthetic data only.**
 
-> 公开复现限制：Excel 导出使用的 `@oai/artifact-tool` 需要已有获授权运行时，
-> 目前不能从公共 npm registry 安装。API/数据库启动步骤与 Excel 前提分开说明；
-> 完整的 GitHub 一键复现条件尚未满足，详见[最终审查](docs/FINAL_REVIEW.md)。
+正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
+Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
 
 ## Why this project
 
@@ -86,7 +85,7 @@ Report 2 供应与采购开放量、库存组件对账；Stockpile 的月预测�
 
 Python 3.12（已验证）、FastAPI、Pydantic、SQLAlchemy 2、PostgreSQL 16、Alembic、
 pytest、NumPy/SciPy；精确版本在 [requirements.txt](backend/requirements.txt)。
-Excel exporter 调用 Node.js + `@oai/artifact-tool`；该私有依赖的公开分发/版本锁定尚未解决。
+Excel 使用公开依赖 [openpyxl 3.1.5](https://pypi.org/project/openpyxl/3.1.5/)，与其余 Python 依赖一起安装。
 Docker Compose 用于本地 PostgreSQL。仓库的 Next.js 页面只是初始占位，不是业务 Dashboard。
 
 ## Quick Start
@@ -142,7 +141,7 @@ Invoke-RestMethod "http://localhost:8000/api/v1/reports/latest-13w-forecast?page
 
 ## Excel Export
 
-先完成[运行时配置](docs/LOCAL_SETUP.md#excel-runtime)，然后在 `backend/` 执行：
+安装 `backend/requirements.txt` 后，在 `backend/` 执行：
 
 ```powershell
 python -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir ../exports
@@ -152,22 +151,29 @@ python -m app.reporting.export_cli --dataset-version-name demo-master-v1 --repor
 Report 4 展开 Monday-start 的 13 周，Report 6 展开版本月之后 6 个自然月。
 `exports/` 默认忽略，不提交正式导出文件。模板来源已固化成 Manifest，运行时不需要原始 Excel。
 
-**不要假定 `npm install` 可以完成安装。** 2026-08-30 公共 registry 检查返回 404；
-已有获授权运行时可使用 `REPORT_EXPORT_NODE`、`REPORT_EXPORT_NODE_MODULES`。
-未获此运行时的新用户目前不能复现 Excel 及完整 Excel 集成测试。
+无需 npm、Node、Microsoft Excel 或私有运行时。Exporter 只负责列序、透视、动态表头和格式，
+继续从 canonical views 读取业务值；未确认字段保留 blank/null。
+重复导出的单元格值及行列顺序一致，不要求包含时间戳的 xlsx 二进制完全一致。
+可按[干净环境 smoke 流程](docs/LOCAL_SETUP.md#clean-environment-smoke)重新安装公开依赖后导出六张表。
 
 ## Testing
 
+公开可复现性修复后的最终单次全量回归，在干净公开依赖环境中执行：
+**471 passed / 0 failed / 0 skipped**，844.98 秒，1 条既有 Starlette/httpx 弃用警告。
+完整记录与六表 smoke 见[公开复现验收](docs/PUBLIC_REPRODUCIBILITY.md)。
+
 Phase 6B checkpoint `a968492` 的最后一次全量记录：
 **439 passed / 0 failed / 0 skipped**，810.33 秒，1 条既有 Starlette/httpx 弃用警告。
-这是历史全量记录，不代表本次 Review 重跑了全部测试。
+该 439 项结果仅为历史 checkpoint 记录。
 
 覆盖 schema/migrations、确定性、Dataset 隔离、业务规则、Forecast 选择、
 跨报表对账、权限、API、Excel 和 finalization。Final Review 新增真实 API 角色端到端覆盖，
-修复 Report 6 raw-table 越界读取；本轮 targeted 结果见[审查记录](docs/FINAL_REVIEW.md)。
+修复 Report 6 raw-table 越界读取；历史 targeted 结果见[审查记录](docs/FINAL_REVIEW.md)。
+现有 Excel 集成测试直接使用 openpyxl 导出并重开文件，覆盖全部业务值、精确表头、格式、
+零/空值及重复导出确定性，不调用私有工具验收。
 
 ```powershell
-# 在 backend/；完整测试另需手册中的 TEST_* 连接与 Excel runtime
+# 在 backend/；完整测试另需手册中的 TEST_* 连接
 python -m pytest
 python ../scripts/check_forbidden_terms.py
 ```
@@ -209,11 +215,11 @@ data/                  placeholders; local generated data is ignored
 | Demo Dataset | READY |
 | Schema | `011_report_semantic_views` |
 | System B | NOT STARTED |
-| Full public-environment reproducibility | NOT READY：Excel 私有运行时分发尚未解决 |
+| Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
 `f91717e3af70a518caf31673fd5f733f1e12b2dfb9598b1e7c0cec20c36ac199`。
-本次查询修复与文档整理不修改 Dataset facts、Truth、业务阈值或历史 migration。
+本次 Excel 可移植性修复不修改 Dataset facts、Truth、业务阈值或历史 migration。
 
 ## Roadmap — System B
 

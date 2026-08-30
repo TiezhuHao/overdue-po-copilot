@@ -6,8 +6,8 @@ Synthetic data only. 以下步骤用于新的本地开发环境；不连接真�
 
 ## 1. Prerequisites and local configuration
 
-需要 Python 3.12、Git、Docker Desktop（PostgreSQL 16 容器）。Excel 另需
-[获授权运行时](#excel-runtime)，其私有依赖尚不能由公共 npm registry 安装。
+需要 Python 3.12、Git、Docker Desktop（PostgreSQL 16 容器）。Excel 使用 requirements
+中的 openpyxl，不需要 npm、Node.js、Office 或私有运行时。
 先在仓库根目录检查：
 
 ```powershell
@@ -117,20 +117,11 @@ Invoke-RestMethod "http://localhost:8000/api/v1/reports/latest-13w-forecast?page
 Report 3 API 按月份返回长表行，Report 4 使用固定周槽位，Report 6 包含未来月份与库龄数组。
 完整字段/筛选见 `/docs` 与 `/openapi.json`。无公网用户认证，不要对外部署此开发命令。
 
-## Excel runtime
+## Excel export
 
-截至 2026-08-30，公共 npm registry 对 `@oai/artifact-tool` 返回 404；本次可用的
-工作区包版本为 2.8.52，metadata 标记 `private=true`。仓库 package.json 仍为 `*`，
-没有可用于公开安装的 lockfile 或经确认的分发方案。
-不能把 `npm install --omit=dev` 当作从空环境复现 Excel 的有效路径，也不要复制或提交私有包。
-
-已经拥有获授权运行时的用户，可在 backend 设置已有路径（交互输入，不硬编码个人路径）：
+第 3 步已安装 `openpyxl==3.1.5`，在 backend 直接执行：
 
 ```powershell
-$env:REPORT_EXPORT_NODE = Read-Host 'Existing Node executable path'
-$env:REPORT_EXPORT_NODE_MODULES = Read-Host 'Existing authorized node_modules directory'
-if (-not (Test-Path -LiteralPath $env:REPORT_EXPORT_NODE)) { throw 'Node executable not found' }
-if (-not (Test-Path -LiteralPath (Join-Path $env:REPORT_EXPORT_NODE_MODULES '@oai/artifact-tool/package.json'))) { throw 'Authorized Excel runtime not found' }
 & .\.venv\Scripts\python.exe -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir ../exports
 ```
 
@@ -140,8 +131,9 @@ if (-not (Test-Path -LiteralPath (Join-Path $env:REPORT_EXPORT_NODE_MODULES '@oa
 全部在根目录 `exports/` 下且默认 ignore。当前环境的历史 smoke 结果为
 115 / 60 / 900（28 sheets）/ 60 / 272 / 24 行；动态表头由版本/snapshot 决定。
 
-没有该运行时的用户仍可运行数据库与 API，但 Excel 和依赖它的完整测试被阻塞。
-公开分发方式或替代实现需后续单独决定；本次 Final Review 不替换 exporter。
+列序、多级表头和动态槽位来自原 Manifest；业务计算和版本选择仍由 canonical views 完成。
+DC-03/DC-12 未确认字段保持空白，零值保留为数值零；数组展示沿用逗号连接。
+本次可移植性修复移除了旧 Node bridge 和仅供该 bridge 使用的 package.json。
 
 ## 6. Tests on a disposable database
 
@@ -167,14 +159,29 @@ Get-Content ../.env | ForEach-Object {
 & .\.venv\Scripts\python.exe ../scripts/check_forbidden_terms.py
 ```
 
-完整 pytest 还需同会话中的 Excel runtime。测试会在专用测试库执行
+完整 pytest 不需要额外 Excel runtime。测试会在专用测试库执行
 `downgrade base → upgrade head`，并重放 grants；禁止使用开发库或共享库。
 无需 PostgreSQL 的检查可用 `python -m pytest -m "not integration"`，不能将子集结果当全量验收。
 
-## Review boundary
+## Clean-environment smoke
 
-本手册修复了原 README 的工作目录、角色密码和测试环境变量说明。
-本次只验证 Compose 配置解析、已有实例只读状态、CLI 参数及 targeted 回归；
-未另建一套全新机器环境、未重建开发 Dataset、未重跑历史 439 项全量。
-Python 依赖使用固定版本，但这里不宣称重新下载并验证了所有依赖的公开可获取性。
-完整 public reproducibility 仍受 Excel 私有依赖阻塞。
+先按前述步骤准备本地 PostgreSQL、`.env` 与 READY Dataset。
+另开 PowerShell，从仓库根目录创建新的虚拟环境，不复用现有 site-packages 或下载缓存：
+
+```powershell
+python -m venv exports/public-smoke/venv
+& exports/public-smoke/venv/Scripts/python.exe -m pip --isolated install --no-cache-dir --index-url https://pypi.org/simple -r backend/requirements.txt
+& exports/public-smoke/venv/Scripts/python.exe -m pip check
+Set-Location backend
+& ../exports/public-smoke/venv/Scripts/python.exe -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir ../exports/public-smoke/first
+& ../exports/public-smoke/venv/Scripts/python.exe -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir ../exports/public-smoke/repeat
+& ../exports/public-smoke/venv/Scripts/python.exe -m pytest tests/test_excel_writer.py
+```
+
+两个输出目录各有六张工作簿，可用 openpyxl 的 `load_workbook` 重开。
+若要运行全量，将第 6 节 TEST_* 环境变量加载到同会话，再使用新环境的 Python 执行 `-m pytest`。
+此流程只读既有 READY Dataset，不调用 Generator 或 Finalization 改写开发业务数据。
+要复现空数据库生成，另按第 1～4 节在新的本地数据库完整执行，不删除现有数据。
+
+验收记录见 [PUBLIC_REPRODUCIBILITY.md](PUBLIC_REPRODUCIBILITY.md)。
+新虚拟环境和文件均位于 Git 忽略的 exports 下；无需设置任何旧 Node 环境变量。

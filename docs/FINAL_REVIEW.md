@@ -1,5 +1,9 @@
 # System A Final Review — 2026-08-30
 
+> 历史审查记录：以下 FR-02 与 NOT READY 是 `bb0876d` 时的结论。
+> 后续公开运行修复已将 Excel 迁移到 openpyxl，当前结果见
+> [PUBLIC_REPRODUCIBILITY.md](PUBLIC_REPRODUCIBILITY.md)；本文保留历史依据，不是当前安装要求。
+
 Synthetic data only. 本轮以 `a968492`（Phase 6B）为起点，初始 working tree clean。
 只做公开仓库审查、文档整理和经实际复现确认的最小缺陷修复；没有开发 System B。
 Report 6 修复独立提交为 `395435f`：`fix: keep stockpile API within reporting permissions`。

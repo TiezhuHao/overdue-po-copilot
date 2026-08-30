@@ -1,15 +1,13 @@
 from collections import defaultdict
 from dataclasses import dataclass
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 from decimal import Decimal
-import json
-import os
 from pathlib import Path
-import shutil
-import subprocess
-import tempfile
 from uuid import UUID
 
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.utils import get_column_letter
 from sqlalchemy import text
 
 from app.reporting.report_header_manifest import get_report_manifest
@@ -58,12 +56,8 @@ def _month_add(day, offset):
 
 
 class ReportExcelExporter:
-    def __init__(self, executor, *, node_executable=None, node_modules=None):
+    def __init__(self, executor):
         self.executor = executor
-        self.node_executable = node_executable or os.getenv("REPORT_EXPORT_NODE") or shutil.which("node")
-        configured_modules = node_modules or os.getenv("REPORT_EXPORT_NODE_MODULES")
-        local_modules = Path(__file__).with_name("node_modules")
-        self.node_modules = configured_modules or (str(local_modules) if local_modules.is_dir() else None)
 
     def _dataset(self, name):
         return ReportQueryService(self.executor).select_dataset(None, name)
@@ -145,64 +139,104 @@ class ReportExcelExporter:
             sheets = [self._sheet_payload(report_id, manifest["sheet_name"], rows, overrides)]
         return {"report_id": report_id, "manifest": manifest, "sheets": sheets}
 
+    @staticmethod
+    def _display_value(field, value):
+        if isinstance(value, list):
+            # Preserve the previous comma-separated display of canonical arrays.
+            return ",".join("" if item is None else str(item) for item in value)
+        if isinstance(value, str) and field.endswith(("date", "_at")):
+            try:
+                if len(value) == 10:
+                    return date.fromisoformat(value)
+                timestamp = datetime.fromisoformat(value)
+                # Excel has no timezone type; preserve the old writer's UTC value.
+                if timestamp.tzinfo is not None:
+                    timestamp = timestamp.astimezone(timezone.utc).replace(tzinfo=None)
+                return timestamp
+            except ValueError:
+                pass
+        return value
+
+    @staticmethod
+    def _set_value(cell, value):
+        cell.value = value
+        if isinstance(value, str):
+            # Report text must remain literal, including formula-like source text.
+            cell.data_type = "s"
+
+    def _write_sheet(self, workbook, manifest, data_sheet):
+        sheet = workbook.create_sheet(data_sheet["name"])
+        sheet.sheet_view.showGridLines = False
+        structure = manifest["sheet_structure"][0]
+        header_end = max(structure["header_rows"])
+        columns = manifest["columns"]
+        last_column = get_column_letter(len(columns))
+        for address, value in structure["header_cells"].items():
+            self._set_value(sheet[address], value)
+        for merge in structure["merges"]:
+            sheet.merge_cells(merge)
+        for column in columns:
+            field = column["canonical_field"]
+            if column["slot"] and field in data_sheet["header_overrides"]:
+                self._set_value(sheet[column["slot"]["header_cell"]], data_sheet["header_overrides"][field])
+
+        header_font = Font(bold=True, color="FFFFFF")
+        header_fill = PatternFill("solid", fgColor="1F4E78")
+        header_alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        thin = Side(style="thin", color="B4C7E7")
+        for row in sheet.iter_rows(min_row=1, max_row=header_end, max_col=len(columns)):
+            sheet.row_dimensions[row[0].row].height = 30
+            for cell in row:
+                cell.font = header_font
+                cell.fill = header_fill
+                cell.alignment = header_alignment
+                if cell.row == header_end:
+                    cell.border = Border(left=thin, right=thin, top=thin, bottom=thin)
+
+        for index, column in enumerate(columns, 1):
+            field = column["canonical_field"]
+            if field.endswith(("date", "_at")):
+                number_format = "yyyy-mm-dd"
+            elif "ratio" in field or "completion" in field:
+                number_format = "0.00%"
+            elif any(term in field for term in ("qty", "amount", "price")):
+                number_format = "#,##0.0000"
+            else:
+                number_format = "General"
+            for row_number, values in enumerate(data_sheet["rows"], header_end + 1):
+                cell = sheet.cell(row_number, index)
+                self._set_value(cell, self._display_value(field, values[index - 1]))
+                cell.number_format = number_format
+            sample = [str(self._display_value(field, row[index - 1]) or "")
+                      for row in data_sheet["rows"][:50]]
+            width = max(10, len(" ".join(column["header_path"])) + 2,
+                        *(len(value) + 2 for value in sample))
+            sheet.column_dimensions[get_column_letter(index)].width = min(28, width)
+
+        sheet.freeze_panes = f"A{header_end + 1}"
+        last_row = max(header_end + 1, header_end + len(data_sheet["rows"]))
+        sheet.auto_filter.ref = f"A{header_end}:{last_column}{last_row}"
+
     def export(self, report_id, dataset_version_name, output_dir):
         if report_id not in REPORT_FILENAMES:
             raise ReportExcelExportError("UNKNOWN_REPORT")
-        if not self.node_executable:
-            raise ReportExcelExportError("XLSX_NODE_RUNTIME_NOT_CONFIGURED")
         payload = self.prepare(report_id, dataset_version_name)
         output_dir = Path(output_dir).resolve()
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / REPORT_FILENAMES[report_id]
-        runtime_script = Path(__file__).with_name("xlsx_runtime.mjs")
-        with tempfile.TemporaryDirectory(prefix="system-a-xlsx-") as temp_name:
-            temp = Path(temp_name)
-            if self.node_modules:
-                try:
-                    os.symlink(Path(self.node_modules), temp / "node_modules", target_is_directory=True)
-                except OSError:
-                    link = subprocess.run(
-                        ["cmd", "/c", "mklink", "/J", str(temp / "node_modules"), str(Path(self.node_modules))],
-                        capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
-                    )
-                    if link.returncode:
-                        raise ReportExcelExportError("XLSX_NODE_MODULE_LINK_FAILED")
-            shutil.copy2(runtime_script, temp / runtime_script.name)
-            input_path = temp / "input.json"
-            input_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-            result = subprocess.run(
-                [self.node_executable, str(temp / runtime_script.name), "build", str(input_path), str(output_path)],
-                cwd=temp, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False,
-            )
-            if result.returncode:
-                raise ReportExcelExportError("XLSX_BUILD_FAILED")
-        return ExportResult(report_id, output_path, sum(len(sheet["rows"]) for sheet in payload["sheets"]), len(payload["sheets"]))
-
-    def inspect(self, report_id, dataset_version_name, workbook_path):
-        if not self.node_executable:
-            raise ReportExcelExportError("XLSX_NODE_RUNTIME_NOT_CONFIGURED")
-        payload = self.prepare(report_id, dataset_version_name)
-        specification = {
-            "workbook_path": str(Path(workbook_path).resolve()),
-            "manifest": payload["manifest"],
-            "sheets": [{"name": sheet["name"], "row_count": len(sheet["rows"])} for sheet in payload["sheets"]],
-        }
-        runtime_script = Path(__file__).with_name("xlsx_runtime.mjs")
-        with tempfile.TemporaryDirectory(prefix="system-a-xlsx-inspect-") as temp_name:
-            temp = Path(temp_name)
-            if self.node_modules:
-                try:
-                    os.symlink(Path(self.node_modules), temp / "node_modules", target_is_directory=True)
-                except OSError:
-                    link = subprocess.run(["cmd", "/c", "mklink", "/J", str(temp / "node_modules"), str(Path(self.node_modules))],
-                                          capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
-                    if link.returncode:
-                        raise ReportExcelExportError("XLSX_NODE_MODULE_LINK_FAILED")
-            shutil.copy2(runtime_script, temp / runtime_script.name)
-            input_path, result_path = temp / "inspect.json", temp / "result.json"
-            input_path.write_text(json.dumps(specification, ensure_ascii=False), encoding="utf-8")
-            result = subprocess.run([self.node_executable, str(temp / runtime_script.name), "inspect", str(input_path), str(result_path)],
-                                    cwd=temp, capture_output=True, text=True, encoding="utf-8", errors="replace", check=False)
-            if result.returncode:
-                raise ReportExcelExportError("XLSX_INSPECTION_FAILED")
-            return json.loads(result_path.read_text(encoding="utf-8"))
+        workbook = Workbook()
+        workbook.remove(workbook.active)
+        workbook.properties.creator = "System A"
+        workbook.properties.lastModifiedBy = "System A"
+        workbook.properties.description = "Synthetic data only."
+        try:
+            for data_sheet in payload["sheets"]:
+                self._write_sheet(workbook, payload["manifest"], data_sheet)
+            workbook.save(output_path)
+        finally:
+            workbook.close()
+        return ExportResult(
+            report_id, output_path,
+            sum(len(sheet["rows"]) for sheet in payload["sheets"]),
+            len(payload["sheets"]),
+        )
