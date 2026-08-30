@@ -1,11 +1,11 @@
 # Overdue PO Copilot
 
-A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
+A synthetic procurement data platform with a bounded natural-language copilot for overdue purchase-order diagnosis and decision support.
 
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、参数化业务诊断、只读处置映射与结构化LangGraph编排。六个判断分支覆盖原五类原因；缺证据、缺参数或正式处置规格时保持未决。
+System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、参数化业务诊断、只读处置映射、LangGraph编排与受约束自然语言入口。六个判断分支覆盖原五类原因；缺证据、缺参数或正式处置规格时保持未决，模型不能覆盖业务结果。
 
-**System A: COMPLETE · System B: Phase 4A — read-only LangGraph foundation, no LLM · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 4B — Natural-language Copilot available (bounded composition, local API) · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 4A：四个typed Tool与只读LangGraph已实现；售后处置/缺参/缺证据保持未决，未接LLM或业务前端 |
+| System B | Phase 4B：严格意图/身份解析、既有Graph、受控中文回答与fallback、独立query API；无业务前端 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -260,7 +260,10 @@ Phase 3增加 [Decision Engine](docs/decision-engine.md)，先审计并建立 [�
 Phase 4A新增 [Agent Foundation](docs/agent-architecture.md)：四个版本化Pydantic Tool、稳定ID请求、六节点LangGraph及单次执行trace。
 Graph直接消费既有Analytics/Diagnosis/Decision结果；缺证据与未决状态不会被Agent覆盖。LangGraph及必要传递依赖固定在现有requirements中，外部tracing显式关闭。
 运行 `python -m pytest tests/test_system_b_agent_tools.py tests/test_system_b_agent_graph.py -q` 验证工具和真实Graph。
-尚未连接LLM、生成自然语言答案或开发最终Copilot UI；无持久化memory、采购操作执行或内置诊断企业阈值。
+Phase 4B新增[自然语言Copilot](docs/copilot.md)：官方OpenAI Responses SDK、strict intent、精确PO/material消歧、Agent结果投影、grounding校验和确定性fallback。模型选择已有事实的中文措辞与顺序，不支持任意自由改写；原因、owner、动作与数字均不可越过既有引擎。
+服务器配置`OPENAI_API_KEY`及`OPENAI_MODEL`，所有调用`store=False`；无key时，提供明确结构化selector仍可使用fallback。真实API smoke默认deselect，当前仅验证模拟模型及SDK模拟传输，未声称真实中文准确率。
+独立入口为`app.system_b.copilot.api:app`，仅一个`POST /api/v1/copilot/query`；启动与参数见Copilot文档。不改变System A OpenAPI。无认证或生产部署能力，不应公开本地演示端口。
+未开发最终Copilot UI；无持久化memory、采购操作执行或内置诊断企业阈值，缺Policy及售后DC-16仍保持未决。
 
 ## Disclaimer
 

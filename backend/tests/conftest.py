@@ -12,6 +12,20 @@ from sqlalchemy.engine import make_url
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 
+def pytest_addoption(parser):
+    parser.addoption("--run-llm-integration", action="store_true", default=False,
+                     help="Explicitly opt in to paid provider smoke tests")
+
+
+def pytest_collection_modifyitems(config, items):
+    if config.getoption("--run-llm-integration"):
+        return
+    excluded = [item for item in items if item.get_closest_marker("llm_integration")]
+    if excluded:
+        config.hook.pytest_deselected(items=excluded)
+        items[:] = [item for item in items if not item.get_closest_marker("llm_integration")]
+
+
 class _RedactedDatabaseURL(str):
     """Keep pytest argument rendering from revealing local connection passwords."""
 

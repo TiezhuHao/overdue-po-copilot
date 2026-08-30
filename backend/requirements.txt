@@ -34,3 +34,9 @@ zstandard==0.25.0
 charset-normalizer==3.5.1
 urllib3==2.7.0
 websockets==16.1.1
+# Phase 4B: official Responses SDK and newly required transport dependencies.
+openai==3.6.0
+httpx2==2.12.0
+httpcore2==2.12.0
+jiter==0.16.0
+truststore==0.10.4

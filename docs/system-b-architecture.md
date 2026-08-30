@@ -1,10 +1,10 @@
-# System B — Phase 0 through Phase 4A
+# System B — Phase 0 through Phase 4B
 
-已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C补齐六个参数化分支，覆盖原五类原因。Phase 3新增只读Decision映射，售后处置仍因DC-16未决。Phase 4A增加typed Tool与无LLM的LangGraph结构化编排。未开发业务前端；不修改System A、Generator、数据库或已有业务公式/规则。
+已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C补齐六个参数化分支，覆盖原五类原因。Phase 3新增只读Decision映射，售后处置仍因DC-16未决。Phase 4A增加typed Tool与无LLM的LangGraph结构化编排；Phase 4B新增外围自然语言解析、精确身份解析、受控中文composition/fallback与一个独立System B API。未开发业务前端；不修改System A、Generator、数据库或已有业务公式/规则。
 
 ## Repository inspection
 
-现有 Python 工程是 `backend/app`，依赖固定于 `backend/requirements.txt`，使用 Python 3.12、Pydantic 2、pydantic-settings、httpx、pytest。继续复用服务栈；Phase 4A仅增加LangGraph及其必要依赖闭包。
+现有 Python 工程是 `backend/app`，依赖固定于 `backend/requirements.txt`，使用 Python 3.12、Pydantic 2、pydantic-settings、httpx、pytest。继续复用服务栈；Phase 4A增加LangGraph及必要依赖闭包，Phase 4B增加官方OpenAI SDK及其必要依赖，隔离在Copilot Provider。
 
 | 检查项 | 实际位置与结论 |
 |---|---|
@@ -35,7 +35,9 @@ flowchart LR
     Diagnosis --> Decision[Deterministic Decision + Action Trace]
     Assembler --> Decision
     Decision --> Agent[Typed Tools + Read-only LangGraph]
-    Agent -.-> Frontend[Dashboard / Copilot]
+    Agent --> Copilot[Bounded LLM Composer + deterministic guard / fallback]
+    Copilot --> BAPI[System B query API]
+    BAPI -.-> Frontend[Future frontend]
 ```
 
 代码放在 `backend/app/system_b/`，不是改造 System A 的 `domain/` 或 `services/`。已有 `app/adapters/` 仍是空骨架；使用 B 命名空间避免 System A 公共进程反向依赖 B。模块可以独立通过 HTTP 调用另一进程中的 A，无数据库连接、Repository、ORM、Generator 或隐藏答案依赖。
@@ -59,7 +61,7 @@ Phase 2A只判断阈值资格、历史囤料记录存在和可比较Forecast负�
 
 Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`；Phase 2C增加`parameters.py`，由调用者提供独立版本化BusinessDiagnosisPolicy。原`diagnose`保持foundation兼容；`diagnose_business(bundle, policy)`可选择六分支唯一主原因。TRIAL仍由R1组织决定；其它分支使用唯一top项目、对应CURRENT_STATE、显式阈值及严格高优先级排除。参数全文/fingerprint与used_policy_fields进入结果。完整条件见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。
 
-`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但诊断企业参数权威值仍须调用者明确提供。自然语言交互/前端仍未实现；任何层都不得绕过REST读取A的隐藏答案。
+`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但诊断企业参数权威值仍须调用者明确提供。自然语言入口现由Phase 4B提供，前端未实现；任何层都不得绕过REST读取A的隐藏答案。
 
 `decision/models.py`、`rules.py`、`engine.py`消费BusinessDiagnosisResult+EvidenceBundle，按主原因/规则ID/版本匹配六个处置入口。实际五种动作源于已固化规格；消费分支使用显式选择的正式6个月Policy，售后DC-16无动作。客户与内部呆滞分别沟通客户/事业部；MPM仅按物料关联。核验证据派生但不重新诊断，不调用HTTP/DB、不执行操作。输入、动作、缺口及trace见 [decision-engine.md](decision-engine.md)，逐条来源见 [decision-rule-specification.md](decision-rule-specification.md)。
 
@@ -67,11 +69,15 @@ Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`
 
 ## Operational contract
 
+`copilot/`包含严格公开模型、环境配置、集中Prompt、OpenAI Provider、精确display→schedule resolver、Agent结果投影/校验/fallback、薄Service和独立FastAPI app。输入文本先成为受约束Intent，不透传业务Tool；所有支持Intent仍经过完整四工具Graph。模型只能在已有事实表述中选择措辞和顺序，不能补原因、owner、动作、数字或责任项目。详情及边界见[copilot.md](copilot.md)。
+
+Copilot配置与System A Settings分离：key/model及可选业务Policy来自服务器环境，不接受公开request覆盖。Resolver只接受显式READY dataset，不猜latest；snapshot可从该dataset元数据取得。缺模型时，有明确结构化selector仍可执行并fallback；缺Policy保持原未决。System A API进程不反向导入Copilot。
+
 每次查询必须传 `dataset_version_id`，不隐式选择 latest。调用者可用 `list_datasets()` 发现候选，再用 `get_dataset(id)` 检查状态和 hash；本阶段允许显式读取开发 dataset，与 A 行为一致，不声称它不可变。每个返回行都携带同一 dataset UUID 与 snapshot date，跨页还需调用者核验或使用 `iter_pages()` 的一致性检查。
 
 单页方法返回 `CanonicalPage[T]`，绝不把一页冒充全部结果。`iter_pages()` 从第一页拉取，验证 dataset、snapshot、total 与分页连贯性；异常终止，已 yield 页不能当作完整结果。它是惰性传输迭代器，不做业务分析。
 
-默认每个 HTTP timeout 阶段 10 秒，可配置；不自动重试、不跟随 redirect、不继承代理环境。非 200（包括 3xx/204）显式错误。404、timeout/网络故障/5xx、其他 HTTP 状态、响应校验有不同异常类型。服务端错误 detail 不向外透传。没有部署 B 的路由、认证、缓存、消息发送或定时任务。
+Adapter默认每个HTTP timeout阶段10秒，可配置；不自动重试、不跟随redirect、不继承代理环境。非200（包括3xx/204）显式错误。404、timeout/网络故障/5xx、其他HTTP状态、响应校验有不同异常类型。错误detail不向外透传。Phase 4B新增独立`POST /api/v1/copilot/query`，仍无认证、缓存、消息发送或定时任务，仅供本地演示。
 
 ## Usage
 
@@ -107,3 +113,5 @@ with SystemAAdapter() as adapter:
 `python -m pytest tests/test_system_b_decision.py` 验证六路径动作、6个月边界、缺证据/参数、售后规格阻断、不同主规则同原因、trace、防串用与确定性。
 
 `python -m pytest tests/test_system_b_agent_tools.py tests/test_system_b_agent_graph.py` 验证工具schema/错误、真实LangGraph路径、只读GET、引用、缺证据保护、状态隔离与无外部tracing。没有真实LLM测试依赖。
+
+`python -m pytest -k copilot`验证中文意图模拟、精确消歧、同一四工具路径、结构/文本grounding、fallback、注入防护、SDK模拟HTTP和独立API。默认deselect真实`llm_integration`，只有显式选项与key/model才可运行收费smoke，不以模拟测试声称真实模型准确率。

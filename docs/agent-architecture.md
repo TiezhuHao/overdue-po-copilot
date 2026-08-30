@@ -1,6 +1,6 @@
 # System B Agent Foundation — Phase 4A
 
-Phase 4A是结构化、确定性执行基础，不是自然语言Copilot。没有LLM、Prompt、意图分类、模型选工具、前端或长期memory。
+Phase 4A是结构化、确定性执行基础，Agent自身没有LLM、Prompt、意图分类、模型选工具、前端或长期memory。Phase 4B在其外侧新增[自然语言Copilot](copilot.md)，复用本页四工具及Graph，不改变业务执行层。
 
 ## Why LLM does not own business truth
 
@@ -10,7 +10,7 @@ System A → Adapter → Canonical/Analytics → Diagnosis → Decision → Agen
 
 核验环境为Python 3.12.0、Pydantic 2.13.4、FastAPI 0.141.1。选择官方稳定 [langgraph 1.2.11](https://pypi.org/project/langgraph/1.2.11/)（Python>=3.10）；采用 [StateGraph API](https://docs.langchain.com/oss/python/langgraph/graph-api)，不需要模型即可运行。现有直接依赖版本不变，新增依赖与解析出的传递依赖全部固定在`backend/requirements.txt`。
 
-主要传递依赖为langchain-core 1.6.1、langgraph-checkpoint 4.2.0、langgraph-prebuilt 1.1.0、langgraph-sdk 0.4.4、langsmith 0.11.2；它们是LangGraph依赖闭包，不代表启用托管服务。SDK约束使原未固定的websockets 17.0解析为16.1.1，现已显式固定；uvicorn仍兼容。没有增加OpenAI/Anthropic/Gemini SDK、向量数据库或RAG。
+主要传递依赖为langchain-core 1.6.1、langgraph-checkpoint 4.2.0、langgraph-prebuilt 1.1.0、langgraph-sdk 0.4.4、langsmith 0.11.2；它们是LangGraph依赖闭包，不代表启用托管服务。SDK约束使原未固定的websockets 17.0解析为16.1.1，现已显式固定；uvicorn仍兼容。Phase 4A没有模型SDK、向量数据库或RAG；Phase 4B的OpenAI依赖仅由外层Copilot使用。
 
 `pip check`核验依赖一致性。入口以`tracing_context(enabled=False, parent=False)`关闭外部tracing，且不接受外部Runnable callbacks/config；即使环境开启LangSmith tracing也不会发送数据。没有配置checkpointer、store、retry、SaaS或模型客户端。
 
@@ -78,7 +78,7 @@ Agent trace → DecisionOutput.trace_ref → source_diagnosis_ref → DiagnosisO
 
 ## Read-only guarantee
 
-唯一远程访问经已有SystemAAdapter GET实现。没有DB依赖、写接口、邮件、供应商联络、Cancel/Reschedule执行函数。Decision中的动作始终是recommendation。每次execute创建独立session/graph，调用者管理Adapter生命周期；没有全局业务状态或共享长期缓存。
+Agent自身唯一远程访问经已有SystemAAdapter GET实现。没有DB依赖、写接口、邮件、供应商联络、Cancel/Reschedule执行函数。Decision中的动作始终是recommendation。每次execute创建独立session/graph，调用者管理Adapter生命周期；没有全局业务状态或共享长期缓存。
 
 ## Usage
 
@@ -101,10 +101,10 @@ result = ProcurementAgent(adapter).execute(request)
 
 ## Current limitations and verification
 
-- 不支持自然语言、展示字段消歧/resolve、通用Intent taxonomy或最终UI；调用者必须已持有dataset/snapshot/schedule。
+- Agent自身不支持自然语言或展示字段消歧，仍要求dataset/snapshot/schedule；Phase 4B外层负责严格Intent、精确resolve与受控中文回答。没有最终UI。
 - R1使用既有overdue-pos报表，不是任意历史PO实体目录；查不到时不猜是不存在还是未进入该报表。
 - 不补上游契约、诊断参数权威值、售后/零需求处置缺口；不选择previous/current或改业务规则。
-- 无持久化checkpoint、长期memory、跨执行工件服务、服务端认证或部署API。Graph/session仅单次执行。
+- Graph/session仅单次执行；无持久化checkpoint、长期memory、跨执行工件服务或服务端认证。Phase 4B另有一个本地Copilot API，不增加Agent内部接口。
 - 两组Agent测试分别覆盖四个Tool和真实LangGraph：六路径Golden、same-primary不同动作、缺证据/参数、未决/不适用、GET/稳定筛选、完整分页、错误中断、trace、确定性、并发隔离及关闭外部tracing。测试无真实LLM、网络或System A服务依赖。
 
 在backend运行`python -m pytest tests/test_system_b_agent_tools.py tests/test_system_b_agent_graph.py -q`；回归继续覆盖所有既有业务层。
