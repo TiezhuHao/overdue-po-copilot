@@ -3,9 +3,9 @@
 A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
 
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标和诊断证据基础框架，完整原因判断与决策支持将在后续阶段实现。
+System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、诊断证据框架和试产主原因规则，完整原因判断与决策支持将在后续阶段实现。
 
-**System A: COMPLETE · System B: Phase 2A Diagnosis Foundation · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 2B — TRIAL diagnosis + explicit rule gaps · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 2A：证据装配、基础规则与trace已实现；完整原因树、决策、Agent与业务前端未实现 |
+| System B | Phase 2B：业务policy、TRIAL主原因及trace已实现；其他原因显式blocked，决策/Agent/业务前端未实现 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -242,9 +242,13 @@ Phase 1B 已增加纯 Analytics 与薄服务：年龄/阈值、13周聚合、物
 详见 [Analytics 指标与可用性](docs/analytics-metrics.md) 及 [证据契约](docs/evidence-contracts.md)。
 运行 `python -m pytest tests/test_system_b_analytics.py -q` 验证纯计算，无网络/数据库依赖。
 Phase 2A增加 [Diagnosis Foundation](docs/diagnosis-engine.md)：统一Evidence Bundle、字段provenance、三态规则接口与确定性trace。
-仅实现超期阈值资格、历史囤料记录存在和可比较Forecast负向变化三个支持规则，`primary_reason`始终为空。
+原foundation入口只实现超期阈值资格、历史囤料记录存在和可比较Forecast负向变化三个支持规则，`primary_reason`始终为空。
 当前lifecycle不能替代下单日历史lifecycle，参考项目/最大贡献项目不自动成为责任项目。
 运行 `python -m pytest tests/test_system_b_diagnosis.py -q` 验证固定证据下的纯规则；无网络或数据库依赖。
+Phase 2B新增`diagnose_business`入口：满足LT+240严格超期、稳定身份完整且R1组织为TRIAL时，输出唯一TRIAL主原因及组织/aging来源。
+按 [正式规则审计与规范](docs/diagnosis-rule-specification.md) 固定业务优先级；量产不是第六类原因，NPI/EOL不自动决定试产或售后。
+其它业务原因因正式变化/售后规范、最可能项目、完整Anchor证据或有效囤料条件缺口返回UNRESOLVED，不继承Generator的Synthetic阈值。
+运行 `python -m pytest tests/test_system_b_business_diagnosis.py -q` 验证Golden scenarios、排除条件、policy与确定性。
 完整Diagnosis业务树、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
 
 ## Disclaimer

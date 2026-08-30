@@ -1,6 +1,6 @@
-# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C / Phase 2A
+# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C / Phase 2A / Phase 2B
 
-已实现REST Adapter、Canonical Models和Phase 1B确定性Analytics；Phase 1C补充公开证据身份与时间契约，新增012只读视图migration。Phase 2A实现Diagnosis Foundation：证据装配、三个基础支持规则与确定性trace，不实现完整原因树、Decision、Agent或业务前端。Phase 2A不修改System A、Generator、数据库或既有Analytics公式。
+已实现REST Adapter、Canonical Models和Phase 1B确定性Analytics；Phase 1C补充公开证据身份与时间契约，新增012只读视图migration。Phase 2A实现Diagnosis Foundation；Phase 2B新增明确业务policy和TRIAL主原因，其余分支记录规则/契约缺口。不实现完整原因树、Decision、Agent或业务前端。Phase 2A/2B不修改System A、Generator、数据库或既有Analytics公式。
 
 ## Repository inspection
 
@@ -31,7 +31,7 @@ flowchart LR
     Canonical --> Analytics[Deterministic Analytics]
     Canonical --> Assembler[Evidence Assembler]
     Analytics --> Assembler
-    Assembler --> Diagnosis[Diagnosis Foundation + Trace]
+    Assembler --> Diagnosis[Diagnosis Foundation + Business Policy + Trace]
     Diagnosis -. future .-> Decision[Decision]
     Decision -.-> Agent[Agent]
     Agent -.-> Frontend[Dashboard / Copilot]
@@ -56,7 +56,9 @@ Phase 1C通过真实REST补齐R1/R4身份、R3版本/项目、R4项目周事实�
 
 Phase 2A只判断阈值资格、历史囤料记录存在和可比较Forecast负向变化；这些是支持信号，`primary_reason`始终为空。completeness仅针对所选规则要求。当前lifecycle不满足历史lifecycle要求；参考项目和项目周贡献不成为责任归属。接口、查询范围信任边界及缺失语义见 [diagnosis-engine.md](diagnosis-engine.md)。
 
-未来正式 Diagnosis 规则才执行已确认的判断顺序和五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
+Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`。原`diagnose`保留foundation兼容行为；`diagnose_business`执行独立业务policy，可输出唯一TRIAL主原因。R1组织类型决定试产，不能由项目NPI猜测；其他原因缺少正式变化/售后参数、最可能项目及完整Anchor证据时返回UNRESOLVED。完整规则来源、优先级和blocked分支见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。
+
+未来补齐正式Diagnosis规则的缺口后才覆盖全部五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
 
 ## Operational contract
 
@@ -92,3 +94,5 @@ with SystemAAdapter() as adapter:
 `python -m pytest tests/test_system_b_analytics.py` 额外验证纯指标、固定日期边界、零/缺失/非法数量、不完整 horizon、版本比较条件与无 HTTP/clock 依赖。Analytics 不产生诊断或采购动作。
 
 `python -m pytest tests/test_system_b_diagnosis.py` 验证纯Diagnosis Foundation的规则三态、身份/时间拒绝、provenance、历史lifecycle和参考项目红线，以及确定性。它不依赖真实System A或数据库。
+
+`python -m pytest tests/test_system_b_business_diagnosis.py` 验证TRIAL Golden scenarios、业务policy、未知排除项、阈值资格与来源；测试不导入Generator阈值或隐藏答案。

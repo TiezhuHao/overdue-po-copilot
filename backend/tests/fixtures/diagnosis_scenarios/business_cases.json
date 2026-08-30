@@ -1,0 +1,11 @@
+[
+  {"id": "trial_minimal", "profile": "minimal", "organization": "TRIAL", "status": "DIAGNOSED", "primary": "TRIAL", "rule": "business_trial"},
+  {"id": "trial_with_eol_negative_forecast_and_stockpile", "profile": "full", "organization": "TRIAL", "status": "DIAGNOSED", "primary": "TRIAL", "rule": "business_trial"},
+  {"id": "mass_eol_negative_forecast_and_stockpile_are_not_causes", "profile": "full", "organization": "MASS_PRODUCTION", "status": "UNRESOLVED", "primary": null, "rule": null},
+  {"id": "mass_npi_is_not_trial", "profile": "full", "organization": "MASS_PRODUCTION", "lifecycle": "NPI", "status": "UNRESOLVED", "primary": null, "rule": null},
+  {"id": "mass_without_forecast_or_stockpile_is_not_internal_obsolescence", "profile": "minimal", "organization": "MASS_PRODUCTION", "status": "UNRESOLVED", "primary": null, "rule": null},
+  {"id": "trial_before_threshold", "profile": "minimal", "organization": "TRIAL", "delta": -1, "status": "NOT_ELIGIBLE", "primary": null, "rule": null},
+  {"id": "trial_on_threshold", "profile": "minimal", "organization": "TRIAL", "delta": 0, "status": "NOT_ELIGIBLE", "primary": null, "rule": null},
+  {"id": "trial_after_threshold", "profile": "minimal", "organization": "TRIAL", "delta": 1, "status": "DIAGNOSED", "primary": "TRIAL", "rule": "business_trial"},
+  {"id": "mass_on_threshold", "profile": "full", "organization": "MASS_PRODUCTION", "delta": 0, "status": "NOT_ELIGIBLE", "primary": null, "rule": null}
+]
