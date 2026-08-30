@@ -40,3 +40,8 @@ data/synthetic/*
 !data/synthetic/.gitkeep
 postgres-data/
 exports/
+*.dump
+*.sql.gz
+*.bak
+*.tmp
+~$*.xlsx

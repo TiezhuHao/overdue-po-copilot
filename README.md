@@ -1,347 +1,227 @@
-# Overdue PO Copilot — System A
+# Overdue PO Copilot
 
-本仓库已完成 Phase 5A.1、Phase 5B、Phase 5C、Phase 6A 与 Phase 6B。System A 现在提供六张报表只读 API、统一 Manifest 驱动的 Excel 导出，以及 Dataset finalization（GENERATING → READY）。
+A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
 
-## Implementation Status
+采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
+System A 用可重复的合成业务世界提供这套证据基础；未来 System B 将消费这些证据完成分析与决策支持。
 
-- [x] Phase 0 / 0.1：业务规格固化与纠偏
-- [x] Phase 1：PostgreSQL、SQLAlchemy、Alembic、FastAPI 基础骨架
-- [x] Phase 1.1：真实 PostgreSQL 在线验收与仓库基础卫生
-- [x] Phase 2：确定性主数据世界、关系、校验与演示数据集
-- [x] Phase 3：PO Header、PO Line、PO Shipment / Schedule 采购事实世界
-- [x] Phase 4：Scenario Planning 与隔离 Evaluation Truth
-- [x] Phase 5A — Evidence Foundation
-- [x] Phase 5B — Forecast Evidence World
-- [x] Phase 5C — Supply/Demand & Stockpile Evidence
-- [x] Phase 6A — Six Report Semantic Layer
-- [x] Phase 6B — Report APIs / Excel / Finalization
-- [ ] Phase 7：Copilot
+**System A: COMPLETE · System B: NOT STARTED · Synthetic data only.**
 
-当前已包含：
+> 公开复现限制：Excel 导出使用的 `@oai/artifact-tool` 需要已有获授权运行时，
+> 目前不能从公共 npm registry 安装。API/数据库启动步骤与 Excel 前提分开说明；
+> 完整的 GitHub 一键复现条件尚未满足，详见[最终审查](docs/FINAL_REVIEW.md)。
 
-- PostgreSQL `platform` / `evaluation` schema 迁移；
-- dataset 与核心主数据 SQLAlchemy 2.x 模型；
-- Material ↔ Project、Material → MPM，以及供应商、客户、员工角色与物料责任关系；
-- 基于 seed、snapshot date、版本和配置签名的稳定 UUID 与确定性主数据生成；
-- 单事务 Dataset 生成服务、内存业务校验器、CLI 与演示摘要；
-- 数据库角色与权限 bootstrap SQL；
-- `GET /api/v1/health` 与 `GET /api/v1/ready`；
-- unit tests 与真实 PostgreSQL integration tests。
+## Why this project
 
-当前已实现 Master Data、Procurement、隔离 Scenario Truth、Lifecycle/Product Config、共享需求、Forecast、Operational facts、六张 canonical Report Semantics、Report REST API、Manifest 驱动 Excel 与 Dataset finalization；Agent 与 AI 诊断属于 System B。
+真实企业数据通常分散在多个系统中，且不能作为公开演示数据。独立随机生成六张报表又会造成跨表数量、版本和项目关系矛盾。
+本项目先生成统一的 Synthetic Enterprise World，再派生规范化事实、六张报表、API 和 Excel。
+这样可以在不使用真实企业记录的前提下，测试时间口径、数据血缘、权限与未来诊断逻辑。
 
-所有生成内容均为合成演示数据，不来源于真实企业数据，也不得用于真实企业运营。
+## Architecture
 
-### Architecture Snapshot
-
-```text
-Generation Config
-      ↓
-Dataset Version (GENERATING)
-      ↓
-Synthetic Enterprise World
-      ↓
-Master Data
-├─ Organizations / Employees
-├─ Customers / Suppliers
-├─ Projects / Materials
-└─ Effective-dated Relationships
-      ↓
-Procurement World
-├─ PO Header
-├─ PO Line
-└─ PO Shipment / Schedule
-      ↓
-Scenario Plan (evaluation-only)
-      ↓
-Lifecycle + Product Config
-      ↓
-Underlying Demand Signal + dated source revisions
-      ├─ Forecast Versions → Monthly Project Forecast
-      └─ Latest Snapshot → Project 13W → Material 13W
-      ↓
-Supply-Demand / Stockpile
-      ↓
-Six Canonical Report Semantics
-      ↓
-REST API / Excel (next phase)
+```mermaid
+flowchart TD
+    Config["Generation Config: seed + snapshot + versions"] --> Dataset["Dataset Version: GENERATING"]
+    Dataset --> Master["Synthetic Master World"]
+    Master --> PO["Procurement Facts: Header → Line → Schedule"]
+    PO --> Truth["Scenario Ground Truth<br/>evaluation-only · not exposed to API"]
+    Master --> Evidence["Evidence Foundation: lifecycle + product configs + shared demand"]
+    PO --> Evidence
+    Truth -. "generator-only planning" .-> Evidence
+    Evidence --> Forecast["Forecast Evidence: monthly + 13-week"]
+    Forecast --> Operations["Operational Evidence: inventory + supply/demand + stockpile"]
+    PO --> Operations
+    Truth -. "generator-only stockpile plan" .-> Operations
+    Evidence --> Views["Six Canonical Report Views"]
+    PO --> Views
+    Forecast --> Views
+    Operations --> Views
+    Views --> API["Read-only REST API"]
+    Views --> Excel["Manifest-driven Excel"]
+    Views --> Finalize["Validation + business_content_hash → READY"]
+    classDef private fill:#fff0e6,stroke:#b45309,stroke-dasharray:5 5;
+    class Truth private;
 ```
 
-All report-facing demand data will be derived from one shared Underlying Demand Signal.
+运行时数据流固定为 normalized platform facts → canonical reporting views → API / Excel。
+公开查询不会读取隐藏答案，也不会重新实现报表业务公式。
 
-Report 1 将使用 Shipment / Schedule 级事实，一条 Schedule 对应一条事实行。超期判断是确定性计算，只使用 Dataset 的 `snapshot_date`、`order_date`、主用 Material LT 和固定 240 天，不读取运行机器日期，`due_date` 仅用于运营展示。
+## System A — Mock Enterprise Data Platform
 
-Synthetic data is generated cause-first. Hidden scenario plans are created before demand/forecast evidence, preventing independently randomized reports from contradicting one another. 每条隐藏真值仅存于权限隔离的 `evaluation` schema；普通业务 API、OpenAPI 和公开示例不会暴露逐条答案。
+- seed、固定 `snapshot_date`、生成器版本和配置决定合成世界；稳定 UUID 与内容 hash 支持复现。
+- PostgreSQL dataset-scoped 复合外键和有效日期约束保证跨 Dataset 隔离及时间关系一致。
+- 11 个 Alembic migrations 建立主数据、采购事实、历史证据与 reporting views。
+- 每个生成阶段使用事务；缺失/部分前置世界拒绝生成，不静默补齐。
+- Finalization 校验一致性并写入最终 hash，原子切换 `GENERATING → READY`。
+- READY 在 Generator 服务入口拒绝改写，重新 finalization 检测内容变化；这不是对 owner 直接 SQL 的数据库级不可变锁。
 
-## 1. Python 环境
+## Six Business Reports
 
-需要 Python 3.11+。Windows PowerShell 示例：
+| Report | Purpose | Grain | Main role |
+|---|---|---|---|
+| 1 — Overdue PO Detail | 展示严格超期的 PO 与未交数量 | PO Header × Line × Schedule/Shipment | 排查入口 |
+| 2 — Material Supply-Demand | 汇总供应、实际需求和盈余 | 每 Material 一行，V1 主库存组织 | 供需背景 |
+| 3 — Historical Forecast | 展示 Anchor 前后预测证据 | Schedule × Material × Project × Version × Month（API 长表） | 需求变化分析输入 |
+| 4 — Latest 13-Week Forecast | 展示最新 13 周需求，保留零需求物料 | 每 Material 一行，13 个周槽位 | 未来消耗输入 |
+| 5 — Product Configuration | 展示配置物料与项目生命周期 | 有效 Product Config × Material | 项目/配置证据 |
+| 6 — Stockpile Detail | 展示 snapshot 时有效的当前囤料计划 | 最新有效 Stockpile Version × Material | 囤料证据；历史 as-of 查询另按 PO order date |
+
+六个最终 Excel 的列数为 **37 / 106 / 23 / 44 / 22 / 60**。
+列序与多级表头只有一份[机器 Manifest](backend/app/reporting/report_header_manifest.json)，
+[字段映射](docs/REPORT_FIELD_MAPPING.md)说明各列来源，不在 API、View 和 exporter 分别维护列序。
+
+## Data Consistency / Ground Truth
+
+Ground Truth 是合成场景的预期答案，只存在于隔离的 `evaluation` schema，供 Generator/Evaluation/测试使用。
+Cause-first 生成让业务证据与测试目标一致；生产式 API 使用 `system_a_api`，不能读取 Truth 或受限 raw tables。
+
+Report 3、4、6 的预测都来自同一 Underlying Demand Signal 和持续生效的日期修订。
+Report 2 供应与采购开放量、库存组件对账；Stockpile 的月预测保留同源 lineage。
+所有“当前”都使用 Dataset snapshot，不使用机器日期；同日版本取最大有效 sequence。
+
+辅助字段中尚未确认的公式保持 null；`KD` 仅作辅助展示、释义待确认，
+售后正式处置规则仍待业务确认。System A 不把这些空缺编造成诊断结论。
+
+## Tech Stack
+
+Python 3.12（已验证）、FastAPI、Pydantic、SQLAlchemy 2、PostgreSQL 16、Alembic、
+pytest、NumPy/SciPy；精确版本在 [requirements.txt](backend/requirements.txt)。
+Excel exporter 调用 Node.js + `@oai/artifact-tool`；该私有依赖的公开分发/版本锁定尚未解决。
+Docker Compose 用于本地 PostgreSQL。仓库的 Next.js 页面只是初始占位，不是业务 Dashboard。
+
+## Quick Start
+
+使用 Windows PowerShell，从仓库根目录开始。需要 Python 3.12 与运行中的 Docker Desktop，
+不需要连接真实企业系统。
+
+1. 按[本地运行手册](docs/LOCAL_SETUP.md)准备 `.env`、PostgreSQL 角色/密码与测试数据库。
+2. 安装 `backend/requirements.txt`，执行 Alembic upgrade 和 grants bootstrap。
+3. 顺序运行 Master → Procurement → Scenario → Evidence → Forecast → Operational CLI。
+4. 执行 finalization，然后在 `backend/` 启动 API：
 
 ```powershell
-cd backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+python -m app.finalization.cli --dataset-version-name demo-master-v1
+python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-## 2. 配置
+上述 `python` 指已激活的 backend venv；手册给出无需激活的完整 PowerShell 命令。
+推荐使用 `docker-compose.dev.yml` 仅启动 PostgreSQL。
+根目录 `docker-compose.yml` 是早期三服务骨架，尚未配置容器 API 数据库连接，不能当作完整启动命令。
+不要对已发布 READY Dataset 重跑生成步骤，也不要对开发数据库执行测试重建。
 
-复制根目录 `.env.example` 为 `.env`，替换所有 `change_me`。应用支持：
+## API Examples
 
-- `APP_ENV`、`APP_NAME`、`API_V1_PREFIX`、`LOG_LEVEL`；
-- `DATABASE_URL_OWNER`、`DATABASE_URL_API`、`DATABASE_URL_GENERATOR`、`DATABASE_URL_EVALUATOR`。
-
-连接字符串通过 `SecretStr` 管理，不会输出密码。`.env` 已被 Git 忽略。
-
-## 3. PostgreSQL
-
-如果本机已有 PostgreSQL 16，可直接创建开发数据库。若 Docker 可用，可只启动开发数据库：
+API 默认只选择最新 READY Dataset；没有 READY 返回 `NO_READY_DATASET`（404）。
+可以显式指定 `dataset_version_name` 或 `dataset_version_id`，包含开发用 GENERATING Dataset。
+分页默认为 1/100，page_size 上限 500。Dataset 列表会展示各状态的安全元数据。
 
 ```powershell
-docker compose -f docker-compose.dev.yml up -d postgres
+Invoke-RestMethod "http://localhost:8000/api/v1/datasets"
+Invoke-RestMethod "http://localhost:8000/api/v1/reports/overdue-pos?dataset_version_name=demo-master-v1&page_size=2"
+Invoke-RestMethod "http://localhost:8000/api/v1/reports/latest-13w-forecast?page_size=2"
 ```
 
-以 PostgreSQL 管理员连接目标数据库，依次执行角色脚本；密码必须在仓库外设置：
+报表分页结构示意（空 items 仅省略行内容）：
 
-```powershell
-psql -U postgres -d overdue_po_copilot -f backend/db/bootstrap/001_roles.sql
-psql -U postgres -d overdue_po_copilot -c "ALTER ROLE system_a_owner PASSWORD '<local-secret>'"
-psql -U postgres -d overdue_po_copilot -c "ALTER ROLE system_a_api PASSWORD '<local-secret>'"
-psql -U postgres -d overdue_po_copilot -c "ALTER ROLE system_a_generator PASSWORD '<local-secret>'"
-psql -U postgres -d overdue_po_copilot -c "ALTER ROLE system_a_evaluator PASSWORD '<local-secret>'"
+```json
+{
+  "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+  "snapshot_date": "2026-08-26",
+  "page": 1,
+  "page_size": 2,
+  "total": 115,
+  "items": []
+}
 ```
 
-## 4. Alembic
+交互接口文档：`http://localhost:8000/docs`；完整路径与筛选参数以 `/openapi.json` 为准。
+六个 GET 路径：`overdue-pos`、`material-supply-demand`、`forecast-history`、
+`latest-13w-forecast`、`product-configurations`、`stockpile`。
+`/health` 检查进程；`/ready` 检查数据库连接和 migration head，不等于 Dataset 已 READY。
+当前没有用户认证层，仅用于本机合成数据演示，不应直接暴露到公网。
 
-在 `backend/` 下使用 owner 连接执行：
+## Excel Export
+
+先完成[运行时配置](docs/LOCAL_SETUP.md#excel-runtime)，然后在 `backend/` 执行：
 
 ```powershell
-alembic -c alembic.ini upgrade head
-psql -U system_a_owner -d overdue_po_copilot -f db/bootstrap/002_grants.sql
+python -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir ../exports
 ```
 
-迁移链为：schema/extension → dataset/master/relationships → `006_procurement_facts` → `007_scenario_truth` → `008_evidence_foundation` → `009_forecast_evidence` → `010_operational_evidence` → `011_report_semantic_views`。`alembic downgrade base` 会按依赖逆序删除对象；共享的 `btree_gist` extension 不会在 downgrade 时删除。重建 Schema 后必须重放grants脚本；测试夹具已自动执行。
+生成六个 `.xlsx`；Report 3 按 Forecast Version 分 Sheet 展开版本月起 7 个月，
+Report 4 展开 Monday-start 的 13 周，Report 6 展开版本月之后 6 个自然月。
+`exports/` 默认忽略，不提交正式导出文件。模板来源已固化成 Manifest，运行时不需要原始 Excel。
 
-## 5. Phase 2 主数据生成
+**不要假定 `npm install` 可以完成安装。** 2026-08-30 公共 registry 检查返回 404；
+已有获授权运行时可使用 `REPORT_EXPORT_NODE`、`REPORT_EXPORT_NODE_MODULES`。
+未获此运行时的新用户目前不能复现 Excel 及完整 Excel 集成测试。
 
-在仓库根目录执行一行 PowerShell 命令：
+## Testing
 
-```powershell
-cd backend; .\.venv\Scripts\python.exe -m app.generators.master_data.cli --seed 20260826 --snapshot-date 2026-08-26 --version-name demo-master-v1 --summary-output ..\examples\master_world_summary.json
-```
+Phase 6B checkpoint `a968492` 的最后一次全量记录：
+**439 passed / 0 failed / 0 skipped**，810.33 秒，1 条既有 Starlette/httpx 弃用警告。
+这是历史全量记录，不代表本次 Review 重跑了全部测试。
 
-CLI 使用 `DATABASE_URL_GENERATOR`，不会显示数据库密码。同一完整生成配置会得到相同 `generation_signature`、稳定实体 UUID 和相同 `master_content_hash`；同一 `GENERATING` 数据集可安全复用，不会重复写入。
-
-Phase 2 完成后 Dataset 仍保持 `GENERATING`，且 `business_content_hash` 为 `null`。这是有意设计：主数据只完成了 Synthetic Enterprise World 的第一层，只有后续业务事实、Forecast、Stockpile 等全部生成并通过最终校验后，才允许将 Dataset 发布为 `READY`。
-
-## 6. Phase 3 Procurement World
-
-先完成 Phase 2 Demo Master World，再在同一个 `GENERATING` Dataset 上执行：
-
-```powershell
-cd backend; .\.venv\Scripts\python.exe -m app.generators.procurement.cli --dataset-version-name demo-master-v1 --seed 20260827 --summary-output ..\examples\procurement_world_summary.json
-```
-
-默认生成100个 Synthetic PO Header，每个1～3行，V1 每行默认生成一个 Shipment；数据库 Schema 仍允许一个 PO Line 拥有多个 Shipment。生成器只引用同 Dataset 已存在的主数据和有效供应商、项目、采购员关系，不生成或保存任何根因答案。
-
-Phase 3 后 Dataset 继续保持 `GENERATING` 且最终 `business_content_hash` 仍为空，因为 Demand、Forecast、Lifecycle、Stockpile 和 Reports 尚未完成。
-
-## 7. Phase 4 Hidden Scenario Planning
-
-在同一个已完成 Procurement World 的 `GENERATING` Dataset 上执行：
+覆盖 schema/migrations、确定性、Dataset 隔离、业务规则、Forecast 选择、
+跨报表对账、权限、API、Excel 和 finalization。Final Review 新增真实 API 角色端到端覆盖，
+修复 Report 6 raw-table 越界读取；本轮 targeted 结果见[审查记录](docs/FINAL_REVIEW.md)。
 
 ```powershell
-cd backend; .\.venv\Scripts\python.exe -m app.generators.scenarios.cli --dataset-version-name demo-master-v1 --seed 20260828 --summary-output ..\examples\scenario_world_summary.json
-```
-
-Planner 只为严格满足超期公式的 Schedule 创建隐藏 Truth，并优先按 Material 共享 Scenario Plan。公开摘要只包含聚合 Synthetic Generator 统计；逐条 Evaluation Truth 始终隔离在 `evaluation` schema。Phase 4 不生成 Demand、Forecast、Lifecycle 或 Stockpile 证据，Dataset 继续保持 `GENERATING`。
-
-## 8. Phase 5A Evidence Foundation
-
-先完成原 Demo 的 Master、Procurement 和 Scenario；在仓库根目录执行：
-
-```powershell
-cd backend; .\.venv\Scripts\python.exe -m app.generators.evidence_foundation.cli --dataset-version-name demo-master-v1 --seed 20260829 --summary-output ..\examples\evidence_foundation_summary.json
-```
-
-`--config` 支持 Evidence JSON 配置；上游非默认世界必须另外传入原始 `--procurement-config` / `--scenario-config`。服务只读校验完整前置世界，禁止静默补齐。所有 Evidence 在同一事务中落库；完整且同配置则复用，部分存在直接报错。仅输出聚合统计，不输出逐条 Truth。
-
-六张基础表为项目生命周期、产品配置及关联、日需求 Signal/Point，以及中性的 `demand_signal_revisions`。最后一张保存企业需求源“在哪天修订哪个需求日的数量”，不是 Forecast Version。后续月/周报表必须按同一 as-of 源序列聚合，不能各自随机造数。
-
-Demo：70 条生命周期（snapshot：NPI 4 / MASS_PRODUCTION 12 / EOL 14），60 个配置、272 条 Config-Material 关系、136 条 Signal、110840 个日点、130415 条持续状态日修订。需求窗口为 2025-02-01～2027-04-26，由 Dataset/PO 时间计算，并非硬编码窗口。Dataset 仍为 `GENERATING`，最终 `business_content_hash` 保持 null。
-
-Phase 5A.1 消除临时预算恢复脉冲；source state 在 Anchor 当日生效并持续至下一事件。多 Anchor 联合构造非负数量状态，再按原 seeded 日权重分配；不依赖特定发布星期，不放宽 Scenario 阈值。构造器固定 NumPy/SciPy 版本，采用 [SciPy HiGHS 线性约束求解](https://docs.scipy.org/doc/scipy-1.15.3/reference/optimize.linprog-highs.html)，只在 Generator 中使用，不是运行时诊断引擎。
-
-针对已审计的旧 demo，显式修复命令（不可用于 READY 或已有下游 Forecast/Stockpile 的世界）：
-
-```powershell
-python -m app.generators.evidence_foundation.correct_timing --expected-old-hash 762381c2296e7c684b3698bc669ed353f55bdb342edf8157fa4b96678d28c8a3 --summary-output ../examples/evidence_foundation_summary.json
-```
-
-该操作只修改受影响 Evidence，并保留 Master、Procurement、Truth、Lifecycle/Config 和既有实体 ID。无公开 reset API。新 Evidence hash：`d2ee070ef425915488b5281b244a234a24be0a9890598a2b2d48de1400cc868e`。
-
-## 9. FastAPI
-
-```powershell
-cd backend
-uvicorn app.main:app --reload
-```
-
-检查：
-
-```powershell
-curl http://localhost:8000/api/v1/health
-curl http://localhost:8000/api/v1/ready
-```
-
-`/health` 仅检查进程存活。`/ready` 检查数据库连接和当前 Alembic revision 是否等于 head；Phase 4 不要求存在 READY dataset。
-根路径 `/health`、`/ready` 与上述版本化健康接口均可使用；根路径兼容入口不加入 OpenAPI。
-
-## 10. 测试
-
-纯 unit tests 无需 PostgreSQL：
-
-```powershell
-cd backend
-python -m pytest -m "not integration"
-```
-
-真实 PostgreSQL integration tests 只允许指向数据库名包含 `test` 的一次性数据库：
-
-```powershell
-$env:TEST_DATABASE_URL = "postgresql+psycopg://system_a_owner:<secret>@localhost:5432/overdue_po_copilot_test"
-$env:TEST_DATABASE_ADMIN_URL = "postgresql+psycopg://postgres:<secret>@localhost:5432/overdue_po_copilot_test"
+# 在 backend/；完整测试另需手册中的 TEST_* 连接与 Excel runtime
 python -m pytest
+python ../scripts/check_forbidden_terms.py
 ```
 
-Integration fixture 会先执行 `alembic downgrade base` 再执行 `upgrade head`，不得指向共享或生产数据库。
+集成测试只允许数据库名含 `test` 的专用数据库，会执行 `downgrade base → upgrade head`。
+不要指向开发/共享数据库。未配置测试连接时出现 skipped，不可据此声称完整验收通过。
 
-Phase 5A 全量验收：153 passed / 0 failed / 0 skipped。正式 Forecast 版本比较留待 Phase 5B；Source revision foundation 已验证 Reduction/Delay/Mixed、售后持续性及 EOL 负证据。
-
-Phase 5A.1 修复后全量：191 passed / 0 failed / 0 skipped；12075 次多发布日历比较全部通过。测试库完成 `008 → base → 008`，历史迁移不变；正式 Forecast 表与选择服务仍待 Phase 5B。
-
-Phase 5B：完整回归262项通过；全量启动后新增的1项“缺少 Demand 禁止随机回退”测试另外执行通过，当前263项均已验证，0 failed / 0 skipped。测试库完成 `009 → base → 009`，1条既有 Starlette/httpx 弃用警告。
-
-禁止词扫描：
-
-```powershell
-python scripts/check_forbidden_terms.py
-```
-
-## 11. Phase 6B 报表交付
-
-六张报表 API 均位于 `/api/v1/reports/`，支持 `dataset_version_id` 或
-`dataset_version_name`、分页及白名单筛选；未指定 Dataset 时只选择最新 READY
-版本。Dataset 元数据位于 `/api/v1/datasets`。公开 API、Schema 与 OpenAPI
-不包含 `evaluation.scenario_truth` 或隐藏场景答案。
-
-Excel 导出只消费 canonical reporting views，并以
-`backend/app/reporting/report_header_manifest.json` 固化列序。需要 Node.js 与
-`@oai/artifact-tool` 运行时；在标准 Node 环境中可执行：
-
-```powershell
-cd backend/app/reporting
-npm install --omit=dev
-cd ../../..
-python -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir exports
-```
-
-若使用 Codex 工作区提供的 Node 运行时，可设置 `REPORT_EXPORT_NODE` 与
-`REPORT_EXPORT_NODE_MODULES` 后运行同一命令。导出文件默认写入 `exports/`，不纳入
-Git。`python -m app.finalization.cli --dataset-version-name demo-master-v1` 会在
-所有平台事实、Scenario Truth、六张 canonical views 和一致性校验通过后计算
-`business_content_hash` 并原子发布 Dataset；READY Dataset 只能被幂等重验，不能再由
-Generator 改写。
-
-Phase 6B 的完整验收包括：clean database downgrade/upgrade、从空库完整生成、六张
-API 与精确表头 Excel round-trip、READY 不可变性、角色权限隔离、OpenAPI/敏感词扫描、
-`/health` 与 `/ready` 200，以及全量 pytest 0 failed/0 skipped。
-
-## 12. 后端基础镜像
-
-`backend/Dockerfile` 是已验证可构建的 Phase 1 FastAPI 基础镜像；开发用
-`docker-compose.dev.yml` 仍只启动 PostgreSQL。它不表示 Generator、Report API
-或后续 Copilot 已实现。
-
-在仓库根目录构建：
-
-```powershell
-docker build -f backend/Dockerfile -t overdue-po-system-a:phase1 backend
-```
-
-运行 API 容器时必须通过环境变量提供可从容器访问的 `DATABASE_URL_API`；
-不得把数据库密码写入 Dockerfile 或提交到仓库。
-
-## 12. Phase 5B Forecast Evidence World
-
-Pre-Phase5B checkpoint（独立5A.1修复）：`1e38a4b2f79771d1affd581647a0569d292c4655`。新增 migration `009_forecast_evidence`；不修改001～008。
-
-```powershell
-cd backend
-python -m app.generators.forecasts.cli --dataset-version-name demo-master-v1 --seed 20260830 --summary-output ../examples/forecast_world_summary.json
-```
-
-可使用 `--config`、`--evidence-config`、`--procurement-config`、`--scenario-config` 传入原始阶段配置。只能在完整前置世界和 GENERATING dataset 上执行；完整同配置复用，部分存在拒绝，错误整阶段回滚。最终 Dataset hash 仍为 null。
-
-Forecast history and 13-week demand are two views of the same synthetic demand world.
+## Repository Structure
 
 ```text
-Underlying Demand Signal
-        ↓
-Forecast Versions
-        ├─ Monthly Project Forecast
-        └─ Latest 13W Forecast (Project → Material)
+backend/
+  app/generators/       deterministic world generation
+  app/domain/          shared business calculations
+  app/reporting/       canonical views, manifest, Excel
+  app/api/             read-only dataset/report/health routes
+  app/finalization/    private publication CLI/service
+  alembic/versions/    immutable migration history 001–011
+  db/bootstrap/        roles and grants
+  tests/               unit and PostgreSQL integration tests
+docs/                  contracts, architecture, setup and review
+examples/              small synthetic aggregate checkpoint summaries
+scripts/               forbidden-term checks
+frontend/              initial placeholder only
+agent/                 reserved directories only
+data/                  placeholders; local generated data is ignored
 ```
 
-`SYNTHETIC_PLANNING` 是 synthetic source-domain label，不是真实企业系统名。月长表含用于共同月份比较的前2月/后1月重叠事实；Report 3 展示仍限定版本月 M0～M+6，不增加 Excel 列。项目发货是独立履约事实，不使用 PO receipt 冒充。
+保留工程代码、migration、测试、Manifest、规格与小型聚合示例。
+`.env`、数据卷、venv、node_modules、缓存、日志、备份和导出均不属于公开内容。
+原始 Word/Excel 不随仓库分发，也不作为业务数据源。
+`examples/*_summary.json` 是各阶段历史快照；最终 READY 状态见
+[system_a_final_summary.json](examples/system_a_final_summary.json)。
 
-Demo：102版本（82有效、20无效；20条同日附加版本），135320月事实，11152项目发货，1个最新周快照，1768项目周行、780物料周行。版本日期2025-02-03～2026-08-24；13周起始日2026-08-31～2026-11-23，覆盖至2026-11-29；9个物料13周全零。正常 CLI 重跑 hash 一致：`fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9`。
+## System Status
 
-已完成底层 Forecast 与 Operational Evidence facts、选择器与查询计算器。Report 3/4/6 final Views、Report API、Excel Export、Diagnosis、Agent、LLM 均未实现。
+| Component | Status |
+|---|---|
+| System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
+| Demo Dataset | READY |
+| Schema | `011_report_semantic_views` |
+| System B | NOT STARTED |
+| Full public-environment reproducibility | NOT READY：Excel 私有运行时分发尚未解决 |
 
-## 13. Phase 5C Operational Evidence World
+最终业务 hash：
+`f91717e3af70a518caf31673fd5f733f1e12b2dfb9598b1e7c0cec20c36ac199`。
+本次查询修复与文档整理不修改 Dataset facts、Truth、业务阈值或历史 migration。
 
-Pre-Phase5C checkpoint：`907e26e9b54995aca87657661c73ce6dca49930b`。新增 `010_operational_evidence` 九表；历史001～009保持不变。
+## Roadmap — System B
 
-```text
-Procurement + Inventory + Demand
-        ↓
-Current Supply/Demand Context
+计划模块：Adapter Layer、Analytics Engine、Diagnosis Engine、Decision Engine、
+LangGraph Agent、Next.js Dashboard / Copilot。目前均未实现。
 
-Scenario Plan
-        ↓
-Historical Stockpile Evidence
-```
+## Disclaimer
 
-Supply-demand is context, not a root-cause decision gate.
-
-```powershell
-cd backend
-python -m app.generators.operational_evidence.cli --dataset-version-name demo-master-v1 --seed 20260831 --summary-output ../examples/operational_evidence_summary.json
-```
-
-支持 `--config`、`--evidence-config`、`--forecast-config`、`--procurement-config`、`--scenario-config`。默认 Operational generator 为5C.2.0，schema为010，数量保留四位小数。全空才生成，完整且同配置才复用，部分世界、损坏上游、配置冲突与READY均拒绝；失败整体回滚。
-
-Supply以Schedule open量与当前库存为来源；试产数量按真实来源组织汇总，不固定为0。Stockpile六自然月预测聚合全部Material-Project有效日需求修订，并记录完整lineage；月结余连续，允许净缺口为负。历史命中使用order_date，不以当前囤料状态替代。
-
-Demo：60 Inventory Snapshots、60 Supply-Demand Snapshots；330 Supply Components、408 Demand Components；盈余正/零/负物料为44/0/16。88个Stockpile Versions、2469条Records、14814条Forecast与14814条Balance Projection；版本日期2025-02-01～2026-09-02。历史查询74命中/41未命中。公开摘要仅包含聚合值，不输出逐条Truth。
-
-本次获授权纠正未提交草稿：旧九表数据已备份并校验，受控事务只重建Operational九表；Master、Procurement、Scenario Truth、Evidence、Forecast和Dataset元数据逐表指纹不变。备份位于Git忽略的 `data/synthetic/phase5c_before_correction`，不是可发布数据。私有维护工具以 `python -m scripts.phase5c_maintenance` 从backend运行，不提供公开reset。
-
-新增91项测试；最终单次全量结果为354 passed / 0 failed / 0 skipped（425.57秒，1条既有依赖弃用警告）。真实测试库完成010→base→010；API不能读取Operational raw tables或Truth，generator/evaluator权限验证通过。四个健康端点HTTP200，在线OpenAPI、公共代码与示例防泄漏检查通过。
-
-正常generator角色CLI重复调用得到相同 `operational_content_hash=a2cd88c8de00b9c659ce4c781a953e9e037fa3cf7d2de76e8c348c0bedd37e9f`。Dataset仍为GENERATING，最终business_content_hash=null；上游Evidence与Forecast hash不变。DC-03/DC-12最终展示映射留Phase6，DC-16售后正式处置及KD完整释义继续待确认；不新增本阶段业务阻塞。
-
-未实现Final Report Views、Report APIs、Excel Export、Diagnosis、Decision Engine、Agent或LLM。
-
-## 14. Phase 6A Six Report Semantic Layer
-
-新增 `reporting` schema与`011_report_semantic_views`。六个canonical sources严格从normalized platform facts派生；Report3/4/6另有normalized long views。精确展示列序取自六个“最终模板”，由 `backend/app/reporting/report_header_manifest.json` 单点维护；`docs/REPORT_HEADER_MANIFEST.md` 与 `docs/REPORT_FIELD_MAPPING.md` 是生成投影。
-
-Report 1严格按Schedule粒度和`overdue_days > 0`；Report 2核心供需与component facts对账；Report3使用daily-final-valid及严格Anchor窗口；Report4为每Material完整13周并保留零需求行；Report5按snapshot取项目生命周期；Report6 current版本严格不晚于dataset snapshot，历史as-of仍以PO order_date查询。跨报表validator验证Material、Project、Forecast、MPM及Report3/4/6共享Demand lineage。
-
-`system_a_api`只新增reporting SELECT，仍不能读取evaluation与restricted raw facts。聚合证据位于`examples/report_semantic_summary.json`；Dataset继续`GENERATING`，没有写最终`business_content_hash`。
-
-本阶段未实现Report REST APIs、Excel Export、Dataset READY finalization、Diagnosis、Decision Engine、Agent或LLM。
-
-Phase6A最终单次全量结果：404 passed / 0 failed / 0 skipped（446.81秒，1条既有依赖弃用警告）。开发库与测试库迁移、四个健康端点、角色权限、OpenAPI泄漏、forbidden-term和repository hygiene均已验证。
+**Synthetic data only.** 不包含真实公司订单、供应商交易、物料或项目记录；不能用于真实企业运营。
+本项目展示确定性业务规则、合成企业数据、数据血缘和可测试 API 如何组成采购决策支持基础。
+当前为本地演示工程，不宣称生产部署或认证安全能力。仓库尚无 LICENSE；许可证由维护者另行决定。

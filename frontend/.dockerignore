@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+.env
+.env.*
+!.env.example
+.git/
+.idea/
+.vscode/
+*.log
+*.dump
+*.sql.gz
+*.bak
+*.tmp
+exports/
+~$*.xlsx
