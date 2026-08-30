@@ -1,6 +1,6 @@
-# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C / Phase 2A / Phase 2B / Phase 2C
+# System B — Phase 0 through Phase 3
 
-已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C沿用该架构，补齐六个参数化分支和中性项目/Forecast分析，覆盖原五类原因。缺参数或证据仍未决，不实现Decision、Agent或业务前端。Phase 2C不修改System A、Generator、数据库或既有Analytics公式。
+已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C补齐六个参数化分支，覆盖原五类原因。Phase 3新增只读Decision映射，售后处置仍因DC-16未决。Agent和业务前端未实现。本阶段不修改System A、Generator、数据库、Analytics公式或Diagnosis规则。
 
 ## Repository inspection
 
@@ -32,7 +32,8 @@ flowchart LR
     Canonical --> Assembler[Evidence Assembler]
     Analytics --> Assembler
     Assembler --> Diagnosis[Diagnosis Foundation + Business Policy + Trace]
-    Diagnosis -. future .-> Decision[Decision]
+    Diagnosis --> Decision[Deterministic Decision + Action Trace]
+    Assembler --> Decision
     Decision -.-> Agent[Agent]
     Agent -.-> Frontend[Dashboard / Copilot]
 ```
@@ -58,7 +59,9 @@ Phase 2A只判断阈值资格、历史囤料记录存在和可比较Forecast负�
 
 Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`；Phase 2C增加`parameters.py`，由调用者提供独立版本化BusinessDiagnosisPolicy。原`diagnose`保持foundation兼容；`diagnose_business(bundle, policy)`可选择六分支唯一主原因。TRIAL仍由R1组织决定；其它分支使用唯一top项目、对应CURRENT_STATE、显式阈值及严格高优先级排除。参数全文/fingerprint与used_policy_fields进入结果。完整条件见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。
 
-`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但企业参数权威值仍须调用者明确提供。未来Decision才映射采购动作，Agent/前端仍未实现；任何层都不得绕过REST读取A的隐藏答案。
+`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但诊断企业参数权威值仍须调用者明确提供。Agent/前端仍未实现；任何层都不得绕过REST读取A的隐藏答案。
+
+`decision/models.py`、`rules.py`、`engine.py`消费BusinessDiagnosisResult+EvidenceBundle，按主原因/规则ID/版本匹配六个处置入口。实际五种动作源于已固化规格；消费分支使用显式选择的正式6个月Policy，售后DC-16无动作。客户与内部呆滞分别沟通客户/事业部；MPM仅按物料关联。核验证据派生但不重新诊断，不调用HTTP/DB、不执行操作。输入、动作、缺口及trace见 [decision-engine.md](decision-engine.md)，逐条来源见 [decision-rule-specification.md](decision-rule-specification.md)。
 
 ## Operational contract
 
@@ -98,3 +101,5 @@ with SystemAAdapter() as adapter:
 `python -m pytest tests/test_system_b_business_diagnosis.py` 验证TRIAL Golden scenarios、业务policy、未知排除项、阈值资格与来源；测试不导入Generator阈值或隐藏答案。
 
 `python -m pytest tests/test_system_b_diagnosis_completion.py` 验证六分支Golden正例/排除、显式参数、项目并列、完整Anchor窗口、缺证据保护及参数/事实provenance。
+
+`python -m pytest tests/test_system_b_decision.py` 验证六路径动作、6个月边界、缺证据/参数、售后规格阻断、不同主规则同原因、trace、防串用与确定性。
