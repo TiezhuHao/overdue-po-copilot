@@ -151,11 +151,11 @@ class ReportQueryService:
             material_code = row["material_code"]
             dynamic = list(self.executor.execute(text(
                 "SELECT l.forecast_month period,l.forecast_qty quantity FROM reporting.report6_stockpile_forecast_long l "
-                "JOIN platform.materials m USING(dataset_version_id,material_id) WHERE l.dataset_version_id=:did AND m.material_code=:code ORDER BY l.forecast_month"
+                "JOIN reporting.report6_stockpile_detail m USING(dataset_version_id,material_id) WHERE l.dataset_version_id=:did AND m.material_code=:code ORDER BY l.forecast_month"
             ), {"did": dataset.dataset_version_id, "code": material_code}).mappings())
             ages = list(self.executor.execute(text(
                 "SELECT l.age_threshold_days threshold_days,l.age_qty quantity FROM reporting.report6_stockpile_age_long l "
-                "JOIN platform.materials m USING(dataset_version_id,material_id) WHERE l.dataset_version_id=:did AND m.material_code=:code ORDER BY l.age_threshold_days"
+                "JOIN reporting.report6_stockpile_detail m USING(dataset_version_id,material_id) WHERE l.dataset_version_id=:did AND m.material_code=:code ORDER BY l.age_threshold_days"
             ), {"did": dataset.dataset_version_id, "code": material_code}).mappings())
             row["future_months"], row["inventory_age_quantities"] = dynamic, ages
         return total, rows

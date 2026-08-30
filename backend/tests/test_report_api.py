@@ -2,8 +2,12 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine, text
+from sqlalchemy.engine import make_url
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.db.session import get_db_session
 from app.main import app
 from tests.test_operational_integration import operational_worlds
@@ -81,3 +85,47 @@ def test_openapi_has_six_reports_and_no_private_terms(client):
     assert sum(path.startswith("/api/v1/reports/") for path in paths) == 6
     rendered = json.dumps(document).lower()
     assert all(term not in rendered for term in ("true_cause", "scenario_pattern", "causal_project_id", "expected_action", "evaluation"))
+
+
+@pytest.mark.parametrize("path", [
+    "overdue-pos", "material-supply-demand", "forecast-history",
+    "latest-13w-forecast", "product-configurations", "stockpile",
+])
+def test_report_http_with_real_api_role(client, api_world, test_database_url, path):
+    params = {"dataset_version_id": str(api_world.dataset_version_id), "page_size": 2}
+    expected = client.get(f"/api/v1/reports/{path}", params=params)
+    assert expected.status_code == 200
+    credentials = make_url(settings.database_url_api.get_secret_value())
+    api_url = make_url(test_database_url).set(
+        username=credentials.username, password=credentials.password,
+    )
+    engine = create_engine(api_url, hide_parameters=True)
+    try:
+        with engine.connect() as connection:
+            assert connection.scalar(text("SELECT current_user")) == "system_a_api"
+            connection.rollback()
+            for source in ("platform.materials", "evaluation.scenario_truth"):
+                with pytest.raises(DBAPIError) as denied:
+                    connection.execute(text(f"SELECT 1 FROM {source} LIMIT 1"))
+                assert denied.value.orig.sqlstate == "42501"
+                connection.rollback()
+
+        def api_session():
+            with Session(engine) as session:
+                yield session
+
+        previous = app.dependency_overrides[get_db_session]
+        app.dependency_overrides[get_db_session] = api_session
+        try:
+            response = TestClient(app, raise_server_exceptions=False).get(
+                f"/api/v1/reports/{path}", params=params,
+            )
+        finally:
+            app.dependency_overrides[get_db_session] = previous
+        assert response.status_code == 200, f"{path}: HTTP {response.status_code}"
+        assert response.json() == expected.json()
+        if path == "stockpile":
+            assert all(len(row["future_months"]) == 6 for row in response.json()["items"])
+            assert all(row["inventory_age_quantities"] for row in response.json()["items"])
+    finally:
+        engine.dispose()
