@@ -95,17 +95,14 @@ def test_primary_provenance_contains_organization_aging_and_source_inputs():
     assert {key.name: key.value for key in org.entity_keys}["organization_id"] == bundle.inputs.po.organization_id
     assert facts["aging.threshold_delta_days"].derived_from == ("po.order_date", "po.material_lt_days")
     assert "po.order_date" in facts and "po.material_lt_days" in facts
-    assert result.policy_id == "procurement_diagnosis" and result.policy_version == "1.0.0"
+    assert result.policy_id == "procurement_diagnosis" and result.policy_version == "2.0.0"
 
 
 def test_rule_gaps_remain_even_when_all_foundation_signals_are_available():
     result = diagnose_business(assemble_evidence(full_inputs()))
     assert result.status == B.UNRESOLVED and result.primary_reason is None
-    assert {gap.gap_id for gap in result.rule_gaps} == {
-        "SIGNIFICANT_FORECAST_CHANGE", "MOST_LIKELY_PROJECT_SELECTION", "ANCHOR_COMPARISON_WINDOW",
-        "AFTER_SALES_PATTERN", "VALID_STOCKPILE_CONDITION",
-    }
-    assert {gap.code for gap in result.rule_gaps} == {"RULE_SPEC_GAP", "CONTRACT_GAP"}
+    assert {gap.gap_id for gap in result.rule_gaps} == {"demand_change"}
+    assert {gap.code for gap in result.rule_gaps} == {"MISSING_POLICY_PARAMETER"}
 
 
 def test_policy_catalog_preserves_confirmed_branch_order_and_five_causes():
@@ -114,7 +111,8 @@ def test_policy_catalog_preserves_confirmed_branch_order_and_five_causes():
         ("business_after_sales", 30), ("business_stockpile", 40), ("business_internal_obsolescence", 50),
     ]
     assert set(DiagnosisCode) == {"TRIAL", "STOCKPILE", "DEMAND_ADJUSTMENT", "AFTER_SALES", "PROJECT_OBSOLESCENCE"}
-    assert all(rule.version == "1.0.0" for rule in BUSINESS_RULES)
+    assert BUSINESS_RULES[0].version == "1.0.0"
+    assert all(rule.version == "2.0.0" for rule in BUSINESS_RULES[1:])
 
 
 def policy_item(rule_id, priority, state):

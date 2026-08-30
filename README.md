@@ -3,9 +3,9 @@
 A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
 
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、诊断证据框架和试产主原因规则，完整原因判断与决策支持将在后续阶段实现。
+System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标与参数化业务诊断。六个判断分支在证据和显式Policy完整时覆盖原五类原因；决策支持仍留后续阶段。
 
-**System A: COMPLETE · System B: Phase 2B — TRIAL diagnosis + explicit rule gaps · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 2C — parameterized deterministic diagnosis · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 2B：业务policy、TRIAL主原因及trace已实现；其他原因显式blocked，决策/Agent/业务前端未实现 |
+| System B | Phase 2C：六个参数化诊断分支、证据/参数trace已实现；缺参/缺证据未决，决策/Agent/业务前端未实现 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -247,9 +247,14 @@ Phase 2A增加 [Diagnosis Foundation](docs/diagnosis-engine.md)：统一Evidence
 运行 `python -m pytest tests/test_system_b_diagnosis.py -q` 验证固定证据下的纯规则；无网络或数据库依赖。
 Phase 2B新增`diagnose_business`入口：满足LT+240严格超期、稳定身份完整且R1组织为TRIAL时，输出唯一TRIAL主原因及组织/aging来源。
 按 [正式规则审计与规范](docs/diagnosis-rule-specification.md) 固定业务优先级；量产不是第六类原因，NPI/EOL不自动决定试产或售后。
-其它业务原因因正式变化/售后规范、最可能项目、完整Anchor证据或有效囤料条件缺口返回UNRESOLVED，不继承Generator的Synthetic阈值。
+Phase 2B当时未完成的五个分支已在Phase 2C补齐：变化幅度、后移、售后持续性及有效标签均来自调用者版本化Policy，不继承Generator的Synthetic阈值。
 运行 `python -m pytest tests/test_system_b_business_diagnosis.py -q` 验证Golden scenarios、排除条件、policy与确定性。
-完整Diagnosis业务树、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
+Phase 2C新增中性项目贡献ranking/唯一top、完整R3 Anchor窗口的共同月份比较和后移匹配量；并列、全零、缺月份或项目lifecycle不对应均保持未决。
+`diagnose_business(bundle, policy)`可输出TRIAL、DEMAND_ADJUSTMENT、AFTER_SALES、STOCKPILE以及客户/内部两个PROJECT_OBSOLESCENCE分支。
+内部呆滞仅在所有高优先级分支均明确排除后成立；缺Policy不是false。规则、参数全文/版本/fingerprint和事实来源均可追溯。
+本轮售后为显式13周参数模式，不宣称企业阈值已确认或已验证6月模式；top contributing project不等于责任项目。
+运行 `python -m pytest tests/test_system_b_diagnosis_completion.py -q` 验证六分支正反例、参数切换、并列和严格fallback。
+Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现；没有内置企业阈值或Demo profile。
 
 ## Disclaimer
 

@@ -10,6 +10,7 @@ from app.system_b.models import (
 from app.system_b.analytics.models import (
     ConsumptionMetrics, CoverageMetrics, ForecastChangeMetrics, PoAgingMetrics, SupplyDemandMetrics,
 )
+from app.system_b.analytics.evidence_metrics import AnchorComparisonMetrics, ProjectExposureMetrics
 
 
 class EvidenceKind(StrEnum):
@@ -26,6 +27,9 @@ class EvidenceKind(StrEnum):
     HISTORICAL_LIFECYCLE = "HISTORICAL_LIFECYCLE"
     STOCKPILE_HISTORY = "STOCKPILE_HISTORY"
     MPM = "MPM"
+    PROJECT_SELECTION = "PROJECT_SELECTION"
+    FORECAST_HISTORY = "FORECAST_HISTORY"
+    ALIGNED_FORECAST = "ALIGNED_FORECAST"
 
 
 class MissingCode(StrEnum):
@@ -81,6 +85,7 @@ class EvidenceInputs(CanonicalModel):
     supply: MaterialSupplyDemand | None = None
     previous_forecast: ForecastSnapshot | None = None
     current_forecast: ForecastSnapshot | None = None
+    forecast_history: tuple[ForecastSnapshot, ...] | None = None
     products: tuple[ProductConfig, ...] = ()
     stockpile: HistoricalStockpileQuery | None = None
 
@@ -91,6 +96,8 @@ class AnalyticsEvidence(CanonicalModel):
     coverage: CoverageMetrics
     supply_demand: SupplyDemandMetrics
     forecast_change: ForecastChangeMetrics
+    project_exposure: ProjectExposureMetrics
+    anchor_comparisons: AnchorComparisonMetrics
 
 
 class EvidenceBundle(CanonicalModel):

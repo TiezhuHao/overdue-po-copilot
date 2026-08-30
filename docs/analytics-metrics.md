@@ -91,14 +91,56 @@ Phase 1B未改上游；下表按Phase 1C证据增强后的实际状态更新。�
 | Blocked metric | Why / missing contract |
 |---|---|
 | overdue amount | B-G02：缺 PO 单价与币种；不借协议价，不默认货币，不计算伪金额 |
-| project exposure Top 3（尚未实现） | B-G06原始项目周贡献与稳定关联已补齐；排名算法留后续独立阶段，不生成责任项目 |
-| 自动 Forecast previous/current 与完整 horizon 变化 | B-G05部分解决：已公开版本/项目/物料ID及sequence；仍无完整版本目录/任意Anchor与额外重叠月份，自动选择不在本轮范围 |
+| 金额型project exposure Top 3 | Phase 2C已实现数量贡献ranking和唯一top，不提供金额exposure或责任归属 |
+| 任意Anchor/完整Forecast版本目录 | Phase 2C可比较R3已选Baseline/Post窗口；仍无完整目录/任意Anchor或额外重叠月份，不自动猜测版本 |
 | REST的PO级consumption（身份阻塞已解除） | R1/R4已提供material/organization ID，既有算法可按同dataset/snapshot/identity使用；缺证据仍按原availability处理 |
 | confirmed_supply_qty / planned_supply_qty | B-G07：PR/ASN可空，IN_TRANSIT不是ASN，open PO已含在途；缺供应承诺状态、组成、排重和单位语义，不能强套 inventory + ASN + PO (+ PR) |
 | confirmed/planned gap 与 coverage | 依赖上一项；不把 all_supply 偷换成 confirmed，也不把 PR 当成确认供应 |
 | 周窗口实际日历日期（已解除） | B-G06已提供weekly snapshot ID/date与周日期；旧接口响应无日期时仍不伪造 |
 
 原有 NEEDS_BUSINESS_CONFIRMATION 事项不在本阶段解决。没有新增最终原因类型、业务阈值或责任路径。
+
+## Phase 2C neutral evidence metrics
+
+新增`analytics/evidence_metrics.py`，沿用40位ROUND_HALF_EVEN局部Decimal context，不改变原指标公式，不读取业务Policy或输出业务原因。
+
+### Project contribution aggregation
+
+`calculate_project_exposure(weekly)`接收一条Canonical R4，要求完整13周、Monday-start日期、快照/源版本/物料/组织ID，以及每个贡献项目完整13个周桶。每周项目合计必须精确等于物料周需求；缺桶不自动补零，不用宽表展示总量替代逐周核验。
+
+| Metric | Formula / units |
+|---|---|
+| total_contribution_qty | 项目13周qty求和；物料Canonical数量单位 |
+| contribution_share | 项目合计 / 物料13周合计；无量纲 |
+| average_weekly_qty | 项目合计 / 13；qty/week |
+| nonzero_week_count | qty>0的周桶个数；weeks |
+| longest_nonzero_run | 按week index排序的最长连续非零周数；weeks |
+| top_contributing_project | 唯一且正贡献的最大项目ID；不是责任项目 |
+
+排名按数量降序；UUID仅使并列项展示顺序稳定，不用于选胜者。并列第一：PARTIAL + AMBIGUOUS_TOP_PROJECT，保留ranking但top为空。全零：NOT_COMPUTABLE + NO_POSITIVE_PROJECT_DEMAND，share为空；没有无穷大或sentinel。
+
+缺事实/ID、无效周历、项目桶不完整、项目与物料数量不对账分别返回MISSING_PROJECT_CONTRIBUTIONS、MISSING_STABLE_ID、INCOMPLETE_FORECAST_WINDOW/WEEKLY_WINDOW_MISMATCH、INCOMPLETE_PROJECT_WINDOW、PROJECT_CONTRIBUTION_TOTAL_MISMATCH等稳定原因码。未知值不作零。
+
+### Aligned Forecast totals and later-period matching
+
+`calculate_anchor_comparisons(po, project_id, history)`只消费显式R3 Canonical长表行。要求同dataset/snapshot/material/schedule/project，位置0的Baseline严格在order+LT之前，连续位置1..N（N=2..5）在Anchor之后、不晚于snapshot；版本ID各异，日期严格递增，同一版本metadata一致。每版完整包含声明的7个自然月，月份不重复、不补零。所有提供版本共同月份至少2个；业务Policy还可以要求更长窗口。
+
+用所有提供版本的共同月份集合（升序）逐一比较Baseline与每个Post：
+
+| Metric | Formula / units |
+|---|---|
+| aligned_previous_total / aligned_current_total | 共同月份的previous/current qty之和；qty |
+| per-period change_qty | current_qty - previous_qty；qty |
+| total_change_qty | aligned_current_total - aligned_previous_total；qty |
+| total_change_rate | total_change_qty / aligned_previous_total；无量纲，分母0时null |
+| later_shift_qty | 按月先后将较早负差与之后正差匹配的数量；qty |
+| later_shift_share | later_shift_qty / aligned_previous_total；无量纲，分母0时null |
+
+后移匹配的严格算法：初始化`earlier_deficit=0, shift=0`。每月delta<0时，将`-delta`加到earlier_deficit；delta>0时，`matched=min(earlier_deficit, delta)`，加入shift并从earlier_deficit扣减；delta=0不改变状态。之后的亏缺不能匹配之前的盈余。因此纯总量缩减（没有后续回补）或反向前移的shift为0。算法只是数量形态证据，不证明真实需求搬迁，也不直接输出DELAY或MIXED。
+
+保留每月previous/current/change和两版ID/date及Post位置；完整版本序号、Anchor和horizon通过原始history事实保留于provenance。重复/缺月、版本位置缺口、时间/身份冲突或无共同窗口均NOT_COMPUTABLE，不通过数组顺序或ID大小猜先后。
+
+规则层的数量阈值由调用者另行提供；此模块不含显著下降、售后或责任评分。当前无UOM换算，所有跨记录数量必须属于同一物料的Canonical单位。
 
 ## Usage and tests
 

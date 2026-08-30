@@ -1,6 +1,6 @@
-# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C / Phase 2A / Phase 2B
+# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C / Phase 2A / Phase 2B / Phase 2C
 
-已实现REST Adapter、Canonical Models和Phase 1B确定性Analytics；Phase 1C补充公开证据身份与时间契约，新增012只读视图migration。Phase 2A实现Diagnosis Foundation；Phase 2B新增明确业务policy和TRIAL主原因，其余分支记录规则/契约缺口。不实现完整原因树、Decision、Agent或业务前端。Phase 2A/2B不修改System A、Generator、数据库或既有Analytics公式。
+已实现REST Adapter、Canonical Models、确定性Analytics和公开证据契约。Phase 2A/2B建立Diagnosis框架与policy；Phase 2C沿用该架构，补齐六个参数化分支和中性项目/Forecast分析，覆盖原五类原因。缺参数或证据仍未决，不实现Decision、Agent或业务前端。Phase 2C不修改System A、Generator、数据库或既有Analytics公式。
 
 ## Repository inspection
 
@@ -50,15 +50,15 @@ flowchart LR
 
 同一 R4 行的物料级消耗和库存覆盖可直接计算；PO 与 Forecast 跨记录计算要求稳定 ID，不能退回名称 Join。confirmed/planned 供应口径、金额、Top 3 与自动版本比较等仍 blocked，不能因增加计算函数而宣称上游数据缺口已解决。完整公式、单位、availability 和依赖见 [analytics-metrics.md](analytics-metrics.md)。
 
-Phase 1C通过真实REST补齐R1/R4身份、R3版本/项目、R4项目周事实和R6历史选择；解除PO消费与周日期的原身份阻塞。Top 3原始证据已齐但算法未实现；自动窗口选择仍未开发。新增证据边界与剩余缺口见 [evidence-contracts.md](evidence-contracts.md)。
+Phase 1C通过真实REST补齐R1/R4身份、R3版本/项目、R4项目周事实和R6历史选择；解除原身份阻塞。Phase 2C按现有R3位置/horizon验证完整窗口，按R4数量贡献排名，但不扩展任意Anchor、完整版本目录或金额exposure。证据边界见 [evidence-contracts.md](evidence-contracts.md)。
 
 `diagnosis/models.py` 定义Evidence Bundle、provenance及三态结果；`diagnosis/assembler.py`核验身份/时间并调用已有Analytics；`diagnosis/rules.py`提供Protocol和三个固定顺序基础规则；`diagnosis/engine.py`校验血缘、执行规则并返回所用证据及来源。无HTTP、DB、URL、clock或SDK依赖，也不新增endpoint。
 
 Phase 2A只判断阈值资格、历史囤料记录存在和可比较Forecast负向变化；这些是支持信号，`primary_reason`始终为空。completeness仅针对所选规则要求。当前lifecycle不满足历史lifecycle要求；参考项目和项目周贡献不成为责任归属。接口、查询范围信任边界及缺失语义见 [diagnosis-engine.md](diagnosis-engine.md)。
 
-Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`。原`diagnose`保留foundation兼容行为；`diagnose_business`执行独立业务policy，可输出唯一TRIAL主原因。R1组织类型决定试产，不能由项目NPI猜测；其他原因缺少正式变化/售后参数、最可能项目及完整Anchor证据时返回UNRESOLVED。完整规则来源、优先级和blocked分支见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。
+Phase 2B新增`diagnosis/business_models.py`、`business_rules.py`、`policy.py`；Phase 2C增加`parameters.py`，由调用者提供独立版本化BusinessDiagnosisPolicy。原`diagnose`保持foundation兼容；`diagnose_business(bundle, policy)`可选择六分支唯一主原因。TRIAL仍由R1组织决定；其它分支使用唯一top项目、对应CURRENT_STATE、显式阈值及严格高优先级排除。参数全文/fingerprint与used_policy_fields进入结果。完整条件见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。
 
-未来补齐正式Diagnosis规则的缺口后才覆盖全部五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
+`analytics/evidence_metrics.py`只做数量贡献聚合、共同月份比较及后移数量匹配；不读取Policy、不输出原因。Assembler消费`forecast_history`，保留R3完整版本/月事实和派生来源。项目并列/全零、缺Policy/月份或lifecycle身份不对应时不猜值、不归责。六个分支已可执行，但企业参数权威值仍须调用者明确提供。未来Decision才映射采购动作，Agent/前端仍未实现；任何层都不得绕过REST读取A的隐藏答案。
 
 ## Operational contract
 
@@ -96,3 +96,5 @@ with SystemAAdapter() as adapter:
 `python -m pytest tests/test_system_b_diagnosis.py` 验证纯Diagnosis Foundation的规则三态、身份/时间拒绝、provenance、历史lifecycle和参考项目红线，以及确定性。它不依赖真实System A或数据库。
 
 `python -m pytest tests/test_system_b_business_diagnosis.py` 验证TRIAL Golden scenarios、业务policy、未知排除项、阈值资格与来源；测试不导入Generator阈值或隐藏答案。
+
+`python -m pytest tests/test_system_b_diagnosis_completion.py` 验证六分支Golden正例/排除、显式参数、项目并列、完整Anchor窗口、缺证据保护及参数/事实provenance。

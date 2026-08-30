@@ -3,6 +3,8 @@ from app.system_b.analytics.calculations import (
     calculate_coverage, calculate_forecast_change, calculate_po_aging,
     calculate_po_consumption, calculate_supply_demand,
 )
+from app.system_b.analytics.evidence_metrics import calculate_anchor_comparisons, calculate_project_exposure
+from app.system_b.analytics.models import Availability
 from app.system_b.diagnosis.models import (
     AnalyticsEvidence, EntityKey, EvidenceBundle, EvidenceFact, EvidenceInputs,
     EvidenceKind as K, MissingCode as M, MissingEvidence,
@@ -25,7 +27,8 @@ def entity_keys(row):
 
 def _check_inputs(inputs):
     po = inputs.po
-    rows = (inputs.weekly, inputs.supply, inputs.previous_forecast, inputs.current_forecast, *inputs.products)
+    rows = (inputs.weekly, inputs.supply, inputs.previous_forecast, inputs.current_forecast, *inputs.products,
+            *(inputs.forecast_history or ()))
     if inputs.stockpile is not None:
         query = inputs.stockpile
         if query.material_id != po.material_id:
@@ -85,12 +88,15 @@ def assemble_evidence(inputs: EvidenceInputs) -> EvidenceBundle:
     _check_inputs(inputs)
     po, weekly, supply = inputs.po, inputs.weekly, inputs.supply
     previous, current = inputs.previous_forecast, inputs.current_forecast
+    exposure = calculate_project_exposure(weekly)
     metrics = AnalyticsEvidence(
         aging=calculate_po_aging(po.order_date, po.material_lt_days, as_of_date=po.snapshot_date),
         consumption=calculate_po_consumption(po, weekly),
         coverage=calculate_coverage(weekly.good_subinventory_qty if weekly else None, weekly.weeks if weekly else None),
         supply_demand=calculate_supply_demand(supply),
         forecast_change=calculate_forecast_change(previous, current),
+        project_exposure=exposure,
+        anchor_comparisons=calculate_anchor_comparisons(po, exposure.top_contributing_project, inputs.forecast_history),
     )
     facts = []
     missing = {kind: MissingEvidence(kind=kind, code=M.NOT_PROVIDED) for kind in K}
@@ -248,6 +254,40 @@ def assemble_evidence(inputs: EvidenceInputs) -> EvidenceBundle:
                      observed_on=row.stockpile_version_date, version_date=row.stockpile_version_date, sequence=row.stockpile_version_sequence)
             if valid:
                 ready(K.STOCKPILE_HISTORY)
+    project_parents = tuple(fact.evidence_id for fact in facts if fact.kind in (K.PROJECT_CONTRIBUTION, K.WEEKLY_FORECAST))
+    if exposure.status == Availability.AVAILABLE:
+        selected = exposure.top_contributing_project
+        for rank in exposure.rankings:
+            emit(f"project_metrics.{rank.project_id}", K.PROJECT_SELECTION, "ANALYTICS", weekly,
+                 rank.model_dump(exclude={"project_id"}), derived=project_parents,
+                 keys=entity_keys(weekly) + (EntityKey(name="project_id", value=rank.project_id),))
+        emit("project_selection", K.PROJECT_SELECTION, "ANALYTICS", weekly,
+             {"top_contributing_project": selected}, derived=project_parents)
+        ready(K.PROJECT_SELECTION)
+    else:
+        missing[K.PROJECT_SELECTION] = MissingEvidence(kind=K.PROJECT_SELECTION, code=M.NOT_COMPUTABLE,
+                                                        analytics_reason_codes=exposure.reason_codes)
+    for row in sorted(inputs.forecast_history or (), key=lambda item: (str(item.project_id), str(item.forecast_version_id), item.forecast_month)):
+        emit(f"history.{row.project_id}.{row.forecast_version_id}.{row.forecast_month}", K.FORECAST_HISTORY, "R3", row,
+             {name: getattr(row, name) for name in ("forecast_qty", "forecast_anchor_date", "window_position", "window_role",
+                                                   "horizon_start_month", "horizon_end_month_exclusive")},
+             observed_on=row.forecast_version_date, version_date=row.forecast_version_date,
+             sequence=row.forecast_version_sequence, period=row.forecast_month)
+    if inputs.forecast_history:
+        ready(K.FORECAST_HISTORY)
+    aligned = metrics.anchor_comparisons
+    if aligned.status == Availability.AVAILABLE:
+        parents = tuple(fact.evidence_id for fact in facts if fact.kind == K.FORECAST_HISTORY
+                        and EntityKey(name="project_id", value=exposure.top_contributing_project) in fact.entity_keys)
+        for comparison in aligned.comparisons:
+            emit(f"aligned.{comparison.post_position}", K.ALIGNED_FORECAST, "ANALYTICS", po,
+                 {name: getattr(comparison, name) for name in ("aligned_previous_total", "aligned_current_total",
+                   "total_change_qty", "total_change_rate", "later_shift_qty", "later_shift_share")},
+                 derived=(*parents, "project_selection.top_contributing_project"))
+        ready(K.ALIGNED_FORECAST)
+    else:
+        missing[K.ALIGNED_FORECAST] = MissingEvidence(kind=K.ALIGNED_FORECAST, code=M.NOT_COMPUTABLE,
+                                                      analytics_reason_codes=aligned.reason_codes)
     ids = [fact.evidence_id for fact in facts]
     if len(ids) != len(set(ids)):
         raise EvidenceAssemblyError("DUPLICATE_EVIDENCE_ADDRESS")

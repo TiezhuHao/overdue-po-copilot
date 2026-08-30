@@ -1,6 +1,6 @@
-# System B — Phase 2A Foundation / Phase 2B Business Diagnosis
+# System B — Phase 2A Foundation / Phase 2B Policy / Phase 2C Completion
 
-Phase 2A建立纯规则接口、证据装配和可追溯结果；其三个基础规则只产生支持信号，原 `diagnose` 接口仍保持 `primary_reason=null`。Phase 2B新增独立 `diagnose_business` 入口、显式业务policy及TRIAL主原因；其他业务分支仍因规范/契约缺口不可评估。不新增最终原因类别，不输出责任归属、采购动作或置信度。
+Phase 2A的原`diagnose`接口仍只产生支持信号，primary_reason=null。Phase 2B建立业务入口/policy；Phase 2C在相同架构中补齐六个可配置业务分支，覆盖原五类原因。缺参数或证据仍不可评估，不提供企业阈值默认值，不输出责任项目、采购动作或置信度。
 
 ## Layer responsibility
 
@@ -25,14 +25,15 @@ Adapter → Canonical Models → existing Analytics functions
 - `rules.py`：简单 Protocol、三个规则及固定顺序的 tuple registry。
 - `engine.py`：先验证 bundle 血缘，再检查规则前置条件、执行规则并收集所用事实及其来源。
 - `business_models.py`：业务原因、规则缺口、业务评估和升级结果，与foundation signals分离。
-- `business_rules.py`：一个完整TRIAL谓词及五个显式blocked分支；版本、priority、证据需求和缺口均有固定定义。
+- `business_rules.py`：TRIAL和五个参数化业务分支；版本、priority、证据需求及严格排除条件。
 - `policy.py`：复用foundation验证，执行业务规则，按明确priority选择唯一primary并生成业务trace。
+- `parameters.py`：调用者显式BusinessDiagnosisPolicy；只含身份、阈值、窗口/持续性参数和有效标签，不含答案查找表。
 
 这些模块不导入 Adapter、HTTP、数据库、Settings 或 SDK，不读取机器时间。`as_of_date` 来自 PO 的 dataset snapshot。调用者负责在边界外获取 Canonical 数据，不能通过名称猜测跨记录关系。
 
 ## Evidence bundle
 
-`EvidenceInputs` 接收一个 PO 以及可选的 weekly、supply、previous/current forecast、products 和历史囤料查询结果。`EvidenceBundle` 包含这些 Canonical 输入、现有 Analytics 分组结果、字段级 `facts` 和显式 `missing_evidence`。
+`EvidenceInputs`接收一个PO以及可选weekly、supply、previous/current forecast、完整`forecast_history`长表行集合、products和历史囤料查询结果。`EvidenceBundle`包含Canonical输入、Analytics分组结果、facts和missing_evidence。history各行也必须通过已有dataset/material/schedule/时间门禁。
 
 | Evidence kind | 实际内容与范围 |
 |---|---|
@@ -46,6 +47,9 @@ Adapter → Canonical Models → existing Analytics functions
 | `HISTORICAL_LIFECYCLE` | 保留为显式缺口，当前没有输入实现 |
 | `STOCKPILE_HISTORY` | PO 下单日 as-of 查询的选择元数据、记录数量、版本、tag、target/actual quantities |
 | `MPM` | R2 的 Material → employee 联系关系，不绑定项目 |
+| `PROJECT_SELECTION` | 中性项目数量ranking、唯一top、平均周量、非零周数和最长连续run；并列不可选择 |
+| `FORECAST_HISTORY` | R3各项目/版本/月事实，含位置、Anchor、版本序号和完整horizon元数据 |
+| `ALIGNED_FORECAST` | 选定项目Baseline与Post的共同月份总量、变化率及中性后移匹配量；来源关联完整history |
 
 源记录若跨 dataset、snapshot、material，或具有相互冲突的 organization/schedule ID，装配失败。跨物料关系缺少 material ID 也失败。缺少其他必要稳定 ID 或可计算指标则标记缺失，不能按名称补齐。拒绝未来观察日期、历史选择/记录版本不一致及重复证据地址。
 
@@ -107,30 +111,30 @@ Forecast 使用现有 Analytics 对同 dataset/snapshot/material/project/schedul
 
 `po_reference_project_id` 仅保留 reference/context 语义，不约束 Forecast 必须属于该参考项目。项目周贡献只保留事实；最大贡献项目不会自动成为责任项目。结果不包含责任字段、推荐动作或最终原因猜测。
 
-后续仍需独立处理：历史 lifecycle 查询；完整 Forecast 版本目录与正式 Anchor/变化规则；PO 单价/币种及明确 UOM 契约；confirmed/planned supply composition。项目贡献事实已存在，但 Top 3 及责任算法未实现。缺失证据不触发本轮 System A 扩展。Phase 2B已审计正式顺序，未将Generator/Evaluation的Synthetic阈值移植成业务阈值。
+后续仍需独立处理历史lifecycle查询、任意Anchor/完整Forecast目录、PO单价/币种、UOM换算及confirmed/planned composition。本轮已支持R3公开选择窗口的比较及数量贡献ranking，但不推导责任。没有System A扩展，也没有移植Generator/Evaluation阈值。
 
-## Phase 2B business policy
+## Phase 2C business policy and rule logic
 
-正式来源、每条规则条件/排除/时间口径和缺口见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。该规范先于本轮业务代码建立。
+正式来源、每条规则条件/排除/时间口径和参数见 [diagnosis-rule-specification.md](diagnosis-rule-specification.md)。该规范在Phase 2B始建，本轮按明确授权参数化并记录版本升级。
 
-业务入口 `diagnose_business(bundle)` 先执行原foundation验证与支持信号，再执行独立业务规则。`BusinessRule`沿用rule ID、version、semantic label、required evidence、evaluate结构，增加显式priority和目标diagnosis code，返回`BusinessRuleEvaluation`。目标code仅表示规则所检查的原因，只有MATCHED并通过policy选择才成为primary。
+业务入口`diagnose_business(bundle, policy=None)`先验证完整bundle再执行业务规则。policy为可选仅表示可显式缺失，不代表存在默认参数；TRIAL可独立完成，其余分支按实际需要返回MISSING_POLICY_PARAMETER。`BusinessRule`保持现有ID/version/semantic label/required evidence/evaluate结构，额外消费参数及已评估的高优先级排除结果。只有MATCHED并通过policy选择才成为primary。
 
-`business_trial / 1.0.0`要求可用aging、完整PO身份、R1组织类型为TRIAL。量产组织不匹配；未知或空组织不可评估，不按字符串近似或lifecycle=NPI猜测。试产优先，所以缺Forecast、囤料、联系人不阻止已完整确定的TRIAL原因。其它五个分支的试产排除可直接返回NOT_MATCHED；非试产分支则返回NOT_EVALUABLE及具体RULE_SPEC_GAP/CONTRACT_GAP，不能因负向Forecast或任意囤料记录判定原因。
+`business_trial / 1.0.0`保持不变：可用aging、完整PO身份、R1组织TRIAL。未知组织不可评估，NPI不冒充试产，可选Forecast/囤料/联系人不阻止TRIAL。其它五个分支升级2.0.0：共同月份显著变化参数 + 选定项目CURRENT_STATE分叉；无显著变化后判断显式13周售后模式；再判断order-date历史tag是否属于显式有效标签；最后严格fallback。不存在“任意负数→明显变化”或“EOL→售后”的快捷路径。
 
-Policy `procurement_diagnosis / 1.0.0`：TRIAL(10) → 需求变化的EOL/非EOL互斥分支(20) → AFTER_SALES(30) → STOCKPILE(40) → 内部呆滞(50)。量产不是原因类别。rank只编码正式优先级，不是数量门槛。候选主原因必须来自完整business match；同级冲突或更高/同级未决会阻止选择。未来低优先级完整匹配被覆盖时记录`SUPPRESSED_BY_HIGHER_PRIORITY_RULE`。本轮只有TRIAL能真正命中；其它foundation signals不是被压制的root causes。
+Routing `procurement_diagnosis / 2.0.0`保持TRIAL(10) → 变化EOL/非EOL(20) → AFTER_SALES(30) → STOCKPILE(40) → 内部(50)。量产不是原因，rank不是数量门槛。同级冲突或更高/同级未决阻止选择；内部要求全部五个更高分支明确NOT_MATCHED。完整低优先级匹配被覆盖时保留suppressed语义，foundation signals不被当成root causes。
 
 | Business status | Meaning |
 |---|---|
-| DIAGNOSED | 唯一业务规则完整成立；本轮仅TRIAL |
+| DIAGNOSED | 唯一业务规则在当前显式参数和证据下完整成立 |
 | NOT_ELIGIBLE | PO未越过LT+240；包括阈值当天；primary为空 |
 | UNRESOLVED | 必要证据/规则规范不足，或policy冲突；primary为空 |
-| NO_MATCH | 所有规则均可评估但没有匹配；当前非试产因blocked分支为UNRESOLVED，不宣称NO_MATCH |
+| NO_MATCH | 所有规则可评估但没有匹配；当前完整树通常由严格fallback覆盖，选择器仍保留该状态 |
 
-业务结果额外包含primary rule ID/version、policy ID/version、`business_evaluations`、rule gaps、suppressed matches及固定`reason_summary_code`。原`evaluations`与`signals`仍为foundation支持层，并各自保留缺失项。没有长段生成式解释。
+业务结果包含primary rule ID/version、调用者policy ID/version、参数全文`business_policy`、参数fingerprint、routing版本、business_evaluations、rule gaps和固定reason_summary_code。每条评估记录used_policy_fields。参数对象在入口重新校验，拒绝构造绕过；只允许阈值/标签/窗口参数，无PO/material答案表。原evaluations/signals仍为foundation支持层，没有生成式解释。
 
 业务结果的completeness_scope列出业务policy规则；missing_evidence与rule_gaps按该范围汇总。试产已明确排除后续分支时可以COMPLETE，即使可选foundation signals有缺失；这些缺失仍保留于foundation evaluations和bundle。UNRESOLVED始终PARTIAL。Primary trace包含R1组织字段及Analytics阈值差，并递归包含order/LT源字段。
 
-正式非试产树使用snapshot CURRENT_STATE，而不是下单日lifecycle；因此历史lifecycle缺口不被用作错误的统一阻塞理由。它们真正的阻塞是明显变化/售后量化规范、最可能项目规则、完整Anchor证据和有效囤料条件。历史查询红线保持不变，当前EOL不能单独证明售后或项目呆滞。
+正式非试产树使用选定项目snapshot CURRENT_STATE，要求同一project_id，缺配置或多个配置lifecycle冲突则未决；不使用参考项目回退。本轮项目选择是中性数量贡献唯一第一名，不宣称因果或责任。并列/全零不能按UUID选择。售后是明确的13周模式，不额外宣称6月或历史正常日量比例判断。历史lifecycle仍是独立未提供的证据类型。
 
 ## Usage and verification
 
@@ -147,6 +151,7 @@ inputs = EvidenceInputs(
     supply=supply,
     previous_forecast=previous,
     current_forecast=current,
+    forecast_history=tuple(history_rows),  # complete required R3 version/month buckets
     products=tuple(products),
     stockpile=HistoricalStockpileQuery(
         material_id=po.material_id,
@@ -159,9 +164,17 @@ result = diagnose(bundle)
 
 # Explicit business entry; no change to the foundation-only API.
 from app.system_b.diagnosis.policy import diagnose_business
-business_result = diagnose_business(bundle)
+from app.system_b.diagnosis.parameters import BusinessDiagnosisPolicy
+policy = BusinessDiagnosisPolicy(
+    policy_id=approved_policy_id, version=approved_policy_version,
+    demand_change=demand_parameters, after_sales=after_sales_parameters,
+    valid_stockpile_tags=approved_tags,
+)
+business_result = diagnose_business(bundle, policy)
 ```
 
 在 backend 目录执行 `python -m pytest tests/test_system_b_diagnosis.py -q`。测试只用固定 Canonical fixtures，覆盖规则三态、跨 dataset/身份/时间拒绝、来源与派生链、历史 lifecycle 红线、参考项目边界和确定性；不依赖数据库、网络、Generator 或当前时间。
 
 `python -m pytest tests/test_system_b_business_diagnosis.py -q` 增加测试侧JSON Golden scenarios：真正的TRIAL正例、优先级排除、非试产缺口、lifecycle误用反例和阈值边界。多匹配/冲突测试仅验证policy选择器，不把测试侧假评估结果冒充已实现业务原因。
+
+`python -m pytest tests/test_system_b_diagnosis_completion.py -q`验证六分支真实Golden正例/排除、参数切换、完整比较窗口、后移数学、并列、缺参数/生命周期/历史证据及严格fallback。所有数值policy仅存在测试fixture，没有默认企业profile。

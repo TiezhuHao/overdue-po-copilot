@@ -6,6 +6,7 @@ from pydantic import model_validator
 
 from app.system_b.models import CanonicalModel
 from app.system_b.diagnosis.models import DiagnosisResult, MissingEvidence, RuleState
+from app.system_b.diagnosis.parameters import BusinessDiagnosisPolicy
 
 
 class DiagnosisCode(StrEnum):
@@ -25,7 +26,7 @@ class BusinessStatus(StrEnum):
 
 class RuleGap(CanonicalModel):
     gap_id: str
-    code: Literal["RULE_SPEC_GAP", "CONTRACT_GAP"]
+    code: Literal["RULE_SPEC_GAP", "CONTRACT_GAP", "MISSING_POLICY_PARAMETER"]
     source: str
 
 
@@ -39,6 +40,7 @@ class BusinessRuleEvaluation(CanonicalModel):
     used_evidence_ids: tuple[str, ...] = ()
     missing_evidence: tuple[MissingEvidence, ...] = ()
     rule_gaps: tuple[RuleGap, ...] = ()
+    used_policy_fields: tuple[str, ...] = ()
 
 
 class SuppressedMatch(CanonicalModel):
@@ -55,6 +57,9 @@ class BusinessDiagnosisResult(DiagnosisResult):
     primary_rule_version: str | None = None
     policy_id: str
     policy_version: str
+    business_policy: BusinessDiagnosisPolicy | None = None
+    policy_fingerprint: str | None = None
+    routing_policy_version: str = "2.0.0"
     reason_summary_code: str
     business_evaluations: tuple[BusinessRuleEvaluation, ...]
     rule_gaps: tuple[RuleGap, ...] = ()

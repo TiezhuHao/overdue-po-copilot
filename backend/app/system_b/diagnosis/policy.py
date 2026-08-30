@@ -1,14 +1,16 @@
 """Deterministic primary selection; unresolved exclusions never become false."""
+from hashlib import sha256
 from app.system_b.diagnosis.business_models import (
     BusinessDiagnosisResult, BusinessRuleEvaluation, BusinessStatus as B, SuppressedMatch,
 )
 from app.system_b.diagnosis.business_rules import BUSINESS_RULES
 from app.system_b.diagnosis.engine import diagnose
 from app.system_b.diagnosis.models import Completeness, DiagnosisStatus, EvidenceBundle, RuleState as S
+from app.system_b.diagnosis.parameters import BusinessDiagnosisPolicy
 
 
 POLICY_ID = "procurement_diagnosis"
-POLICY_VERSION = "1.0.0"
+POLICY_VERSION = "2.0.0"
 
 
 def select_primary(evaluations: tuple[BusinessRuleEvaluation, ...]):
@@ -28,10 +30,14 @@ def select_primary(evaluations: tuple[BusinessRuleEvaluation, ...]):
     return best[0], B.DIAGNOSED, "PRIMARY_RULE_MATCHED"
 
 
-def diagnose_business(bundle: EvidenceBundle) -> BusinessDiagnosisResult:
+def diagnose_business(bundle: EvidenceBundle, policy: BusinessDiagnosisPolicy | None = None) -> BusinessDiagnosisResult:
     # Foundation validates the full bundle's derivation before any business rule.
     foundation = diagnose(bundle)
-    evaluations = tuple(rule.evaluate(bundle) for rule in BUSINESS_RULES)
+    if policy is not None:
+        policy = BusinessDiagnosisPolicy.model_validate(policy.model_dump())
+    evaluations = ()
+    for rule in sorted(BUSINESS_RULES, key=lambda rule: (rule.priority, rule.rule_id)):
+        evaluations += (rule.evaluate(bundle, policy, evaluations),)
     primary, status, summary = select_primary(evaluations)
     if foundation.status == DiagnosisStatus.NOT_ELIGIBLE:
         primary, status, summary = None, B.NOT_ELIGIBLE, "PO_NOT_ELIGIBLE"
@@ -61,7 +67,9 @@ def diagnose_business(bundle: EvidenceBundle) -> BusinessDiagnosisResult:
     return BusinessDiagnosisResult(
         **values, status=status, primary_reason=primary.diagnosis_code if primary else None,
         primary_rule_id=primary.rule_id if primary else None, primary_rule_version=primary.rule_version if primary else None,
-        policy_id=POLICY_ID, policy_version=POLICY_VERSION, reason_summary_code=summary,
+        policy_id=policy.policy_id if policy else POLICY_ID, policy_version=policy.version if policy else POLICY_VERSION,
+        business_policy=policy, policy_fingerprint=sha256(policy.model_dump_json().encode()).hexdigest() if policy else None,
+        routing_policy_version=POLICY_VERSION, reason_summary_code=summary,
         business_evaluations=evaluations, rule_gaps=gaps, suppressed_matches=suppressed,
         completeness=Completeness.PARTIAL if missing or gaps or status == B.UNRESOLVED else Completeness.COMPLETE,
         completeness_scope=tuple(rule.rule_id for rule in BUSINESS_RULES), missing_evidence=missing,
