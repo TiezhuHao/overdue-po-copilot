@@ -13,9 +13,13 @@ SCAN_TARGETS = (
     REPOSITORY_ROOT / "backend" / "alembic",
     REPOSITORY_ROOT / "examples",
     REPOSITORY_ROOT / "docs",
+    REPOSITORY_ROOT / "frontend" / "app",
+    REPOSITORY_ROOT / "frontend" / "components",
+    REPOSITORY_ROOT / "frontend" / "lib",
+    REPOSITORY_ROOT / "frontend" / "tests",
     REPOSITORY_ROOT / "README.md",
 )
-TEXT_SUFFIXES = {".py", ".md", ".ini", ".json", ".sql", ".txt"}
+TEXT_SUFFIXES = {".py", ".md", ".ini", ".json", ".sql", ".txt", ".ts", ".tsx", ".css", ".mjs"}
 APPROVED_DISPLAY_TERMS = {"BG", "PDT", "PCBA"}
 
 

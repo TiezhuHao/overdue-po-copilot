@@ -5,7 +5,7 @@ A synthetic procurement data platform with a bounded natural-language copilot fo
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
 System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标、参数化业务诊断、只读处置映射、LangGraph编排与受约束自然语言入口。六个判断分支覆盖原五类原因；缺证据、缺参数或正式处置规格时保持未决，模型不能覆盖业务结果。
 
-**System A: COMPLETE · System B: Phase 4B — Natural-language Copilot available (bounded composition, local API) · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 5 — Next.js Product MVP + grounded Copilot · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -86,7 +86,7 @@ Report 2 供应与采购开放量、库存组件对账；Stockpile 的月预测�
 Python 3.12（已验证）、FastAPI、Pydantic、SQLAlchemy 2、PostgreSQL 16、Alembic、
 pytest、NumPy/SciPy；精确版本在 [requirements.txt](backend/requirements.txt)。
 Excel 使用公开依赖 [openpyxl 3.1.5](https://pypi.org/project/openpyxl/3.1.5/)，与其余 Python 依赖一起安装。
-Docker Compose 用于本地 PostgreSQL。仓库的 Next.js 页面只是初始占位，不是业务 Dashboard。
+Docker Compose用于本地PostgreSQL。Next.js 16.3.1 App Router现提供中文工作台、订单分析和上下文Copilot，不在浏览器计算采购规则或调用OpenAI。
 
 ## Quick Start
 
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 4B：严格意图/身份解析、既有Graph、受控中文回答与fallback、独立query API；无业务前端 |
+| System B | Phase 5：真实报表Dashboard、PO Detail、Diagnosis/Decision、Evidence及上下文Copilot；仅本地只读演示 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -263,7 +263,27 @@ Graph直接消费既有Analytics/Diagnosis/Decision结果；缺证据与未决�
 Phase 4B新增[自然语言Copilot](docs/copilot.md)：官方OpenAI Responses SDK、strict intent、精确PO/material消歧、Agent结果投影、grounding校验和确定性fallback。模型选择已有事实的中文措辞与顺序，不支持任意自由改写；原因、owner、动作与数字均不可越过既有引擎。
 服务器配置`OPENAI_API_KEY`及`OPENAI_MODEL`，所有调用`store=False`；无key时，提供明确结构化selector仍可使用fallback。真实API smoke默认deselect，当前仅验证模拟模型及SDK模拟传输，未声称真实中文准确率。
 独立入口为`app.system_b.copilot.api:app`，仅一个`POST /api/v1/copilot/query`；启动与参数见Copilot文档。不改变System A OpenAPI。无认证或生产部署能力，不应公开本地演示端口。
-未开发最终Copilot UI；无持久化memory、采购操作执行或内置诊断企业阈值，缺Policy及售后DC-16仍保持未决。
+Phase 5提供Next.js产品MVP：Dashboard轻量查询、按schedule进入Detail完整分析、中文追问和证据折叠区。无持久化memory、采购操作执行或内置诊断企业阈值，缺Policy及售后DC-16仍保持未决。
+
+## Product Screens
+
+实际本地生产构建截图，数据来自公开API，不是前端假数据。完整运行与契约限制见[前端MVP说明](docs/frontend-mvp.md)。
+
+![采购工作台](docs/screenshots/dashboard.jpg)
+
+![订单分析与Copilot](docs/screenshots/po-detail.jpg)
+
+## Run locally — Product MVP
+
+依次启动三个进程，保留各自终端；以下命令分别从仓库根目录开始。完整环境初始化见[本地运行手册](docs/LOCAL_SETUP.md)。
+
+1. System A：进入`backend`，激活Python环境，确认`python -m alembic upgrade head`已部署现有012证据视图，再运行`python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`。
+2. System B：进入`backend`，设置`SYSTEM_A_BASE_URL=http://127.0.0.1:8000/api/v1`，运行`python -m uvicorn app.system_b.copilot.api:app --host 127.0.0.1 --port 8100 --env-file ../.env`。OpenAI key/model仅在此服务器配置；无key可用明确PO身份的确定性fallback。
+3. Frontend：进入`frontend`，初次复制`.env.example`为`.env.local`，执行`pnpm install --frozen-lockfile`、`pnpm run build`、`pnpm start --hostname 127.0.0.1 --port 3000`。已有本地配置时先核对，不覆盖。Node 24 / pnpm 11.19.0已验证。
+
+打开[本地工作台](http://localhost:3000)，选择`demo-master-v1`，进入`PO-000015 / 行3 / 发运1`，向Copilot询问“为什么这个PO超期？应该怎么办？”。演示记录从真实公开报表选取；详见[演示路径](docs/frontend-mvp.md)。System B接口为`http://127.0.0.1:8100/api/v1/copilot/query`。
+
+前端仅通过Next.js同源固定目标代理读取A/B，不需放开FastAPI CORS。所有数量/原因/动作源于后端；KPI区分筛选发运行总数与本页去重数。未公开的coverage/Forecast change/required checks显示缺口，未伪造金额或规则。没有认证，勿将演示端口公开。
 
 ## Disclaimer
 

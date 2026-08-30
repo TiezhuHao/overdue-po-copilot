@@ -1,11 +1,4 @@
-export default function Home() {
-  return (
-    <main className="home">
-      <section className="intro" aria-label="Project introduction">
-        <p className="eyebrow">Stage 0</p>
-        <h1>Overdue PO Copilot</h1>
-        <p>Supply Chain Intelligence Platform</p>
-      </section>
-    </main>
-  );
+import { Dashboard } from "../components/dashboard";
+export default async function Home({ searchParams }: { searchParams: Promise<{ dataset?: string }> }) {
+  return <Dashboard initialDataset={(await searchParams).dataset ?? ""} />;
 }
