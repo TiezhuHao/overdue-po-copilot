@@ -1,6 +1,6 @@
 # Overdue PO Copilot — System A
 
-本仓库已完成 Phase 5A.1、Phase 5B、Phase 5C 与 Phase 6A 六报表语义层；Report API、Excel 与 Dataset finalization 留待 Phase 6B。
+本仓库已完成 Phase 5A.1、Phase 5B、Phase 5C、Phase 6A 与 Phase 6B。System A 现在提供六张报表只读 API、统一 Manifest 驱动的 Excel 导出，以及 Dataset finalization（GENERATING → READY）。
 
 ## Implementation Status
 
@@ -14,7 +14,7 @@
 - [x] Phase 5B — Forecast Evidence World
 - [x] Phase 5C — Supply/Demand & Stockpile Evidence
 - [x] Phase 6A — Six Report Semantic Layer
-- [ ] Phase 6B — Report APIs / Excel / Finalization
+- [x] Phase 6B — Report APIs / Excel / Finalization
 - [ ] Phase 7：Copilot
 
 当前已包含：
@@ -28,7 +28,7 @@
 - `GET /api/v1/health` 与 `GET /api/v1/ready`；
 - unit tests 与真实 PostgreSQL integration tests。
 
-当前已实现 Master Data、Procurement、隔离 Scenario Truth、Lifecycle/Product Config、共享需求、Forecast、Operational facts及六张canonical Report Semantics；尚未实现Report REST API、Excel、Agent或AI诊断。
+当前已实现 Master Data、Procurement、隔离 Scenario Truth、Lifecycle/Product Config、共享需求、Forecast、Operational facts、六张 canonical Report Semantics、Report REST API、Manifest 驱动 Excel 与 Dataset finalization；Agent 与 AI 诊断属于 System B。
 
 所有生成内容均为合成演示数据，不来源于真实企业数据，也不得用于真实企业运营。
 
@@ -228,7 +228,36 @@ Phase 5B：完整回归262项通过；全量启动后新增的1项“缺少 Dema
 python scripts/check_forbidden_terms.py
 ```
 
-## 11. 后端基础镜像
+## 11. Phase 6B 报表交付
+
+六张报表 API 均位于 `/api/v1/reports/`，支持 `dataset_version_id` 或
+`dataset_version_name`、分页及白名单筛选；未指定 Dataset 时只选择最新 READY
+版本。Dataset 元数据位于 `/api/v1/datasets`。公开 API、Schema 与 OpenAPI
+不包含 `evaluation.scenario_truth` 或隐藏场景答案。
+
+Excel 导出只消费 canonical reporting views，并以
+`backend/app/reporting/report_header_manifest.json` 固化列序。需要 Node.js 与
+`@oai/artifact-tool` 运行时；在标准 Node 环境中可执行：
+
+```powershell
+cd backend/app/reporting
+npm install --omit=dev
+cd ../../..
+python -m app.reporting.export_cli --dataset-version-name demo-master-v1 --report all --output-dir exports
+```
+
+若使用 Codex 工作区提供的 Node 运行时，可设置 `REPORT_EXPORT_NODE` 与
+`REPORT_EXPORT_NODE_MODULES` 后运行同一命令。导出文件默认写入 `exports/`，不纳入
+Git。`python -m app.finalization.cli --dataset-version-name demo-master-v1` 会在
+所有平台事实、Scenario Truth、六张 canonical views 和一致性校验通过后计算
+`business_content_hash` 并原子发布 Dataset；READY Dataset 只能被幂等重验，不能再由
+Generator 改写。
+
+Phase 6B 的完整验收包括：clean database downgrade/upgrade、从空库完整生成、六张
+API 与精确表头 Excel round-trip、READY 不可变性、角色权限隔离、OpenAPI/敏感词扫描、
+`/health` 与 `/ready` 200，以及全量 pytest 0 failed/0 skipped。
+
+## 12. 后端基础镜像
 
 `backend/Dockerfile` 是已验证可构建的 Phase 1 FastAPI 基础镜像；开发用
 `docker-compose.dev.yml` 仍只启动 PostgreSQL。它不表示 Generator、Report API

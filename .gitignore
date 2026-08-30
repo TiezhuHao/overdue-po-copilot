@@ -39,3 +39,4 @@ data/synthetic/*
 !data/raw/.gitkeep
 !data/synthetic/.gitkeep
 postgres-data/
+exports/

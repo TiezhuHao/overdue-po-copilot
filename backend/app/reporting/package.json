@@ -1,0 +1,8 @@
+{
+  "name": "system-a-reporting-runtime",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@oai/artifact-tool": "*"
+  }
+}

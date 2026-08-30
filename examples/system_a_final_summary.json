@@ -1,0 +1,19 @@
+{
+  "notice": "Synthetic aggregate-only final System A summary; no enterprise data or record-level evaluation truth.",
+  "dataset_version_name": "demo-master-v1",
+  "dataset_status": "READY",
+  "business_content_hash": "f91717e3af70a518caf31673fd5f733f1e12b2dfb9598b1e7c0cec20c36ac199",
+  "report_semantic_content_hash": "c9628312839ac5c5ca0f51e6c1694897e05bfaece70e9ee6282f6f02cee579d9",
+  "report_row_counts": {"report1": 115, "report2": 60, "report3": 900, "report4": 60, "report5": 272, "report6": 24},
+  "report3_sheet_count": 28,
+  "api_endpoint_count": 10,
+  "migration_head": "011_report_semantic_views",
+  "upstream_content_hashes": {
+    "master": "9ceccb5821633dd51bae2ffc6d1909e7b137cc40b48e92b28c3abddf53c977ce",
+    "procurement": "93d93eec22922de873c13926f6d230396bdcfc8af9f569f06852d3b1778b766f",
+    "scenario": "8ae86d1579e22cbef374ba5edf8eae7ac2accd5eef23d3b823139ef64f73767f",
+    "evidence_foundation": "d2ee070ef425915488b5281b244a234a24be0a9890598a2b2d48de1400cc868e",
+    "forecast": "fe1d2700018ba9dfa31180123fa3c51c4e9dede0f0218224581b8aafd87ebec9",
+    "operational": "a2cd88c8de00b9c659ce4c781a953e9e037fa3cf7d2de76e8c348c0bedd37e9f"
+  }
+}

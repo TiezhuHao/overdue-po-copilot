@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 
 from app.api.health import readiness_check, router as health_router
+from app.api.datasets import router as dataset_router
+from app.api.reports import router as report_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 
@@ -9,6 +11,8 @@ def create_app() -> FastAPI:
     configure_logging(settings.log_level)
     app = FastAPI(title=settings.app_name)
     app.include_router(health_router, prefix=settings.api_v1_prefix)
+    app.include_router(dataset_router, prefix=settings.api_v1_prefix)
+    app.include_router(report_router, prefix=settings.api_v1_prefix)
     app.add_api_route("/ready", readiness_check, methods=["GET"], include_in_schema=False)
 
     @app.get("/health", include_in_schema=False)

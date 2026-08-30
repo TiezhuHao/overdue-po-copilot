@@ -2,7 +2,7 @@
 
 ## 1. 范围
 
-本文件规划未来 System A 的组件、数据流和 REST API 契约。本轮不实现 PostgreSQL、SQLAlchemy、Alembic、Generator、FastAPI、Agent、前端或 Docker 业务逻辑。
+本文件定义 System A 的组件、数据流和 REST API 契约。Phase 6B 已实现六张报表只读 API、Dataset 元数据 API、Manifest 驱动 Excel 导出与 Dataset finalization；Agent、Copilot 与前端仍属于 System B。
 
 ## 2. 目标架构
 
@@ -160,9 +160,9 @@ API 版本独立于 `dataset_version`。破坏性响应变更通过 `/api/v2` �
 
 查询单个 dataset 元数据和公开统计；不返回 Truth 分布，除非未来管理端另有授权接口。
 
-### `POST /api/v1/datasets/generate`
+### `POST /api/v1/datasets/generate`（保留规划）
 
-仅开发/管理权限。输入：version_name、random_seed、snapshot_date、generator_version、schema_version、generation_config。相同 signature 的幂等策略在 Phase 1 固定：建议返回已有 dataset，而不是生成第二套不同 ID 数据。
+仅开发/管理权限，当前 Phase 6B 不公开此写入接口。生成仍通过受控 CLI 完成；相同 signature 的幂等策略由各 Generator 固化。
 
 ### `GET /api/v1/health`
 
@@ -174,7 +174,7 @@ API 版本独立于 `dataset_version`。破坏性响应变更通过 `/api/v2` �
 
 ## 7. 六类 Report API
 
-### 7.1 Report 1 — `GET /api/v1/reports/overdue-po`
+### 7.1 Report 1 — `GET /api/v1/reports/overdue-pos`
 
 **目的**：列出项目定义的超期 PO。
 
@@ -417,7 +417,7 @@ CLI使用generator角色、只输出聚合摘要，异常只报告异常类、�
 
 ## 18. Phase 6A Reporting domain boundary
 
-`app.reporting`提供三项内部能力：精确表头manifest、只读SQL View定义、`ReportSemanticService`/`ReportReconciliationValidator`。数据流固定为 `platform normalized facts → reporting semantic views → Phase 6B API/Excel`；本阶段不注册report router，也不生成Excel。
+`app.reporting`提供精确表头manifest、只读SQL View定义、`ReportSemanticService`/`ReportReconciliationValidator`、Excel exporter 与 finalization boundary。数据流固定为 `platform normalized facts → reporting semantic views → Phase 6B API/Excel`；API 与 Excel 均只消费 canonical views。
 
 六张canonical输出的展示字段顺序共同引用机器manifest。动态槽位从normalized long views读取；未来exporter只负责pivot/header/format/file，不重新实现超期、版本选择、供需或Stockpile逻辑。技术lineage ID位于内部View尾部，不属于最终display contract。
 
