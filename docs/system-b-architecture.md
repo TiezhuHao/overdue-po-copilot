@@ -1,6 +1,6 @@
-# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C
+# System B — Phase 0 / Phase 1A / Phase 1B / Phase 1C / Phase 2A
 
-已实现REST Adapter、Canonical Models和Phase 1B确定性Analytics；Phase 1C补充公开证据身份与时间契约。不实现Diagnosis、Decision、Agent或业务前端。新增012只读视图migration，不改Generator、业务事实、历史迁移、既有公式或原表权限。
+已实现REST Adapter、Canonical Models和Phase 1B确定性Analytics；Phase 1C补充公开证据身份与时间契约，新增012只读视图migration。Phase 2A实现Diagnosis Foundation：证据装配、三个基础支持规则与确定性trace，不实现完整原因树、Decision、Agent或业务前端。Phase 2A不修改System A、Generator、数据库或既有Analytics公式。
 
 ## Repository inspection
 
@@ -29,8 +29,10 @@ flowchart LR
     A[System A REST API] --> Adapter[HTTP Adapter + private source DTO]
     Adapter --> Canonical[Canonical Models]
     Canonical --> Analytics[Deterministic Analytics]
-    Analytics -. future .-> Diagnosis[Diagnosis]
-    Diagnosis -.-> Decision[Decision]
+    Canonical --> Assembler[Evidence Assembler]
+    Analytics --> Assembler
+    Assembler --> Diagnosis[Diagnosis Foundation + Trace]
+    Diagnosis -. future .-> Decision[Decision]
     Decision -.-> Agent[Agent]
     Agent -.-> Frontend[Dashboard / Copilot]
 ```
@@ -50,7 +52,11 @@ flowchart LR
 
 Phase 1C通过真实REST补齐R1/R4身份、R3版本/项目、R4项目周事实和R6历史选择；解除PO消费与周日期的原身份阻塞。Top 3原始证据已齐但算法未实现；自动窗口选择仍未开发。新增证据边界与剩余缺口见 [evidence-contracts.md](evidence-contracts.md)。
 
-未来 Diagnosis 执行已确认的判断顺序和五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
+`diagnosis/models.py` 定义Evidence Bundle、provenance及三态结果；`diagnosis/assembler.py`核验身份/时间并调用已有Analytics；`diagnosis/rules.py`提供Protocol和三个固定顺序基础规则；`diagnosis/engine.py`校验血缘、执行规则并返回所用证据及来源。无HTTP、DB、URL、clock或SDK依赖，也不新增endpoint。
+
+Phase 2A只判断阈值资格、历史囤料记录存在和可比较Forecast负向变化；这些是支持信号，`primary_reason`始终为空。completeness仅针对所选规则要求。当前lifecycle不满足历史lifecycle要求；参考项目和项目周贡献不成为责任归属。接口、查询范围信任边界及缺失语义见 [diagnosis-engine.md](diagnosis-engine.md)。
+
+未来正式 Diagnosis 规则才执行已确认的判断顺序和五类原因；Decision 将证据和责任路径映射到已确认对策；Agent 编排工具及解释结果；Frontend 展示证据与结果。任何未来功能都不得绕过 REST 直接读取 A 的数据库或隐藏答案。
 
 ## Operational contract
 
@@ -77,10 +83,12 @@ with SystemAAdapter() as adapter:
             print(forecast.forecast_month, forecast.forecast_qty)
 ```
 
-示例 ID/编码仅示意；真实值来自 Dataset API 和当前公开报表。禁止按名称猜 UUID。后续稳定 Join、历史囤料和完整预测比较必须先解决合同缺口。获取 canonical 对象后可调用 AnalyticsService；调用示例见指标文档。
+示例 ID/编码仅示意；真实值来自 Dataset API 和当前公开报表。禁止按名称猜 UUID。稳定 Join、历史囤料查询使用 Phase 1C 证据契约；完整预测窗口的自动选择仍未实现。获取 canonical 对象后可调用 AnalyticsService 或 Diagnosis Evidence Assembler；示例分别见指标和诊断文档。
 
 ## Verification
 
 `python -m pytest tests/test_system_b_adapter.py` 无需真实 HTTP 服务或数据库。测试通过 MockTransport 和 FastAPI dependency override 验证错误语义、类型、分页、映射、防泄漏和实际路由兼容。全量回归使用 `python -m pytest`；无专用测试数据库时 PostgreSQL 用例按既有规则 skip，不能把它描述为完整数据库验收。
 
 `python -m pytest tests/test_system_b_analytics.py` 额外验证纯指标、固定日期边界、零/缺失/非法数量、不完整 horizon、版本比较条件与无 HTTP/clock 依赖。Analytics 不产生诊断或采购动作。
+
+`python -m pytest tests/test_system_b_diagnosis.py` 验证纯Diagnosis Foundation的规则三态、身份/时间拒绝、provenance、历史lifecycle和参考项目红线，以及确定性。它不依赖真实System A或数据库。

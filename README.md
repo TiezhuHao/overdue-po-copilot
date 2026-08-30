@@ -3,9 +3,9 @@
 A synthetic procurement data platform and future AI copilot for overdue purchase-order diagnosis and decision support.
 
 采购订单超期排查需要把订单、历史预测、库存、项目生命周期和囤料计划放在同一时间线上。
-System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型与确定性指标计算，诊断与决策支持将在后续阶段实现。
+System A 用可重复的合成业务世界提供这套证据基础；System B 已建立 REST 适配、标准模型、确定性指标和诊断证据基础框架，完整原因判断与决策支持将在后续阶段实现。
 
-**System A: COMPLETE · Integration: Phase 1C Evidence Contracts · Synthetic data only.**
+**System A: COMPLETE · System B: Phase 2A Diagnosis Foundation · Synthetic data only.**
 
 正式运行仅需公开 Python 依赖与 PostgreSQL；Excel 使用 openpyxl，不需要 Node.js、
 Codex 或私有运行时。安装、六表导出与验证步骤见[本地运行手册](docs/LOCAL_SETUP.md)。
@@ -49,7 +49,7 @@ flowchart TD
 
 - seed、固定 `snapshot_date`、生成器版本和配置决定合成世界；稳定 UUID 与内容 hash 支持复现。
 - PostgreSQL dataset-scoped 复合外键和有效日期约束保证跨 Dataset 隔离及时间关系一致。
-- 11 个 Alembic migrations 建立主数据、采购事实、历史证据与 reporting views。
+- Alembic migrations 001–011 建立主数据、采购事实、历史证据与 reporting views；012 补充只读证据视图。
 - 每个生成阶段使用事务；缺失/部分前置世界拒绝生成，不静默补齐。
 - Finalization 校验一致性并写入最终 hash，原子切换 `GENERATING → READY`。
 - READY 在 Generator 服务入口拒绝改写，重新 finalization 检测内容变化；这不是对 owner 直接 SQL 的数据库级不可变锁。
@@ -190,7 +190,7 @@ backend/
   app/reporting/       canonical views, manifest, Excel
   app/api/             read-only dataset/report/health routes
   app/finalization/    private publication CLI/service
-  app/system_b/        canonical models, HTTP adapter, deterministic analytics
+  app/system_b/        canonical models, adapter, analytics, diagnosis foundation
   alembic/versions/    migrations 001–012; 012 adds read-only evidence views
   db/bootstrap/        roles and grants
   tests/               unit and PostgreSQL integration tests
@@ -215,7 +215,7 @@ data/                  placeholders; local generated data is ignored
 | System A — Mock Enterprise Data Platform | COMPLETE；Final Review 补齐 Report 6 真实角色兼容修复 |
 | Demo Dataset | READY |
 | Schema head | `012_evidence_contract`；部署需upgrade head，既有dataset生成元数据不改写 |
-| System B | Phase 1B：确定性 Analytics 已实现；诊断、决策、Agent 与业务前端未实现 |
+| System B | Phase 2A：证据装配、基础规则与trace已实现；完整原因树、决策、Agent与业务前端未实现 |
 | Public runtime | Python requirements + PostgreSQL；Excel 已替换为公开 openpyxl |
 
 最终业务 hash：
@@ -241,7 +241,11 @@ Phase 1B 已增加纯 Analytics 与薄服务：年龄/阈值、13周聚合、物
 已有PO跨记录消耗可使用新增稳定ID；自动版本选择和Top 3算法未开发，confirmed/planned供应口径与金额仍blocked。
 详见 [Analytics 指标与可用性](docs/analytics-metrics.md) 及 [证据契约](docs/evidence-contracts.md)。
 运行 `python -m pytest tests/test_system_b_analytics.py -q` 验证纯计算，无网络/数据库依赖。
-Diagnosis Engine、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
+Phase 2A增加 [Diagnosis Foundation](docs/diagnosis-engine.md)：统一Evidence Bundle、字段provenance、三态规则接口与确定性trace。
+仅实现超期阈值资格、历史囤料记录存在和可比较Forecast负向变化三个支持规则，`primary_reason`始终为空。
+当前lifecycle不能替代下单日历史lifecycle，参考项目/最大贡献项目不自动成为责任项目。
+运行 `python -m pytest tests/test_system_b_diagnosis.py -q` 验证固定证据下的纯规则；无网络或数据库依赖。
+完整Diagnosis业务树、Decision Engine、LangGraph Agent、Next.js Dashboard / Copilot 仍未实现。
 
 ## Disclaimer
 
