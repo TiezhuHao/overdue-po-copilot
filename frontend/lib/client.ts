@@ -1,4 +1,6 @@
 import { datasets, orderPage, copilotResult, type QueryContext } from "./contracts.ts";
+import { portfolioDemo } from "./mode.ts";
+import { portfolioApi } from "./portfolio-demo.ts";
 
 export class ApiError extends Error {
   readonly code: string;
@@ -15,7 +17,7 @@ async function request(path: string, options: RequestInit = {}) {
     throw new ApiError("UPSTREAM_UNAVAILABLE");
   }
 }
-export const api = {
+const fullStackApi = {
   datasets: async (signal?: AbortSignal) => datasets(await request("datasets", { signal })),
   orders: async (dataset: string, filters: Record<string, string> = {}, signal?: AbortSignal) => {
     const params = new URLSearchParams({ ...filters, dataset_version_id: dataset });
@@ -31,3 +33,5 @@ export const api = {
     return result;
   }
 };
+
+export const api = portfolioDemo ? portfolioApi : fullStackApi;

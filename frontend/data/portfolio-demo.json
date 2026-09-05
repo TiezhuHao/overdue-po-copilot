@@ -1,0 +1,2269 @@
+{
+  "schema_version": "1.0.0",
+  "mode": "PORTFOLIO_DEMO",
+  "provenance": {
+    "dataset_version_name": "demo-master-v1",
+    "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+    "snapshot_date": "2026-08-26",
+    "generation_signature": "7ccb43f1db06ecc1970e9bde2a0cda0b6d014b05d02d1fd9e67660e1d5769e9b",
+    "business_content_hash": "f91717e3af70a518caf31673fd5f733f1e12b2dfb9598b1e7c0cec20c36ac199",
+    "captured_from": "System A REST + System B deterministic fallback",
+    "openai_used": false
+  },
+  "datasets": {
+    "items": [
+      {
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "dataset_version_name": "demo-master-v1",
+        "snapshot_date": "2026-08-26",
+        "status": "READY",
+        "generation_signature": "7ccb43f1db06ecc1970e9bde2a0cda0b6d014b05d02d1fd9e67660e1d5769e9b",
+        "business_content_hash": "f91717e3af70a518caf31673fd5f733f1e12b2dfb9598b1e7c0cec20c36ac199"
+      }
+    ],
+    "total": 1
+  },
+  "orders": {
+    "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+    "snapshot_date": "2026-08-26",
+    "page": 1,
+    "page_size": 12,
+    "total": 115,
+    "items": [
+      {
+        "inventory_organization_code": "ORG-005",
+        "inventory_organization_type": "TRIAL",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000007",
+        "po_line_number": 1,
+        "shipment_number": 1,
+        "close_status": "CLOSED",
+        "reference_project_name": "Project Atlas",
+        "material_code": "MAT-0060",
+        "material_description": "Synthetic Memory 0060",
+        "specification_model": "Synthetic Specification 0060",
+        "supplier_code": "SUP-0015",
+        "supplier_name": "Supplier Vale",
+        "schedule_qty": "284.0000",
+        "schedule_received_qty": "284.0000",
+        "overdue_open_qty": "0.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-19",
+        "due_date": "2025-07-03",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 14,
+        "overdue_days": 179,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0003",
+        "default_buyer_name": "Synthetic Employee 0003",
+        "material_controller_name": "Synthetic Employee 0005",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0002",
+        "can_close": true,
+        "completion_at": "2025-07-03T12:00:00Z",
+        "po_status": "CLOSED",
+        "material_id": "5a8dbafc-bda7-5d80-b259-f9b876bde8e4",
+        "po_header_id": "2f030b1c-bdf1-531f-ae3f-f2393b8eb871",
+        "po_line_id": "7d5c78b3-6656-556b-9d5e-7b652ea58461",
+        "po_line_schedule_id": "71cb31fc-e631-5aca-904b-b26f66aae40f",
+        "po_reference_project_id": "bd9f1457-d135-5b3d-8015-64b9ae75c824",
+        "supplier_id": "dc80cecc-5abe-58e0-8c68-4cce318940df",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378"
+      },
+      {
+        "inventory_organization_code": "ORG-005",
+        "inventory_organization_type": "TRIAL",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000015",
+        "po_line_number": 3,
+        "shipment_number": 1,
+        "close_status": "OPEN",
+        "reference_project_name": "Project Atlas",
+        "material_code": "MAT-0060",
+        "material_description": "Synthetic Memory 0060",
+        "specification_model": "Synthetic Specification 0060",
+        "supplier_code": "SUP-0015",
+        "supplier_name": "Supplier Vale",
+        "schedule_qty": "108.0000",
+        "schedule_received_qty": "0.0000",
+        "overdue_open_qty": "108.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-19",
+        "due_date": "2025-07-03",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 14,
+        "overdue_days": 179,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0003",
+        "default_buyer_name": "Synthetic Employee 0003",
+        "material_controller_name": "Synthetic Employee 0005",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0002",
+        "can_close": false,
+        "completion_at": null,
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "5a8dbafc-bda7-5d80-b259-f9b876bde8e4",
+        "po_header_id": "4ef0fbd7-09ec-5b76-90fc-167f6647b12e",
+        "po_line_id": "cb443edc-6c2c-5956-843f-cb30a6e7d609",
+        "po_line_schedule_id": "9fe1f6bf-83d8-5987-a6a7-07b54ab82c26",
+        "po_reference_project_id": "bd9f1457-d135-5b3d-8015-64b9ae75c824",
+        "supplier_id": "dc80cecc-5abe-58e0-8c68-4cce318940df",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378"
+      },
+      {
+        "inventory_organization_code": "ORG-005",
+        "inventory_organization_type": "TRIAL",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000012",
+        "po_line_number": 1,
+        "shipment_number": 1,
+        "close_status": "CLOSED",
+        "reference_project_name": "Project Aurora",
+        "material_code": "MAT-0001",
+        "material_description": "Synthetic Communication IC 0001",
+        "specification_model": "Synthetic Specification 0001",
+        "supplier_code": "SUP-0001",
+        "supplier_name": "Supplier Nova",
+        "schedule_qty": "752.0000",
+        "schedule_received_qty": "752.0000",
+        "overdue_open_qty": "0.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-04-06",
+        "due_date": "2025-07-05",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 90,
+        "overdue_days": 177,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0002",
+        "default_buyer_name": "Synthetic Employee 0002",
+        "material_controller_name": "Synthetic Employee 0004",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0001",
+        "can_close": true,
+        "completion_at": "2025-07-05T12:00:00Z",
+        "po_status": "CLOSED",
+        "material_id": "0e2ef742-4c45-5351-baea-00fa0a417d6e",
+        "po_header_id": "2df805d2-136c-5fbe-b760-c31895101b28",
+        "po_line_id": "1d3c3387-602d-5af7-8cab-2990c4735d42",
+        "po_line_schedule_id": "e660a2bf-d376-5e51-b8da-2780469fae41",
+        "po_reference_project_id": "2f08cb7e-dd31-53c3-b1de-583f15676eac",
+        "supplier_id": "7c9ea4af-f66a-51ae-b635-2061ad92848e",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378"
+      },
+      {
+        "inventory_organization_code": "ORG-003",
+        "inventory_organization_type": "MASS_PRODUCTION",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000031",
+        "po_line_number": 2,
+        "shipment_number": 1,
+        "close_status": "OPEN",
+        "reference_project_name": "Project Beacon 02",
+        "material_code": "MAT-0029",
+        "material_description": "Synthetic Communication IC 0029",
+        "specification_model": "Synthetic Specification 0029",
+        "supplier_code": "SUP-0014",
+        "supplier_name": "Supplier Timber",
+        "schedule_qty": "423.0000",
+        "schedule_received_qty": "0.0000",
+        "overdue_open_qty": "423.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-16",
+        "due_date": "2025-07-07",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 21,
+        "overdue_days": 175,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0002",
+        "default_buyer_name": "Synthetic Employee 0002",
+        "material_controller_name": "Synthetic Employee 0004",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0029",
+        "can_close": false,
+        "completion_at": null,
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "1fb2936e-9bc9-540d-9c5d-09ed8e4f20b5",
+        "po_header_id": "6f0edbfc-030e-57ab-9ec0-6faa7d6150d2",
+        "po_line_id": "d16c3854-cfc8-5cb1-96d2-8bc13fde6ee1",
+        "po_line_schedule_id": "8367be8c-e810-546a-8a1d-569c418fa199",
+        "po_reference_project_id": "5443030f-051d-5a2f-8be6-f38837868274",
+        "supplier_id": "0a376f9a-0781-5bfa-9b92-c9223eea0bdc",
+        "organization_id": "d64e923a-e096-5268-8837-6b6fbc88206c"
+      },
+      {
+        "inventory_organization_code": "ORG-001",
+        "inventory_organization_type": "MASS_PRODUCTION",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000047",
+        "po_line_number": 1,
+        "shipment_number": 1,
+        "close_status": "OPEN",
+        "reference_project_name": "Project Harbor",
+        "material_code": "MAT-0010",
+        "material_description": "Synthetic Sensor 0010",
+        "specification_model": "Synthetic Specification 0010",
+        "supplier_code": "SUP-0010",
+        "supplier_name": "Supplier Prism",
+        "schedule_qty": "723.0000",
+        "schedule_received_qty": "713.0000",
+        "overdue_open_qty": "10.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-23",
+        "due_date": "2025-07-07",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 14,
+        "overdue_days": 175,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0003",
+        "default_buyer_name": "Synthetic Employee 0003",
+        "material_controller_name": "Synthetic Employee 0005",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0010",
+        "can_close": false,
+        "completion_at": null,
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "edc55444-e1c8-5a9d-804d-70cb55becd90",
+        "po_header_id": "51e4a670-bb89-53c2-a017-194b62c37c0e",
+        "po_line_id": "1ab8ca85-dbc2-5897-b984-e91cec9f39ed",
+        "po_line_schedule_id": "a6f8de06-c0ba-5d58-9dff-295bd9e2a9c1",
+        "po_reference_project_id": "fafdb4d0-aeb0-59b6-940b-4c3e7e9968d6",
+        "supplier_id": "8aab9f88-14b3-5512-89ef-81dbce030725",
+        "organization_id": "f1eaa634-41ab-5f88-8e0a-5fa7f9f5dfac"
+      },
+      {
+        "inventory_organization_code": "ORG-005",
+        "inventory_organization_type": "TRIAL",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000018",
+        "po_line_number": 2,
+        "shipment_number": 1,
+        "close_status": "OPEN",
+        "reference_project_name": "Project Zenith",
+        "material_code": "MAT-0056",
+        "material_description": "Synthetic Module 0056",
+        "specification_model": "Synthetic Specification 0056",
+        "supplier_code": "SUP-0011",
+        "supplier_name": "Supplier Quill",
+        "schedule_qty": "51.0000",
+        "schedule_received_qty": "11.0000",
+        "overdue_open_qty": "40.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-08",
+        "due_date": "2025-07-08",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 30,
+        "overdue_days": 174,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0003",
+        "default_buyer_name": "Synthetic Employee 0003",
+        "material_controller_name": "Synthetic Employee 0005",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0026",
+        "can_close": false,
+        "completion_at": null,
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "caad0b4f-d82f-5abc-9346-e1d2dc217a21",
+        "po_header_id": "320e9432-1a1e-50ca-8e86-cc86fc35de21",
+        "po_line_id": "0da6f067-e30f-51bd-9d40-e22be139f183",
+        "po_line_schedule_id": "2ab46815-18f9-5818-8900-3426ad702dba",
+        "po_reference_project_id": "87a8bace-fc19-51f0-ad16-ae2773f4f91d",
+        "supplier_id": "b107dd1c-22e5-5f01-aa56-ed3afe2f138b",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378"
+      },
+      {
+        "inventory_organization_code": "ORG-002",
+        "inventory_organization_type": "MASS_PRODUCTION",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000042",
+        "po_line_number": 3,
+        "shipment_number": 1,
+        "close_status": "CLOSED",
+        "reference_project_name": "Project Atlas 02",
+        "material_code": "MAT-0028",
+        "material_description": "Synthetic Module 0028",
+        "specification_model": "Synthetic Specification 0028",
+        "supplier_code": "SUP-0013",
+        "supplier_name": "Supplier Solstice",
+        "schedule_qty": "674.0000",
+        "schedule_received_qty": "674.0000",
+        "overdue_open_qty": "0.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-08",
+        "due_date": "2025-07-08",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 30,
+        "overdue_days": 174,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0003",
+        "default_buyer_name": "Synthetic Employee 0003",
+        "material_controller_name": "Synthetic Employee 0005",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0028",
+        "can_close": true,
+        "completion_at": "2025-07-08T12:00:00Z",
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "eb08a647-c5be-5d3c-9cc9-b23d20cd2fad",
+        "po_header_id": "ce30d390-eede-5ebf-8f5e-c3c947b49c4b",
+        "po_line_id": "b4b86281-f1f7-567d-8b4e-1f99944078f8",
+        "po_line_schedule_id": "65765022-e1cd-5de1-a10a-dfb82c0e9200",
+        "po_reference_project_id": "3355517d-67a2-5afb-b54d-06c552c8814f",
+        "supplier_id": "b86202f5-822f-50a0-af39-c688d059a8a9",
+        "organization_id": "a06fcf8c-817f-5880-a609-ecb28edfa8ad"
+      },
+      {
+        "inventory_organization_code": "ORG-004",
+        "inventory_organization_type": "MASS_PRODUCTION",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000049",
+        "po_line_number": 1,
+        "shipment_number": 1,
+        "close_status": "CLOSED",
+        "reference_project_name": "Project Beacon",
+        "material_code": "MAT-0019",
+        "material_description": "Synthetic Connector 0019",
+        "specification_model": "Synthetic Specification 0019",
+        "supplier_code": "SUP-0004",
+        "supplier_name": "Supplier Summit",
+        "schedule_qty": "408.0000",
+        "schedule_received_qty": "408.0000",
+        "overdue_open_qty": "0.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-05-10",
+        "due_date": "2025-07-09",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 60,
+        "overdue_days": 173,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0002",
+        "default_buyer_name": "Synthetic Employee 0002",
+        "material_controller_name": "Synthetic Employee 0004",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0003",
+        "can_close": true,
+        "completion_at": "2025-07-09T12:00:00Z",
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "25f26670-a765-51e1-89e0-1f81cde6eb89",
+        "po_header_id": "a7de2681-e694-5ec1-b188-9a38707a9a21",
+        "po_line_id": "68bc39a0-0cd9-5d85-ba66-e9cfca155588",
+        "po_line_schedule_id": "97851d99-6d74-540d-b9a2-53e0da925960",
+        "po_reference_project_id": "73f819f2-4065-534f-b551-76362c9fe1e3",
+        "supplier_id": "c4e4abbf-5bd7-5400-ae82-10626016294d",
+        "organization_id": "7a779606-00bb-5b03-9ff0-ce4b3c8fcd77"
+      },
+      {
+        "inventory_organization_code": "ORG-002",
+        "inventory_organization_type": "MASS_PRODUCTION",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000052",
+        "po_line_number": 2,
+        "shipment_number": 1,
+        "close_status": "OPEN",
+        "reference_project_name": "Project Phoenix",
+        "material_code": "MAT-0047",
+        "material_description": "Synthetic Connector 0047",
+        "specification_model": "Synthetic Specification 0047",
+        "supplier_code": "SUP-0002",
+        "supplier_name": "Supplier Vertex",
+        "schedule_qty": "41.0000",
+        "schedule_received_qty": "0.0000",
+        "overdue_open_qty": "41.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-27",
+        "due_date": "2025-07-11",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 14,
+        "overdue_days": 171,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0002",
+        "default_buyer_name": "Synthetic Employee 0002",
+        "material_controller_name": "Synthetic Employee 0004",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0021",
+        "can_close": false,
+        "completion_at": null,
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "b69057ff-76ef-50ef-8587-8f9041f8ea01",
+        "po_header_id": "bc91de8b-1a6f-5c46-8eb5-3dfceb9880b1",
+        "po_line_id": "1007b9ec-9e9c-5ecb-b379-afb836ea9302",
+        "po_line_schedule_id": "f1f906c1-4400-558a-89ee-edb6eba0ec87",
+        "po_reference_project_id": "6cc92054-bb6e-5c7b-aac7-f67b947ac0c7",
+        "supplier_id": "7bbd985c-29f4-567a-9b07-e0a0430f2107",
+        "organization_id": "a06fcf8c-817f-5880-a609-ecb28edfa8ad"
+      },
+      {
+        "inventory_organization_code": "ORG-005",
+        "inventory_organization_type": "TRIAL",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000009",
+        "po_line_number": 1,
+        "shipment_number": 1,
+        "close_status": "OPEN",
+        "reference_project_name": "Project Zenith",
+        "material_code": "MAT-0056",
+        "material_description": "Synthetic Module 0056",
+        "specification_model": "Synthetic Specification 0056",
+        "supplier_code": "SUP-0011",
+        "supplier_name": "Supplier Quill",
+        "schedule_qty": "700.0000",
+        "schedule_received_qty": "472.0000",
+        "overdue_open_qty": "228.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-06-12",
+        "due_date": "2025-07-12",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 30,
+        "overdue_days": 170,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0003",
+        "default_buyer_name": "Synthetic Employee 0003",
+        "material_controller_name": "Synthetic Employee 0005",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0026",
+        "can_close": false,
+        "completion_at": null,
+        "po_status": "PARTIALLY_RECEIVED",
+        "material_id": "caad0b4f-d82f-5abc-9346-e1d2dc217a21",
+        "po_header_id": "8dcc74bf-c5dd-580a-a15a-36b242c9ae18",
+        "po_line_id": "17fcc2a5-9bcc-5d10-bb23-0056d6bcec2d",
+        "po_line_schedule_id": "14d7b27a-0bf9-5cd2-ad2b-518671db244f",
+        "po_reference_project_id": "87a8bace-fc19-51f0-ad16-ae2773f4f91d",
+        "supplier_id": "b107dd1c-22e5-5f01-aa56-ed3afe2f138b",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378"
+      },
+      {
+        "inventory_organization_code": "ORG-004",
+        "inventory_organization_type": "MASS_PRODUCTION",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000054",
+        "po_line_number": 1,
+        "shipment_number": 1,
+        "close_status": "CLOSED",
+        "reference_project_name": "Project Beacon",
+        "material_code": "MAT-0019",
+        "material_description": "Synthetic Connector 0019",
+        "specification_model": "Synthetic Specification 0019",
+        "supplier_code": "SUP-0004",
+        "supplier_name": "Supplier Summit",
+        "schedule_qty": "550.0000",
+        "schedule_received_qty": "550.0000",
+        "overdue_open_qty": "0.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-05-13",
+        "due_date": "2025-07-12",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 60,
+        "overdue_days": 170,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0002",
+        "default_buyer_name": "Synthetic Employee 0002",
+        "material_controller_name": "Synthetic Employee 0004",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0003",
+        "can_close": true,
+        "completion_at": "2025-07-12T12:00:00Z",
+        "po_status": "CLOSED",
+        "material_id": "25f26670-a765-51e1-89e0-1f81cde6eb89",
+        "po_header_id": "16eb0fdc-4ade-5757-860d-85236c5b608e",
+        "po_line_id": "da377b9f-fdc3-56fb-9668-b4bf4f0365a9",
+        "po_line_schedule_id": "b02f77fe-1576-5440-abd0-d32140c35103",
+        "po_reference_project_id": "73f819f2-4065-534f-b551-76362c9fe1e3",
+        "supplier_id": "c4e4abbf-5bd7-5400-ae82-10626016294d",
+        "organization_id": "7a779606-00bb-5b03-9ff0-ce4b3c8fcd77"
+      },
+      {
+        "inventory_organization_code": "ORG-005",
+        "inventory_organization_type": "TRIAL",
+        "business_entity_name": "Business Entity 01",
+        "po_number": "PO-000012",
+        "po_line_number": 2,
+        "shipment_number": 1,
+        "close_status": "CLOSED",
+        "reference_project_name": "Project Compass",
+        "material_code": "MAT-0001",
+        "material_description": "Synthetic Communication IC 0001",
+        "specification_model": "Synthetic Specification 0001",
+        "supplier_code": "SUP-0001",
+        "supplier_name": "Supplier Nova",
+        "schedule_qty": "524.0000",
+        "schedule_received_qty": "524.0000",
+        "overdue_open_qty": "0.0000",
+        "material_attribute": null,
+        "material_category_level_1": null,
+        "material_category_level_2": null,
+        "order_date": "2025-04-14",
+        "due_date": "2025-07-13",
+        "snapshot_date": "2026-08-26",
+        "material_lt_days": 90,
+        "overdue_days": 169,
+        "is_overdue": true,
+        "order_buyer_name": "Synthetic Employee 0002",
+        "default_buyer_name": "Synthetic Employee 0002",
+        "material_controller_name": "Synthetic Employee 0004",
+        "planning_manager_name": "Synthetic Employee 0001",
+        "planning_director_name": "Synthetic Employee 0001",
+        "purchasing_manager_name": "Synthetic Employee 0001",
+        "purchasing_director_name": "Synthetic Employee 0001",
+        "notification_recipient_name": null,
+        "reference_project_code": "PRJ-0005",
+        "can_close": true,
+        "completion_at": "2025-07-13T12:00:00Z",
+        "po_status": "CLOSED",
+        "material_id": "0e2ef742-4c45-5351-baea-00fa0a417d6e",
+        "po_header_id": "2df805d2-136c-5fbe-b760-c31895101b28",
+        "po_line_id": "d2dbaaa7-ebef-5a9d-895b-f4659795cefd",
+        "po_line_schedule_id": "5f22ace7-9c77-5690-9968-8668fd2487e8",
+        "po_reference_project_id": "332f4de8-6a1d-5f13-9530-0e7a8de4a2cd",
+        "supplier_id": "7c9ea4af-f66a-51ae-b635-2061ad92848e",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378"
+      }
+    ]
+  },
+  "copilot_results": {
+    "71cb31fc-e631-5aca-904b-b26f66aae40f": {
+      "request_id": "10000000-0000-0000-0000-000000000001",
+      "status": "COMPLETED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 COMPLETED。 [execution]\n- 本次分析针对发运行 71cb31fc-e631-5aca-904b-b26f66aae40f。 [execution]\n\n### 为什么\n\n- 已确认的原因分类为试产（TRIAL）。 [diagnosis.rule]\n- 订单已越过超期阈值。 [execution]\n- 源库存组织类型为 TRIAL。 [execution]\n\n### 关键数据\n\n- 订单年龄：433 天。 [analytics]\n- 超期判断阈值：254 天。 [analytics]\n- 越过阈值天数：179 天。 [analytics]\n- 当前开放数量：0.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：16288.4360 原始数量单位。 [analytics]\n- 平均周需求：1252.956615384615384615384615384615384615 原始数量单位/周。 [analytics]\n- 预计消耗时间：0 周。 [analytics]\n\n### 建议动作\n\n- 交由物料MPM确认处理。 [decision.rule]\n- 业务处理方或沟通对象为物料MPM。 [decision.rule]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 f338b5e1-afcb-54c1-879b-173f4b9ddb51，这不表示责任归属。 [analytics]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000001",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "71cb31fc-e631-5aca-904b-b26f66aae40f",
+        "po_header_id": "2f030b1c-bdf1-531f-ae3f-f2393b8eb871",
+        "po_line_id": "7d5c78b3-6656-556b-9d5e-7b652ea58461",
+        "material_id": "5a8dbafc-bda7-5d80-b259-f9b876bde8e4",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378",
+        "supplier_id": "dc80cecc-5abe-58e0-8c68-4cce318940df"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "433",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "254",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "179",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "16288.4360",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "1252.956615384615384615384615384615384615",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "DIAGNOSED",
+        "primary_reason": "TRIAL",
+        "primary_rule_id": "business_trial",
+        "primary_rule_version": "1.0.0",
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED"
+        ]
+      },
+      "decision": {
+        "status": "DECIDED",
+        "rule_id": "decision_trial",
+        "rule_version": "1.0.0",
+        "owner_role": "MPM",
+        "actions": [
+          {
+            "action_code": "REQUEST_MPM_CONFIRMATION",
+            "owner_role": "MPM",
+            "required": true
+          }
+        ]
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "diagnosis.rule",
+          "source": "DIAGNOSIS",
+          "label": "business_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "decision.rule",
+          "source": "DECISION",
+          "label": "decision_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.58373f29-b686-5aac-8301-f3b2e62ec86c",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "58373f29-b686-5aac-8301-f3b2e62ec86c",
+          "version_date": "2025-06-14",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 f338b5e1-afcb-54c1-879b-173f4b9ddb51，这不表示责任归属。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000001",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "COMPLETED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "9fe1f6bf-83d8-5987-a6a7-07b54ab82c26": {
+      "request_id": "10000000-0000-0000-0000-000000000002",
+      "status": "COMPLETED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 COMPLETED。 [execution]\n- 本次分析针对发运行 9fe1f6bf-83d8-5987-a6a7-07b54ab82c26。 [execution]\n\n### 为什么\n\n- 已确认的原因分类为试产（TRIAL）。 [diagnosis.rule]\n- 订单已越过超期阈值。 [execution]\n- 源库存组织类型为 TRIAL。 [execution]\n\n### 关键数据\n\n- 订单年龄：433 天。 [analytics]\n- 超期判断阈值：254 天。 [analytics]\n- 越过阈值天数：179 天。 [analytics]\n- 当前开放数量：108.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：16288.4360 原始数量单位。 [analytics]\n- 平均周需求：1252.956615384615384615384615384615384615 原始数量单位/周。 [analytics]\n- 预计消耗时间：0.08619612097809759021676482628534746982460 周。 [analytics]\n\n### 建议动作\n\n- 交由物料MPM确认处理。 [decision.rule]\n- 业务处理方或沟通对象为物料MPM。 [decision.rule]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 f338b5e1-afcb-54c1-879b-173f4b9ddb51，这不表示责任归属。 [analytics]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000002",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "9fe1f6bf-83d8-5987-a6a7-07b54ab82c26",
+        "po_header_id": "4ef0fbd7-09ec-5b76-90fc-167f6647b12e",
+        "po_line_id": "cb443edc-6c2c-5956-843f-cb30a6e7d609",
+        "material_id": "5a8dbafc-bda7-5d80-b259-f9b876bde8e4",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378",
+        "supplier_id": "dc80cecc-5abe-58e0-8c68-4cce318940df"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "433",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "254",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "179",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "108.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "16288.4360",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "1252.956615384615384615384615384615384615",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0.08619612097809759021676482628534746982460",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "DIAGNOSED",
+        "primary_reason": "TRIAL",
+        "primary_rule_id": "business_trial",
+        "primary_rule_version": "1.0.0",
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED"
+        ]
+      },
+      "decision": {
+        "status": "DECIDED",
+        "rule_id": "decision_trial",
+        "rule_version": "1.0.0",
+        "owner_role": "MPM",
+        "actions": [
+          {
+            "action_code": "REQUEST_MPM_CONFIRMATION",
+            "owner_role": "MPM",
+            "required": true
+          }
+        ]
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "diagnosis.rule",
+          "source": "DIAGNOSIS",
+          "label": "business_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "decision.rule",
+          "source": "DECISION",
+          "label": "decision_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.58373f29-b686-5aac-8301-f3b2e62ec86c",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "58373f29-b686-5aac-8301-f3b2e62ec86c",
+          "version_date": "2025-06-14",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 f338b5e1-afcb-54c1-879b-173f4b9ddb51，这不表示责任归属。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000002",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "COMPLETED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "e660a2bf-d376-5e51-b8da-2780469fae41": {
+      "request_id": "10000000-0000-0000-0000-000000000003",
+      "status": "COMPLETED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 COMPLETED。 [execution]\n- 本次分析针对发运行 e660a2bf-d376-5e51-b8da-2780469fae41。 [execution]\n\n### 为什么\n\n- 已确认的原因分类为试产（TRIAL）。 [diagnosis.rule]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 TRIAL。 [execution]\n\n### 关键数据\n\n- 订单年龄：507 天。 [analytics]\n- 超期判断阈值：330 天。 [analytics]\n- 越过阈值天数：177 天。 [analytics]\n- 当前开放数量：0.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：8919.7858 原始数量单位。 [analytics]\n- 平均周需求：686.1373692307692307692307692307692307692 原始数量单位/周。 [analytics]\n- 预计消耗时间：0 周。 [analytics]\n\n### 建议动作\n\n- 交由物料MPM确认处理。 [decision.rule]\n- 业务处理方或沟通对象为物料MPM。 [decision.rule]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 332f4de8-6a1d-5f13-9530-0e7a8de4a2cd，这不表示责任归属。 [analytics]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000003",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "e660a2bf-d376-5e51-b8da-2780469fae41",
+        "po_header_id": "2df805d2-136c-5fbe-b760-c31895101b28",
+        "po_line_id": "1d3c3387-602d-5af7-8cab-2990c4735d42",
+        "material_id": "0e2ef742-4c45-5351-baea-00fa0a417d6e",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378",
+        "supplier_id": "7c9ea4af-f66a-51ae-b635-2061ad92848e"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "507",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "330",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "177",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "8919.7858",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "686.1373692307692307692307692307692307692",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "DIAGNOSED",
+        "primary_reason": "TRIAL",
+        "primary_rule_id": "business_trial",
+        "primary_rule_version": "1.0.0",
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "DECIDED",
+        "rule_id": "decision_trial",
+        "rule_version": "1.0.0",
+        "owner_role": "MPM",
+        "actions": [
+          {
+            "action_code": "REQUEST_MPM_CONFIRMATION",
+            "owner_role": "MPM",
+            "required": true
+          }
+        ]
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "diagnosis.rule",
+          "source": "DIAGNOSIS",
+          "label": "business_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "decision.rule",
+          "source": "DECISION",
+          "label": "decision_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.ac8b2fd8-608e-5bfa-8033-5a4edd2553ab",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "ac8b2fd8-608e-5bfa-8033-5a4edd2553ab",
+          "version_date": "2025-04-05",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 332f4de8-6a1d-5f13-9530-0e7a8de4a2cd，这不表示责任归属。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000003",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "COMPLETED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "8367be8c-e810-546a-8a1d-569c418fa199": {
+      "request_id": "10000000-0000-0000-0000-000000000004",
+      "status": "UNRESOLVED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 UNRESOLVED。 [execution]\n- 本次分析针对发运行 8367be8c-e810-546a-8a1d-569c418fa199。 [execution]\n\n### 为什么\n\n- 诊断状态为 UNRESOLVED，当前没有确认的主原因。 [execution]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 MASS_PRODUCTION。 [execution]\n\n### 关键数据\n\n- 订单年龄：436 天。 [analytics]\n- 超期判断阈值：261 天。 [analytics]\n- 越过阈值天数：175 天。 [analytics]\n- 当前开放数量：423.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：0.0000 原始数量单位。 [analytics]\n- 平均周需求：0.0000 原始数量单位/周。 [analytics]\n- 预计消耗时间当前不可计算，不将未知值当作零。 [analytics]\n\n### 建议动作\n\n- 当前没有可输出的确定采购动作，不自行补充取消或保留建议。 [execution]\n\n### 数据 / 规则限制\n\n- 尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。 [execution]\n- 诊断仍存在规则或参数缺口：demand_change。 [execution]\n- 执行记录的限制状态：BUSINESS_UNRESOLVED。 [execution]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000004",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "8367be8c-e810-546a-8a1d-569c418fa199",
+        "po_header_id": "6f0edbfc-030e-57ab-9ec0-6faa7d6150d2",
+        "po_line_id": "d16c3854-cfc8-5cb1-96d2-8bc13fde6ee1",
+        "material_id": "1fb2936e-9bc9-540d-9c5d-09ed8e4f20b5",
+        "organization_id": "d64e923a-e096-5268-8837-6b6fbc88206c",
+        "supplier_id": "0a376f9a-0781-5bfa-9b92-c9223eea0bdc"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "436",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "261",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "175",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "423.0000",
+          "unit": "原始数量单位",
+          "availability": "PARTIAL"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": null,
+          "unit": "周",
+          "availability": "PARTIAL"
+        }
+      ],
+      "diagnosis": {
+        "status": "UNRESOLVED",
+        "primary_reason": null,
+        "primary_rule_id": null,
+        "primary_rule_version": null,
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "NOT_EVALUABLE",
+        "rule_id": null,
+        "rule_version": null,
+        "owner_role": null,
+        "actions": []
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.58373f29-b686-5aac-8301-f3b2e62ec86c",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "58373f29-b686-5aac-8301-f3b2e62ec86c",
+          "version_date": "2025-06-14",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。",
+        "诊断仍存在规则或参数缺口：demand_change。",
+        "执行记录的限制状态：BUSINESS_UNRESOLVED。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000004",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "UNRESOLVED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "a6f8de06-c0ba-5d58-9dff-295bd9e2a9c1": {
+      "request_id": "10000000-0000-0000-0000-000000000005",
+      "status": "UNRESOLVED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 UNRESOLVED。 [execution]\n- 本次分析针对发运行 a6f8de06-c0ba-5d58-9dff-295bd9e2a9c1。 [execution]\n\n### 为什么\n\n- 诊断状态为 UNRESOLVED，当前没有确认的主原因。 [execution]\n- 订单已越过超期阈值。 [execution]\n- 源库存组织类型为 MASS_PRODUCTION。 [execution]\n\n### 关键数据\n\n- 订单年龄：429 天。 [analytics]\n- 超期判断阈值：254 天。 [analytics]\n- 越过阈值天数：175 天。 [analytics]\n- 当前开放数量：10.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：10097.8476 原始数量单位。 [analytics]\n- 平均周需求：776.7575076923076923076923076923076923077 原始数量单位/周。 [analytics]\n- 预计消耗时间：0.01287403069937399332507256298857194081638 周。 [analytics]\n\n### 建议动作\n\n- 当前没有可输出的确定采购动作，不自行补充取消或保留建议。 [execution]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 fafdb4d0-aeb0-59b6-940b-4c3e7e9968d6，这不表示责任归属。 [analytics]\n- 尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。 [execution]\n- 诊断仍存在规则或参数缺口：demand_change。 [execution]\n- 执行记录的限制状态：BUSINESS_UNRESOLVED。 [execution]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000005",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "a6f8de06-c0ba-5d58-9dff-295bd9e2a9c1",
+        "po_header_id": "51e4a670-bb89-53c2-a017-194b62c37c0e",
+        "po_line_id": "1ab8ca85-dbc2-5897-b984-e91cec9f39ed",
+        "material_id": "edc55444-e1c8-5a9d-804d-70cb55becd90",
+        "organization_id": "f1eaa634-41ab-5f88-8e0a-5fa7f9f5dfac",
+        "supplier_id": "8aab9f88-14b3-5512-89ef-81dbce030725"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "429",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "254",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "175",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "10.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "10097.8476",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "776.7575076923076923076923076923076923077",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0.01287403069937399332507256298857194081638",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "UNRESOLVED",
+        "primary_reason": null,
+        "primary_rule_id": null,
+        "primary_rule_version": null,
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED"
+        ]
+      },
+      "decision": {
+        "status": "NOT_EVALUABLE",
+        "rule_id": null,
+        "rule_version": null,
+        "owner_role": null,
+        "actions": []
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.fdbc6525-fefc-5828-9d5a-0198d38d3df1",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "fdbc6525-fefc-5828-9d5a-0198d38d3df1",
+          "version_date": "2025-06-21",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 fafdb4d0-aeb0-59b6-940b-4c3e7e9968d6，这不表示责任归属。",
+        "尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。",
+        "诊断仍存在规则或参数缺口：demand_change。",
+        "执行记录的限制状态：BUSINESS_UNRESOLVED。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000005",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "UNRESOLVED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "2ab46815-18f9-5818-8900-3426ad702dba": {
+      "request_id": "10000000-0000-0000-0000-000000000006",
+      "status": "COMPLETED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 COMPLETED。 [execution]\n- 本次分析针对发运行 2ab46815-18f9-5818-8900-3426ad702dba。 [execution]\n\n### 为什么\n\n- 已确认的原因分类为试产（TRIAL）。 [diagnosis.rule]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 TRIAL。 [execution]\n\n### 关键数据\n\n- 订单年龄：444 天。 [analytics]\n- 超期判断阈值：270 天。 [analytics]\n- 越过阈值天数：174 天。 [analytics]\n- 当前开放数量：40.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：9541.8540 原始数量单位。 [analytics]\n- 平均周需求：733.9887692307692307692307692307692307692 原始数量单位/周。 [analytics]\n- 预计消耗时间：0.05449674664902648898212024623306959003984 周。 [analytics]\n\n### 建议动作\n\n- 交由物料MPM确认处理。 [decision.rule]\n- 业务处理方或沟通对象为物料MPM。 [decision.rule]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 87a8bace-fc19-51f0-ad16-ae2773f4f91d，这不表示责任归属。 [analytics]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000006",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "2ab46815-18f9-5818-8900-3426ad702dba",
+        "po_header_id": "320e9432-1a1e-50ca-8e86-cc86fc35de21",
+        "po_line_id": "0da6f067-e30f-51bd-9d40-e22be139f183",
+        "material_id": "caad0b4f-d82f-5abc-9346-e1d2dc217a21",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378",
+        "supplier_id": "b107dd1c-22e5-5f01-aa56-ed3afe2f138b"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "444",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "270",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "174",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "40.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "9541.8540",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "733.9887692307692307692307692307692307692",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0.05449674664902648898212024623306959003984",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "DIAGNOSED",
+        "primary_reason": "TRIAL",
+        "primary_rule_id": "business_trial",
+        "primary_rule_version": "1.0.0",
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "DECIDED",
+        "rule_id": "decision_trial",
+        "rule_version": "1.0.0",
+        "owner_role": "MPM",
+        "actions": [
+          {
+            "action_code": "REQUEST_MPM_CONFIRMATION",
+            "owner_role": "MPM",
+            "required": true
+          }
+        ]
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "diagnosis.rule",
+          "source": "DIAGNOSIS",
+          "label": "business_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "decision.rule",
+          "source": "DECISION",
+          "label": "decision_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.bb71f69b-b82b-50ea-8fda-fdad74c7a06b",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "bb71f69b-b82b-50ea-8fda-fdad74c7a06b",
+          "version_date": "2025-06-07",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 87a8bace-fc19-51f0-ad16-ae2773f4f91d，这不表示责任归属。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000006",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "COMPLETED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "65765022-e1cd-5de1-a10a-dfb82c0e9200": {
+      "request_id": "10000000-0000-0000-0000-000000000007",
+      "status": "UNRESOLVED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 UNRESOLVED。 [execution]\n- 本次分析针对发运行 65765022-e1cd-5de1-a10a-dfb82c0e9200。 [execution]\n\n### 为什么\n\n- 诊断状态为 UNRESOLVED，当前没有确认的主原因。 [execution]\n- 订单已越过超期阈值。 [execution]\n- 源库存组织类型为 MASS_PRODUCTION。 [execution]\n\n### 关键数据\n\n- 订单年龄：444 天。 [analytics]\n- 超期判断阈值：270 天。 [analytics]\n- 越过阈值天数：174 天。 [analytics]\n- 当前开放数量：0.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：0.0000 原始数量单位。 [analytics]\n- 平均周需求：0.0000 原始数量单位/周。 [analytics]\n- 预计消耗时间当前不可计算，不将未知值当作零。 [analytics]\n\n### 建议动作\n\n- 当前没有可输出的确定采购动作，不自行补充取消或保留建议。 [execution]\n\n### 数据 / 规则限制\n\n- 尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。 [execution]\n- 诊断仍存在规则或参数缺口：demand_change。 [execution]\n- 执行记录的限制状态：BUSINESS_UNRESOLVED。 [execution]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000007",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "65765022-e1cd-5de1-a10a-dfb82c0e9200",
+        "po_header_id": "ce30d390-eede-5ebf-8f5e-c3c947b49c4b",
+        "po_line_id": "b4b86281-f1f7-567d-8b4e-1f99944078f8",
+        "material_id": "eb08a647-c5be-5d3c-9cc9-b23d20cd2fad",
+        "organization_id": "a06fcf8c-817f-5880-a609-ecb28edfa8ad",
+        "supplier_id": "b86202f5-822f-50a0-af39-c688d059a8a9"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "444",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "270",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "174",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "PARTIAL"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": null,
+          "unit": "周",
+          "availability": "PARTIAL"
+        }
+      ],
+      "diagnosis": {
+        "status": "UNRESOLVED",
+        "primary_reason": null,
+        "primary_rule_id": null,
+        "primary_rule_version": null,
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED"
+        ]
+      },
+      "decision": {
+        "status": "NOT_EVALUABLE",
+        "rule_id": null,
+        "rule_version": null,
+        "owner_role": null,
+        "actions": []
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.bb71f69b-b82b-50ea-8fda-fdad74c7a06b",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "bb71f69b-b82b-50ea-8fda-fdad74c7a06b",
+          "version_date": "2025-06-07",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。",
+        "诊断仍存在规则或参数缺口：demand_change。",
+        "执行记录的限制状态：BUSINESS_UNRESOLVED。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000007",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "UNRESOLVED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "97851d99-6d74-540d-b9a2-53e0da925960": {
+      "request_id": "10000000-0000-0000-0000-000000000008",
+      "status": "UNRESOLVED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 UNRESOLVED。 [execution]\n- 本次分析针对发运行 97851d99-6d74-540d-b9a2-53e0da925960。 [execution]\n\n### 为什么\n\n- 诊断状态为 UNRESOLVED，当前没有确认的主原因。 [execution]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 MASS_PRODUCTION。 [execution]\n\n### 关键数据\n\n- 订单年龄：473 天。 [analytics]\n- 超期判断阈值：300 天。 [analytics]\n- 越过阈值天数：173 天。 [analytics]\n- 当前开放数量：0.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：13835.8704 原始数量单位。 [analytics]\n- 平均周需求：1064.297723076923076923076923076923076923 原始数量单位/周。 [analytics]\n- 预计消耗时间：0 周。 [analytics]\n\n### 建议动作\n\n- 当前没有可输出的确定采购动作，不自行补充取消或保留建议。 [execution]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 fd2557df-3fb2-53cd-81d9-e2ca8a3026f0，这不表示责任归属。 [analytics]\n- 尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。 [execution]\n- 诊断仍存在规则或参数缺口：demand_change。 [execution]\n- 执行记录的限制状态：BUSINESS_UNRESOLVED。 [execution]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000008",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "97851d99-6d74-540d-b9a2-53e0da925960",
+        "po_header_id": "a7de2681-e694-5ec1-b188-9a38707a9a21",
+        "po_line_id": "68bc39a0-0cd9-5d85-ba66-e9cfca155588",
+        "material_id": "25f26670-a765-51e1-89e0-1f81cde6eb89",
+        "organization_id": "7a779606-00bb-5b03-9ff0-ce4b3c8fcd77",
+        "supplier_id": "c4e4abbf-5bd7-5400-ae82-10626016294d"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "473",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "300",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "173",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "13835.8704",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "1064.297723076923076923076923076923076923",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "UNRESOLVED",
+        "primary_reason": null,
+        "primary_rule_id": null,
+        "primary_rule_version": null,
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "NOT_EVALUABLE",
+        "rule_id": null,
+        "rule_version": null,
+        "owner_role": null,
+        "actions": []
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.e9afc182-bcd2-575c-98b4-f59fe7b8562a",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "e9afc182-bcd2-575c-98b4-f59fe7b8562a",
+          "version_date": "2025-05-10",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 fd2557df-3fb2-53cd-81d9-e2ca8a3026f0，这不表示责任归属。",
+        "尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。",
+        "诊断仍存在规则或参数缺口：demand_change。",
+        "执行记录的限制状态：BUSINESS_UNRESOLVED。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000008",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "UNRESOLVED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "f1f906c1-4400-558a-89ee-edb6eba0ec87": {
+      "request_id": "10000000-0000-0000-0000-000000000009",
+      "status": "UNRESOLVED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 UNRESOLVED。 [execution]\n- 本次分析针对发运行 f1f906c1-4400-558a-89ee-edb6eba0ec87。 [execution]\n\n### 为什么\n\n- 诊断状态为 UNRESOLVED，当前没有确认的主原因。 [execution]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 MASS_PRODUCTION。 [execution]\n\n### 关键数据\n\n- 订单年龄：425 天。 [analytics]\n- 超期判断阈值：254 天。 [analytics]\n- 越过阈值天数：171 天。 [analytics]\n- 当前开放数量：41.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：6001.4724 原始数量单位。 [analytics]\n- 平均周需求：461.6517230769230769230769230769230769231 原始数量单位/周。 [analytics]\n- 预计消耗时间：0.08881153898166723219455279007864803310601 周。 [analytics]\n\n### 建议动作\n\n- 当前没有可输出的确定采购动作，不自行补充取消或保留建议。 [execution]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 6cc92054-bb6e-5c7b-aac7-f67b947ac0c7，这不表示责任归属。 [analytics]\n- 尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。 [execution]\n- 诊断仍存在规则或参数缺口：demand_change。 [execution]\n- 执行记录的限制状态：BUSINESS_UNRESOLVED。 [execution]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000009",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "f1f906c1-4400-558a-89ee-edb6eba0ec87",
+        "po_header_id": "bc91de8b-1a6f-5c46-8eb5-3dfceb9880b1",
+        "po_line_id": "1007b9ec-9e9c-5ecb-b379-afb836ea9302",
+        "material_id": "b69057ff-76ef-50ef-8587-8f9041f8ea01",
+        "organization_id": "a06fcf8c-817f-5880-a609-ecb28edfa8ad",
+        "supplier_id": "7bbd985c-29f4-567a-9b07-e0a0430f2107"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "425",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "254",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "171",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "41.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "6001.4724",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "461.6517230769230769230769230769230769231",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0.08881153898166723219455279007864803310601",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "UNRESOLVED",
+        "primary_reason": null,
+        "primary_rule_id": null,
+        "primary_rule_version": null,
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "NOT_EVALUABLE",
+        "rule_id": null,
+        "rule_version": null,
+        "owner_role": null,
+        "actions": []
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.fdbc6525-fefc-5828-9d5a-0198d38d3df1",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "fdbc6525-fefc-5828-9d5a-0198d38d3df1",
+          "version_date": "2025-06-21",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 6cc92054-bb6e-5c7b-aac7-f67b947ac0c7，这不表示责任归属。",
+        "尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。",
+        "诊断仍存在规则或参数缺口：demand_change。",
+        "执行记录的限制状态：BUSINESS_UNRESOLVED。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000009",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "UNRESOLVED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "14d7b27a-0bf9-5cd2-ad2b-518671db244f": {
+      "request_id": "10000000-0000-0000-0000-000000000010",
+      "status": "COMPLETED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 COMPLETED。 [execution]\n- 本次分析针对发运行 14d7b27a-0bf9-5cd2-ad2b-518671db244f。 [execution]\n\n### 为什么\n\n- 已确认的原因分类为试产（TRIAL）。 [diagnosis.rule]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 TRIAL。 [execution]\n\n### 关键数据\n\n- 订单年龄：440 天。 [analytics]\n- 超期判断阈值：270 天。 [analytics]\n- 越过阈值天数：170 天。 [analytics]\n- 当前开放数量：228.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：9541.8540 原始数量单位。 [analytics]\n- 平均周需求：733.9887692307692307692307692307692307692 原始数量单位/周。 [analytics]\n- 预计消耗时间：0.3106314558994509871980854035284966632271 周。 [analytics]\n\n### 建议动作\n\n- 交由物料MPM确认处理。 [decision.rule]\n- 业务处理方或沟通对象为物料MPM。 [decision.rule]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 87a8bace-fc19-51f0-ad16-ae2773f4f91d，这不表示责任归属。 [analytics]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000010",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "14d7b27a-0bf9-5cd2-ad2b-518671db244f",
+        "po_header_id": "8dcc74bf-c5dd-580a-a15a-36b242c9ae18",
+        "po_line_id": "17fcc2a5-9bcc-5d10-bb23-0056d6bcec2d",
+        "material_id": "caad0b4f-d82f-5abc-9346-e1d2dc217a21",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378",
+        "supplier_id": "b107dd1c-22e5-5f01-aa56-ed3afe2f138b"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "440",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "270",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "170",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "228.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "9541.8540",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "733.9887692307692307692307692307692307692",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0.3106314558994509871980854035284966632271",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "DIAGNOSED",
+        "primary_reason": "TRIAL",
+        "primary_rule_id": "business_trial",
+        "primary_rule_version": "1.0.0",
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "DECIDED",
+        "rule_id": "decision_trial",
+        "rule_version": "1.0.0",
+        "owner_role": "MPM",
+        "actions": [
+          {
+            "action_code": "REQUEST_MPM_CONFIRMATION",
+            "owner_role": "MPM",
+            "required": true
+          }
+        ]
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "diagnosis.rule",
+          "source": "DIAGNOSIS",
+          "label": "business_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "decision.rule",
+          "source": "DECISION",
+          "label": "decision_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.bb71f69b-b82b-50ea-8fda-fdad74c7a06b",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "bb71f69b-b82b-50ea-8fda-fdad74c7a06b",
+          "version_date": "2025-06-07",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 87a8bace-fc19-51f0-ad16-ae2773f4f91d，这不表示责任归属。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000010",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "COMPLETED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "b02f77fe-1576-5440-abd0-d32140c35103": {
+      "request_id": "10000000-0000-0000-0000-000000000011",
+      "status": "UNRESOLVED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 UNRESOLVED。 [execution]\n- 本次分析针对发运行 b02f77fe-1576-5440-abd0-d32140c35103。 [execution]\n\n### 为什么\n\n- 诊断状态为 UNRESOLVED，当前没有确认的主原因。 [execution]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 MASS_PRODUCTION。 [execution]\n\n### 关键数据\n\n- 订单年龄：470 天。 [analytics]\n- 超期判断阈值：300 天。 [analytics]\n- 越过阈值天数：170 天。 [analytics]\n- 当前开放数量：0.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：13835.8704 原始数量单位。 [analytics]\n- 平均周需求：1064.297723076923076923076923076923076923 原始数量单位/周。 [analytics]\n- 预计消耗时间：0 周。 [analytics]\n\n### 建议动作\n\n- 当前没有可输出的确定采购动作，不自行补充取消或保留建议。 [execution]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 fd2557df-3fb2-53cd-81d9-e2ca8a3026f0，这不表示责任归属。 [analytics]\n- 尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。 [execution]\n- 诊断仍存在规则或参数缺口：demand_change。 [execution]\n- 执行记录的限制状态：BUSINESS_UNRESOLVED。 [execution]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000011",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "b02f77fe-1576-5440-abd0-d32140c35103",
+        "po_header_id": "16eb0fdc-4ade-5757-860d-85236c5b608e",
+        "po_line_id": "da377b9f-fdc3-56fb-9668-b4bf4f0365a9",
+        "material_id": "25f26670-a765-51e1-89e0-1f81cde6eb89",
+        "organization_id": "7a779606-00bb-5b03-9ff0-ce4b3c8fcd77",
+        "supplier_id": "c4e4abbf-5bd7-5400-ae82-10626016294d"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "470",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "300",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "170",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "13835.8704",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "1064.297723076923076923076923076923076923",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "UNRESOLVED",
+        "primary_reason": null,
+        "primary_rule_id": null,
+        "primary_rule_version": null,
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "NOT_EVALUABLE",
+        "rule_id": null,
+        "rule_version": null,
+        "owner_role": null,
+        "actions": []
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.e9afc182-bcd2-575c-98b4-f59fe7b8562a",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "e9afc182-bcd2-575c-98b4-f59fe7b8562a",
+          "version_date": "2025-05-10",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 fd2557df-3fb2-53cd-81d9-e2ca8a3026f0，这不表示责任归属。",
+        "尚未解决的要求：UNRESOLVED（DIAGNOSIS_UNRESOLVED）。",
+        "诊断仍存在规则或参数缺口：demand_change。",
+        "执行记录的限制状态：BUSINESS_UNRESOLVED。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000011",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "UNRESOLVED",
+        "grounding_status": "FALLBACK"
+      }
+    },
+    "5f22ace7-9c77-5690-9968-8668fd2487e8": {
+      "request_id": "10000000-0000-0000-0000-000000000012",
+      "status": "COMPLETED",
+      "answer": "### 结论\n\n- 本次业务分析状态为 COMPLETED。 [execution]\n- 本次分析针对发运行 5f22ace7-9c77-5690-9968-8668fd2487e8。 [execution]\n\n### 为什么\n\n- 已确认的原因分类为试产（TRIAL）。 [diagnosis.rule]\n- 订单已越过超期阈值。 [execution]\n- 存在历史囤料记录；单独存在记录不等于最终囤料原因。 [execution]\n- 源库存组织类型为 TRIAL。 [execution]\n\n### 关键数据\n\n- 订单年龄：499 天。 [analytics]\n- 超期判断阈值：330 天。 [analytics]\n- 越过阈值天数：169 天。 [analytics]\n- 当前开放数量：0.0000 原始数量单位。 [analytics]\n- 未来13周预测需求：8919.7858 原始数量单位。 [analytics]\n- 平均周需求：686.1373692307692307692307692307692307692 原始数量单位/周。 [analytics]\n- 预计消耗时间：0 周。 [analytics]\n\n### 建议动作\n\n- 交由物料MPM确认处理。 [decision.rule]\n- 业务处理方或沟通对象为物料MPM。 [decision.rule]\n\n### 数据 / 规则限制\n\n- 预测贡献最大项目为 332f4de8-6a1d-5f13-9530-0e7a8de4a2cd，这不表示责任归属。 [analytics]\n- 以上内容仅为只读分析与建议，未执行任何采购操作。 [execution]\n- 数量沿用上游原始单位，当前未确认统一计量单位。 [execution]",
+      "answer_source": "FALLBACK",
+      "resolved_identity": {
+        "request_id": "10000000-0000-0000-0000-000000000012",
+        "dataset_version_id": "1d533913-115a-5f95-a865-374640fb05fc",
+        "snapshot_date": "2026-08-26",
+        "po_line_schedule_id": "5f22ace7-9c77-5690-9968-8668fd2487e8",
+        "po_header_id": "2df805d2-136c-5fbe-b760-c31895101b28",
+        "po_line_id": "d2dbaaa7-ebef-5a9d-895b-f4659795cefd",
+        "material_id": "0e2ef742-4c45-5351-baea-00fa0a417d6e",
+        "organization_id": "3546be79-7440-5fb5-a23e-4ba006635378",
+        "supplier_id": "7c9ea4af-f66a-51ae-b635-2061ad92848e"
+      },
+      "intent": "ANALYZE_OVERDUE_PO",
+      "key_metrics": [
+        {
+          "name": "po_age_days",
+          "value": "499",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "threshold_days",
+          "value": "330",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "days_beyond_threshold",
+          "value": "169",
+          "unit": "天",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "open_qty",
+          "value": "0.0000",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "total_forecast_qty",
+          "value": "8919.7858",
+          "unit": "原始数量单位",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "average_weekly_demand_qty",
+          "value": "686.1373692307692307692307692307692307692",
+          "unit": "原始数量单位/周",
+          "availability": "AVAILABLE"
+        },
+        {
+          "name": "estimated_consumption_weeks",
+          "value": "0",
+          "unit": "周",
+          "availability": "AVAILABLE"
+        }
+      ],
+      "diagnosis": {
+        "status": "DIAGNOSED",
+        "primary_reason": "TRIAL",
+        "primary_rule_id": "business_trial",
+        "primary_rule_version": "1.0.0",
+        "supporting_signals": [
+          "OVERDUE_THRESHOLD_EXCEEDED",
+          "HISTORICAL_STOCKPILE_RECORD_PRESENT"
+        ]
+      },
+      "decision": {
+        "status": "DECIDED",
+        "rule_id": "decision_trial",
+        "rule_version": "1.0.0",
+        "owner_role": "MPM",
+        "actions": [
+          {
+            "action_code": "REQUEST_MPM_CONFIRMATION",
+            "owner_role": "MPM",
+            "required": true
+          }
+        ]
+      },
+      "evidence_references": [
+        {
+          "reference_id": "execution",
+          "source": "AGENT",
+          "label": "结构化执行结果",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "diagnosis.rule",
+          "source": "DIAGNOSIS",
+          "label": "business_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "decision.rule",
+          "source": "DECISION",
+          "label": "decision_trial",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": "1.0.0"
+        },
+        {
+          "reference_id": "analytics",
+          "source": "ANALYTICS",
+          "label": "确定性采购指标",
+          "snapshot_date": "2026-08-26",
+          "version_id": null,
+          "version_date": null,
+          "rule_version": null
+        },
+        {
+          "reference_id": "version.a5c49a43-afd0-52e7-a62f-747558a0586a",
+          "source": "R6",
+          "label": "R6证据版本",
+          "snapshot_date": "2026-08-26",
+          "version_id": "a5c49a43-afd0-52e7-a62f-747558a0586a",
+          "version_date": "2025-04-12",
+          "rule_version": null
+        }
+      ],
+      "limitations": [
+        "预测贡献最大项目为 332f4de8-6a1d-5f13-9530-0e7a8de4a2cd，这不表示责任归属。",
+        "以上内容仅为只读分析与建议，未执行任何采购操作。",
+        "数量沿用上游原始单位，当前未确认统一计量单位。",
+        "LLM_NOT_CONFIGURED"
+      ],
+      "candidate_schedule_ids": [],
+      "execution_reference": "10000000-0000-0000-0000-000000000012",
+      "evaluation": {
+        "resolved_intent": "ANALYZE_OVERDUE_PO",
+        "tool_path": [
+          "get_overdue_po_context",
+          "get_overdue_po_analytics",
+          "diagnose_overdue_po",
+          "get_procurement_decision"
+        ],
+        "business_status": "COMPLETED",
+        "grounding_status": "FALLBACK"
+      }
+    }
+  }
+}

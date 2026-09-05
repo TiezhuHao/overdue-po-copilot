@@ -1,16 +1,18 @@
 # Phase 5 — Next.js Product MVP
 
-本地、只读的中文采购工作台。复用 Next.js 16.3.1 / React 19.2.8 / TypeScript 5.9.3 / App Router / 普通 CSS；没有升级框架、引入 UI/chart library 或业务规则。
+只读中文采购工作台，支持 Portfolio Demo 与 Full Local Stack 两种模式。复用 Next.js 16.3.1 / React 19.2.8 / TypeScript 5.9.3 / App Router / 普通 CSS；没有升级框架、引入 UI/chart library 或业务规则。
 
 ## 页面与数据流
 
 - `/`：READY dataset 选择、超期清单、PO/物料/供应商/参考项目筛选、原 REST 分页。仅有一个 READY dataset 时明确显示并采用它；多个时要求用户选择，不调用隐式 latest。
-- `/po/[scheduleId]?dataset=<datasetId>`：稳定身份订单概览、7个后端指标、Diagnosis、Decision、Evidence折叠区及上下文Copilot。
+- `/po?schedule=<scheduleId>&dataset=<datasetId>`：稳定身份订单概览、7个指标、Diagnosis、Decision、Evidence折叠区及上下文Copilot。查询参数路由允许 static export 同时保留任意本地订单身份。
 - Detail 首次打开调用一次完整 Copilot 分析；后续中文追问按提交调用。Dashboard 不逐行调用 Agent，没有 N+1 诊断。
 
-浏览器 → 同源 `/api/backend/{datasets|orders|copilot}` → System A/B 既有公开 API。使用[Next.js Route Handlers](https://nextjs.org/docs/app/api-reference/file-conventions/route)进行固定目标转发、参数白名单、timeout与错误脱敏，没有新的业务API。只有datasets/orders GET及copilot POST。POST核验同源Origin，不透传浏览器Cookie/Authorization，不接受任意URL、Policy或模型配置。后端不加通配CORS，不改变FastAPI契约。
+Full Local Stack：浏览器 → 同源 `/api/backend/{datasets|orders|copilot}` → Next.js固定 rewrites → System A/B 既有 API。Portfolio Demo：浏览器 → bundled synthetic snapshot。static export 不包含 rewrites、Route Handler、数据库或后端运行时。
 
-`lib/client.ts`统一fetch，`contracts.ts`校验消费字段及上下文，`presentation.ts`仅作标签/字符串展示。后端地址使用服务器环境 `SYSTEM_A_API_BASE_URL`、`SYSTEM_B_API_BASE_URL`；无 `NEXT_PUBLIC_*` key，前端不导入OpenAI SDK。
+`lib/client.ts`按 build mode 选择同一 API interface；`contracts.ts`在两种模式下执行相同响应校验，`presentation.ts`仅作标签/字符串展示。Full Local 后端地址使用服务器环境 `SYSTEM_A_API_BASE_URL`、`SYSTEM_B_API_BASE_URL`。Portfolio build 只公开布尔模式标记和可选 Pages base path；前端不导入 OpenAI SDK 或 secret。
+
+Portfolio snapshot 固定记录 `demo-master-v1` 的 generation signature、business content hash、12条真实Report 1响应以及对应System B deterministic fallback响应。它保留TRIAL确定结论和其他记录因未提供已确认Policy而产生的UNRESOLVED状态；不使用测试专用Policy补造公网结论。
 
 ## 数字与状态口径
 
@@ -79,7 +81,7 @@ pnpm start --hostname 127.0.0.1 --port 3000
 
 真实链路验证：订单 → `TRIAL` → `REQUEST_MPM_CONFIRMATION` / MPM → 中文fallback回答。查看Evidence可见snapshot、实际规则/版本和源版本引用。不是模拟前端数据，也不表示真实OpenAI已验收。
 
-前端用已有TypeScript编译器、Node测试runner和React server renderer做轻量测试，无新增测试框架。覆盖字段mapping、Decimal/null、分页、scope拒绝、状态保留、代理白名单/Origin/错误脱敏、可访问loading/error、未决与DC-16及原动作呈现。
+前端用已有TypeScript编译器、Node测试runner和React server renderer做轻量测试，无新增测试框架。覆盖字段mapping、Decimal/null、分页、scope拒绝、状态保留、Portfolio provenance/身份一致性、可访问loading/error、未决与DC-16及原动作呈现。
 
 浏览器验证包括真实Dashboard/Detail/Copilot、筛选/空列表、分页、1440和1920桌面及窄屏基础布局。数据库API回归继续使用专用测试数据库。截图见README Product Screens。
 

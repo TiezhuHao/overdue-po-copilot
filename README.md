@@ -2,9 +2,24 @@
 
 面向采购人员的超期采购订单诊断与决策支持系统：用确定性引擎计算和判断，用有证据约束的 Copilot 组织中文回答。
 
-**v1.0 求职展示版 · Synthetic data only · Read-only · 本地演示**
+**v1.0 求职展示版 · Synthetic data only · Read-only · Portfolio Demo + Full Local Stack**
 
 > **Real OpenAI smoke not executed.** 本次封版进程未配置 OpenAI key/model。真实 REST、LangGraph、业务引擎和浏览器链路已通过 deterministic fallback 演示。模拟模型测试不是模型准确率，也不代表真实模型已验收。此版本标记不表示已创建 GitHub Release 或 tag。
+
+## Live Portfolio Demo
+
+Cloudflare Pages 公网地址将在首次部署后补入此处。公网版本是纯静态作品集：**Public demo uses synthetic snapshot data and deterministic responses.** 它不运行 PostgreSQL、System A、System B、LangGraph 或 OpenAI，也不产生 API 费用。
+
+静态快照来自已验收的 `demo-master-v1`：`snapshot_date=2026-08-26`，保留 dataset generation signature、business content hash、真实 System A Report 1 响应和 System B deterministic fallback 响应。页面右上角明确显示 `Portfolio demo · Synthetic data · Deterministic AI fallback`。
+
+## Full Local Setup
+
+完整本地工程入口见 [Local Setup](docs/LOCAL_SETUP.md) 和下方 [Quick Start](#quick-start)。**Full repository contains the complete System A/System B architecture and optional OpenAI integration.** Portfolio Demo Mode 没有删除或替代完整链路。
+
+| Mode | Data / computation | Runtime |
+|---|---|---|
+| Portfolio Demo | 仓库内已验收合成快照；浏览器端确定性读取、筛选和回答 | 静态 HTML/CSS/JS，零后端 |
+| Full Local Stack | System A REST → Adapter → Analytics → Diagnosis → Decision → LangGraph → Copilot | PostgreSQL + System A + System B + Next.js；OpenAI 可选 |
 
 ## What it solves
 
@@ -16,7 +31,7 @@
 
 ## Product Screenshots
 
-以下均为当前产品、真实公开 API 和 `demo-master-v1` 的浏览器截图，没有合成 UI 或预置前端答案。
+以下截图来自完整本地链路和 `demo-master-v1`。Portfolio Demo 复用同一 UI，并使用从该链路捕获的已验收响应；不暗示公网正在运行后端。
 
 ### Dashboard
 
@@ -32,12 +47,12 @@
 
 ## Demo Flow
 
-1. 打开 [本地工作台](http://localhost:3000)，选择 `demo-master-v1`，业务 snapshot 为 `2026-08-26`。
+1. 打开 Portfolio Demo，或按 Full Local Setup 启动 [本地工作台](http://localhost:3000)；选择 `demo-master-v1`，业务 snapshot 为 `2026-08-26`。
 2. 点击 **PO-000015 / 行3 / 发运1**，查看开放量、433天订单年龄、254天阈值和179天越界。
 3. 输入 **“为什么这个 PO 超期？应该怎么办？”**。
 4. 查看 `TRIAL` 诊断及 `REQUEST_MPM_CONFIRMATION` / MPM，再展开 **Evidence & Trace** 核对规则、版本与快照。
 
-无 key 时显示“确定性回答”。演示记录由公开 API 选取，ID 只用于文档指引，不硬编码在前端。可另看 `PO-000031 / 行2 / 发运1` 的未决状态，说明未知值和缺参数不会被包装成确定结论。
+Portfolio Demo 始终显示“确定性回答”，其记录和结果由当前本地 API 捕获并固定在版本化快照中。Full Local Stack 无 key 时也使用相同安全回退。可另看未决记录，确认未知值和缺参数不会被包装成确定结论。
 
 ## Architecture
 
@@ -51,7 +66,7 @@ flowchart LR
     DE --> LG["LangGraph<br/>工具编排 / 状态 / Trace"]
     LG --> CP["Copilot API<br/>身份校验 / Grounding / Fallback"]
     CP --> NX["Next.js<br/>Dashboard / Detail / Copilot"]
-    REST -->|"轻量列表经同源代理"| NX
+    REST -->|"Full Local 固定 rewrites"| NX
     OA["OpenAI"] --- INT["Intent extraction"]
     OA --- ANSWER["Answer composition"]
     INT --> CP
@@ -146,7 +161,7 @@ pnpm start --hostname 127.0.0.1 --port 3000
 | OPENAI_TEMPERATURE | 默认0；模型不支持时设为 `null` 省略 |
 | COPILOT_DIAGNOSIS_POLICY / COPILOT_DECISION_POLICY | 可信服务器配置，默认 null；缺参数保持未决，不注入测试阈值 |
 
-Next.js 使用固定白名单同源代理，无须开放通配 CORS。浏览器没有 OpenAI SDK 或 key。API 使用 `system_a_api` 数据库角色，不为绕过权限错误改用 owner。
+Full Local Stack 使用 Next.js rewrites 将三个固定 `/api/backend/*` 路径转发至本地 System A / System B，无须开放通配 CORS。Portfolio Demo build 不包含这些 rewrites。浏览器没有 OpenAI SDK 或 key。API 使用 `system_a_api` 数据库角色，不为绕过权限错误改用 owner。
 
 官方调用使用 strict schema 和 `store=False`，后者不等于供应商层面的零数据保留保证；见 [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) 与 [Responses API](https://developers.openai.com/api/reference/python/resources/responses/methods/create)。仅发送本项目合成数据。完整选项见 [.env.example](.env.example) 和 [Copilot 文档](docs/copilot.md)。
 
@@ -183,6 +198,32 @@ pnpm run build
 
 执行边界和本地验证限制见 [封版验证记录](docs/release-verification.md)。
 
+## Portfolio Demo Static Build
+
+静态构建不需要 PostgreSQL、Python、System A、System B、OpenAI key 或任何云端运行服务：
+
+```powershell
+cd frontend
+pnpm install --frozen-lockfile
+pnpm run build:portfolio
+python -m http.server 3000 --directory out
+```
+
+打开 `http://127.0.0.1:3000`。输出目录是 `frontend/out/`；构建脚本只在该次子进程中设置 `NEXT_PUBLIC_PORTFOLIO_DEMO=1`，不会改变 Full Local Stack 配置。
+
+Cloudflare Pages 设置：
+
+| Setting | Value |
+|---|---|
+| Framework preset | Next.js (Static HTML Export) |
+| Root directory | `frontend` |
+| Build command | `pnpm run build:portfolio` |
+| Build output directory | `out` |
+| Node.js | 24 |
+| Runtime secrets | 无 |
+
+GitHub Pages 也能托管同一个 `out/`。仓库级 Pages 在 build 时设置 `NEXT_PUBLIC_BASE_PATH=/仓库名`，再用 GitHub Actions 上传 `frontend/out`；用户或组织根站点不需要 base path。Cloudflare Pages 对本项目更直接，因为 `*.pages.dev` 位于域名根路径并提供 Git preview deployment。
+
 ## Evaluation
 
 [Evaluation 说明](docs/evaluation.md) 提供25个可重复执行用例和 JSON summary：4类意图路由、4类实体解析、7类业务场景、4类安全场景、6类 grounding 检查。真实引擎运行，模型输出为脚本模拟；每个用例重复两次验证确定性。
@@ -199,7 +240,7 @@ pnpm run build
 - Copilot 公开投影没有全部 Analytics 或逐项 required checks，UI 不补算。数量单位缺统一 UOM 转换；贡献项目不表示责任项目。
 - 无 write-back、无 authentication、无 persistent memory；无邮件、供应商集成或自动取消/改期。
 - 真实模型尚未验收；模型仅在既定事实表述内编排，不支持无限制自由回答。
-- 仅本地演示。数据库 Compose 端口需防火墙保护，不要公开无认证的 A/B/前端端口。
+- Full Local Stack 仅供本地演示。公网 Portfolio Demo 是固定的12条 Report 1 快照，不是完整115条在线数据集，也不执行任意后端查询。
 
 ## Repository Structure
 
@@ -211,9 +252,10 @@ backend/
   db/bootstrap/           角色与授权
   tests/                  单元、契约、集成与离线发布评估
 frontend/
-  app/                    页面和固定目标代理
+  app/                    可静态导出的 Dashboard / PO Detail 页面
   components/             工作台、详情、证据、Copilot
-  lib/                    API client、消费契约与展示
+  lib/                    双模式 API client、静态快照适配与展示
+  data/                   已验收 Portfolio Demo 响应快照
   tests/                  Node / React rendering tests
 docs/                     规格、启动、评估、面试说明与真实截图
 scripts/                  仓库检查与现有维护工具
