@@ -45,3 +45,6 @@ exports/
 *.bak
 *.tmp
 ~$*.xlsx
+
+docs/interview-guide.md
+AGENTS.md
