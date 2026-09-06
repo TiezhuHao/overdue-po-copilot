@@ -257,12 +257,12 @@ frontend/
   lib/                    双模式 API client、静态快照适配与展示
   data/                   已验收 Portfolio Demo 响应快照
   tests/                  Node / React rendering tests
-docs/                     规格、启动、评估、面试说明与真实截图
+docs/                     架构、业务规则、数据契约、评估与发布验证文档
 scripts/                  仓库检查与现有维护工具
 examples/                 无逐条隐藏答案的公开示例
 ```
 
-[30秒介绍与面试问答](docs/interview-guide.md) · [六报表字段映射](docs/REPORT_FIELD_MAPPING.md) · [数据契约](docs/data-contracts.md) · [公开环境复现记录](docs/PUBLIC_REPRODUCIBILITY.md)
+[系统架构](docs/system-b-architecture.md) · [六报表字段映射](docs/REPORT_FIELD_MAPPING.md) · [数据契约](docs/data-contracts.md) · [评估](docs/evaluation.md) · [公开环境复现记录](docs/PUBLIC_REPRODUCIBILITY.md)
 
 ## License
 
